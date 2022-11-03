@@ -9,6 +9,8 @@ namespace UI
     {
         [SerializeField] private TextMeshProUGUI textMesh;
         [SerializeField] private TextMeshProUGUI textMeshVel;
+        [SerializeField] private TextMeshProUGUI textMeshLocalTime;
+
         public void SetStateName(string stateName)
         {
             textMesh.SetText(stateName);
@@ -20,6 +22,10 @@ namespace UI
             double y = System.Math.Round(velocity.y, 3);
             textMeshVel.SetText("X:" + x + "\n" + "Y:" + y);
         }
-        
+
+        public void SetLocalTime(float localTime)
+        {
+            textMeshLocalTime.SetText("Local Time Multiplier: " + localTime);
+        }
     }
 }
