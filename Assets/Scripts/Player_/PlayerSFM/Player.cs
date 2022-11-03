@@ -57,6 +57,8 @@ namespace Player_.PlayerSFM
         {
             Velocity = Vector2.zero;
             _currentState?.Update();
+
+            UiManager.DebugUi.SetLocalTime(LocalTime.multiplierAt(transform.position));
         }
 
         private void SetupJump()

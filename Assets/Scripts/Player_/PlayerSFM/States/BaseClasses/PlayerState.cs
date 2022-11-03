@@ -52,7 +52,7 @@ namespace Player_.PlayerSFM.States.BaseClasses
 
         protected void ApplyGravity()
         {
-            Player.Gravity.AddForce();
+            Player.Gravity.AddForce(Physics.LocalTime.deltaTimeAt(Player.transform.position));
             float realVel = Player.Gravity.AccumulatedVelocity + Player.Velocity.y;
             float multiplier = realVel <= 0 ? 2 : 1;
             Player.AddVelocity(new Vector2(0,realVel * multiplier));
@@ -71,7 +71,7 @@ namespace Player_.PlayerSFM.States.BaseClasses
         
         protected void PerformMovement()
         {
-            Player.Move(Player.Velocity * Time.deltaTime);
+            Player.Move(Player.Velocity * Physics.LocalTime.deltaTimeAt(Player.transform.position));
         }
 
         protected void CommonUpdate(ref float storedVelocity)
