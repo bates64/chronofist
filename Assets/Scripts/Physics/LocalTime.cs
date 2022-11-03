@@ -15,8 +15,6 @@ namespace Physics {
             float time = 1.0f;
             int count = Physics2D.OverlapPointNonAlloc(position, _hits, _layerMask);
 
-            Debug.Log(count);
-
             for (int i = 0; i < count; i++) {
                 var provider = _hits[i].GetComponent<LocalTimeProvider>();
 
