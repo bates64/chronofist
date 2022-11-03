@@ -29,7 +29,7 @@ namespace Player_.PlayerSFM.States
 
         public float ApplyVerticalVelocities()
         {
-            Player.Gravity.AddForce();
+            Player.Gravity.AddForce(Physics.LocalTime.deltaTimeAt(Player.transform.position));
             float realVelocity = _ascendingVelocity + Player.Gravity.AccumulatedVelocity;
             Player.AddVelocity(new Vector2(0,realVelocity));
             return realVelocity;

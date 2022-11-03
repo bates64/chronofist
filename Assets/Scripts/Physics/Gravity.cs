@@ -20,9 +20,9 @@ namespace Physics
             _accumulatedVelocity = 0;
         }
 
-        public float AddForce()
+        public float AddForce(float deltaTime)
         {
-            _accumulatedVelocity += _forceValue * Time.deltaTime;
+            _accumulatedVelocity += _forceValue * deltaTime;
             if (Mathf.Abs(_accumulatedVelocity) < 0.1) _accumulatedVelocity = 0.1f * Mathf.Sign(_forceValue);
             return _accumulatedVelocity;
         }

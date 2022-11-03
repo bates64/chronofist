@@ -20,7 +20,7 @@ namespace Player_
             if (UnityEngine.Input.GetKey(KeyCode.LeftArrow)) dir.x -= 3;
             if (UnityEngine.Input.GetKey(KeyCode.UpArrow)) dir.y += 3;
             if (UnityEngine.Input.GetKey(KeyCode.DownArrow)) dir.y -= 3;
-            _controller2D.Move(dir * Time.deltaTime);
+            _controller2D.Move(dir * LocalTime.deltaTimeAt(transform.position));
         }
     }
 }
