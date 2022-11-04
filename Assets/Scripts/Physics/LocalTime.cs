@@ -23,7 +23,7 @@ namespace Physics {
                     continue;
                 }
 
-                time *= provider.timeMultiplier;
+                time *= provider.TimeMultiplier;
             }
 
             return time;
