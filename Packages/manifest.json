@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.cammin.ldtkunity": "3.1.3",
     "com.spoiledcat.git": "1.0.12",
     "com.unity.2d.animation": "7.0.8",
     "com.unity.2d.pixel-perfect": "5.0.3",
@@ -54,6 +55,13 @@
       "url": "https://registry.spoiledcat.com",
       "scopes": [
         "com.spoiledcat"
+      ]
+    },
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cammin.ldtkunity"
       ]
     }
   ]
