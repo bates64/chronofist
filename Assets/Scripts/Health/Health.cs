@@ -15,6 +15,10 @@ namespace Health {
         public event Util.DVoid OnDeath;
 
         public void ApplyDamage(float damage) {
+            if (isDead) {
+                return;
+            }
+
             health -= damage;
             OnTakeDamage?.Invoke(damage);
 
@@ -24,7 +28,15 @@ namespace Health {
             }
         }
 
-        public void Heal(float heal) {
+        public void Kill() {
+            ApplyDamage(health);
+        }
+
+        public void Heal(float heal, bool allowRevive) {
+            if (isDead && !allowRevive) {
+                return;
+            }
+
             health += heal;
             OnHeal?.Invoke(heal);
 
