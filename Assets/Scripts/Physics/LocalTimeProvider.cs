@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Physics {
     public class LocalTimeProvider : MonoBehaviour {
-        public float timeMultiplier = 1.0f;
+        public float TimeMultiplier = 1.0f;
+
+        public static int Layer => LayerMask.NameToLayer("Local Time");
 
         void Start() {
-            if (gameObject.layer != LayerMask.NameToLayer("Local Time")) {
+            if (gameObject.layer != Layer) {
                 Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
             }
         }
