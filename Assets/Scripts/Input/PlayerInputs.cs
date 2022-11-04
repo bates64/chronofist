@@ -60,5 +60,9 @@ namespace Input
         
         #endregion
         
+        public void Disable()
+        {
+            _playerInput.Disable();
+        }
     }
 }

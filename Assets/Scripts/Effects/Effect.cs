@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Effects {
-    public class Effect : MonoBehaviour {
+    public abstract class Effect : MonoBehaviour {
         public float TimeToLive;
         protected bool isLastUpdate = false;
 
