@@ -2,6 +2,7 @@ using UnityEngine;
 using Physics;
 
 namespace Health {
+    [RequireComponent(typeof(Collider2D))]
     public class KillBox : MonoBehaviour {
         public void Start() {
             // Verify we have a collider with isTrigger=true.

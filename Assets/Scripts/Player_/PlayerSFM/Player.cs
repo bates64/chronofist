@@ -30,6 +30,7 @@ namespace Player_.PlayerSFM
         {
             private set
             {
+                
                 _velocity = value;
                 UiManager.DebugUi.SetVelocity(_velocity);
             }
@@ -40,7 +41,7 @@ namespace Player_.PlayerSFM
         }
         public Gravity Gravity => _gravity;
         public Controller2D Controller2D => _controller2D;
-        
+        public PlayerState CurrentState => _currentState;
         #endregion
 
         #region Unity Event and Setup Functions
@@ -57,7 +58,6 @@ namespace Player_.PlayerSFM
         {
             Velocity = Vector2.zero;
             _currentState?.Update();
-
             UiManager.DebugUi.SetLocalTime(LocalTime.multiplierAt(transform.position));
         }
 
