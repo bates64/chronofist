@@ -12,12 +12,15 @@ namespace Physics
 		const float SkinWidth = .015f;
 
 		private BoxCollider2D _collider;
+		protected float obj;
 		private RaycastOrigins _raycastOrigins;
 		private Direction _horizontal = new Direction(4, 0, Vector2.right);
 		private Direction _vertical =  new Direction(4, 0, Vector2.up);
 		public event Util.DVoid OnLanding;
 		public event Util.DVoid OnTakeoff;
 		public event Util.DVoid OnCeilingBump;
+
+		public bool isGrounded => _vertical.NegativeCollision;
 		
 		#region Properties
 
@@ -56,17 +59,17 @@ namespace Physics
 
 		#region Movement Functions
 
-		public void Move(Vector3 velocity, bool locked = false) 
+		public void Move(Vector3 velocity, bool locked = false, bool skipSlope = false) 
 		{
 			LockCollisions(locked);
 			UpdateRaycastOrigins();
-			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0);
-			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x);
+			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0,skipSlope);
+			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x,skipSlope);
 			transform.Translate (velocity);
 			LockCollisions(false);
 		}
 		
-		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset)
+		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset,bool skipSlope)
 		{
 			int sign = (int) Mathf.Sign(velocity);
 			float rayLength = Mathf.Abs(velocity) + SkinWidth;
@@ -84,8 +87,15 @@ namespace Physics
 					rayLength = hit.distance;
 				}
 			}
-			if (sign == -1) direction.NegativeCollision = isHit;
-			if (sign == 1) direction.PositiveCollision = isHit;
+			direction.NegativeCollision = sign == -1 && isHit;
+			direction.PositiveCollision = sign == 1 && isHit;
+			//if (sign == -1) direction.NegativeCollision = isHit;
+			//if (sign == 1) direction.PositiveCollision = isHit;
+		}
+		
+		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
+		{
+			//velocity.y = Mathf.Sign()
 		}
 		
 		private void UpdateRaycastOrigins()
@@ -105,12 +115,14 @@ namespace Physics
 
 		private void RelayGroundEvents(bool isGround)
 		{
+			Debug.Log("Ground Event:" + isGround);
 			if(isGround) OnLanding?.Invoke();
 			else OnTakeoff?.Invoke();
 		}
 
 		private void RelayCeilingEvents(bool hasBumped)
 		{
+			Debug.Log("Ceiling Event:" + hasBumped);
 			if (hasBumped)OnCeilingBump?.Invoke();
 		}
 		

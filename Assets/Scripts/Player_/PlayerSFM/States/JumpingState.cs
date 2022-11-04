@@ -38,6 +38,7 @@ namespace Player_.PlayerSFM.States
         protected override void RegisterSubscriptions()
         {
             Subscriptions.Add(SubscribeJumpRelease);
+            Subscriptions.Add(SubscribeLanding);
             Subscriptions.Add(SubscribeOnCeilingBump);
         }
 
@@ -63,6 +64,7 @@ namespace Player_.PlayerSFM.States
         
         protected void OnFall()
         {
+            Debug.Log("Fall");
             Player.Gravity.ResetForce();
             Player.SetState(Player.States.FallingState);
         }

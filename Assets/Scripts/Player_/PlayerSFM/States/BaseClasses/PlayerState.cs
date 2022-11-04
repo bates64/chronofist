@@ -124,7 +124,7 @@ namespace Player_.PlayerSFM.States.BaseClasses
         }
 
         protected void OnCeilingBump()
-        {
+         {
             Player.SetState(Player.States.FallingState);
         }
         
