@@ -10,11 +10,19 @@ namespace Physics {
             if (gameObject.layer != Layer) {
                 Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
             }
+
+            LocalTime.InvalidateMultiplierAtCache();
         }
 
         void Update() {
-            // Nothing to do!
-            // See LocalTime.multiplierAt for the actual logic.
+            if (transform.hasChanged) {
+                LocalTime.InvalidateMultiplierAtCache();
+                transform.hasChanged = false;
+            }
+        }
+
+        void Destroy() {
+            LocalTime.InvalidateMultiplierAtCache();
         }
     }
 }
