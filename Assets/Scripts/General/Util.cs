@@ -8,6 +8,8 @@ namespace General
         
         public delegate void DBool(bool b);
         public delegate void DVoid();
+        public delegate void DInt(int i);
+        public delegate void DFloat(float f);
         public delegate void DVector2(Vector2 vector);
 
         public static Vector2 absPerpendicular(Vector2 vector)
