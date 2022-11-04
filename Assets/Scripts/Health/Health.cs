@@ -14,6 +14,12 @@ namespace Health {
         public event Util.DVoid OnFullHealth;
         public event Util.DVoid OnDeath;
 
+        public void Start() {
+            if (GetComponent<DeathHandler>() == null) {
+                Debug.LogWarning($"'{gameObject.name}' has Health but no DeathHandler");
+            }
+        }
+
         public void ApplyDamage(float damage) {
             if (isDead) {
                 return;
