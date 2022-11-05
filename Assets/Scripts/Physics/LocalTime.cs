@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Physics {
@@ -6,11 +7,16 @@ namespace Physics {
 
         static private int _layerMask = LayerMask.GetMask("Local Time");
 
+        static private Dictionary<Vector2Int, float> _multiplierAtCache = new Dictionary<Vector2Int, float>();
+
         /// <summary>
         /// Returns the time multiplier for a given position by querying collisions with LocalTimeProviders.
         /// </summary>
-        static public float multiplierAt(Vector3 position) {
-            // PERF: we could potentially memoize this calculation to avoid the physics query
+        static public float multiplierAt(Vector2Int position) {
+            // Check cache
+            if (_multiplierAtCache.ContainsKey(position)) {
+                return _multiplierAtCache[position];
+            }
 
             float time = 1.0f;
             int count = Physics2D.OverlapPointNonAlloc(position, _hits, _layerMask);
@@ -26,7 +32,19 @@ namespace Physics {
                 time *= provider.TimeMultiplier;
             }
 
+            // Cache result
+            _multiplierAtCache.Add(position, time);
+
             return time;
+        }
+
+        static public float multiplierAt(Vector3 position) {
+            Vector2Int tilePos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
+            return multiplierAt(tilePos);
+        }
+
+        static public void InvalidateMultiplierAtCache() {
+            _multiplierAtCache.Clear();
         }
 
         static public float deltaTimeAt(Vector3 position) {
