@@ -2,14 +2,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Input
-{
-    public class PlayerInputs
-    {
-        private InputActionsPlayer _playerInput;
-        private Vector2 _movement;
-        private bool _jump;
-        private bool _attack;
+namespace Input {
+    public class PlayerInputs : InputSystemConsumer {
+        private Vector2 _movement = Vector2.zero;
+        private bool _jump = false;
+        private bool _attack = false;
         public event Util.DVector2 OnMovementChange;
         public event Util.DBool OnJumpChange;
         public event Util.DBool OnAttackChange;
@@ -24,16 +21,13 @@ namespace Input
 
         #region Setup Functions
 
-        public void Init()
-        {
-            _playerInput = new InputActionsPlayer();
-            _playerInput.Enable();
-            _playerInput.Main.Move.performed += RelayMovement;
-            _playerInput.Main.Move.canceled += RelayMovement;
-            _playerInput.Main.Jump.performed += RelayJump;
-            _playerInput.Main.Jump.canceled += RelayJump;
-            _playerInput.Main.Attack.performed += RelayAttack;
-            _playerInput.Main.Attack.canceled += RelayAttack;
+        public PlayerInputs(): base() {
+            _actions.Main.Move.performed += RelayMovement;
+            _actions.Main.Move.canceled += RelayMovement;
+            _actions.Main.Jump.performed += RelayJump;
+            _actions.Main.Jump.canceled += RelayJump;
+            _actions.Main.Attack.performed += RelayAttack;
+            _actions.Main.Attack.canceled += RelayAttack;
         }
         
         #endregion
@@ -59,10 +53,5 @@ namespace Input
         }
         
         #endregion
-        
-        public void Disable()
-        {
-            _playerInput.Disable();
-        }
     }
 }
