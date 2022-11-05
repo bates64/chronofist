@@ -23,7 +23,7 @@ namespace World {
             const int SCREEN_WIDTH_TILES = 48;
             const int SCREEN_HEIGHT_TILES = 27;
 
-            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds) {
+            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds, Transform follow) {
                 this.gameObject = gameObject;
                 this.level = level;
                 this.bounds = bounds;
@@ -52,8 +52,20 @@ namespace World {
                 var vcam = vcamObject.AddComponent<CinemachineVirtualCamera>();
                 vcam.m_Lens.OrthographicSize = 13.5f;
                 if (!useStaticCamera()) {
-                    // FIXME
-                    //vcam.Follow = LevelActivator.Transform();
+                    vcam.Follow = follow;
+
+                    vcamObject.AddComponent<CinemachinePixelPerfect>();
+
+                    var framingTransposer = vcam.AddCinemachineComponent<CinemachineFramingTransposer>();
+                    framingTransposer.m_LookaheadTime = 0.6f;
+                    framingTransposer.m_LookaheadSmoothing = 5.0f;
+                    framingTransposer.m_LookaheadIgnoreY = true;
+                    framingTransposer.m_ScreenX = 0.5f;
+                    framingTransposer.m_ScreenY = 0.5f;
+                    framingTransposer.m_CameraDistance = 10f;
+                    //framingTransposer.m_DeadZoneWidth = 0.2f;
+                    //framingTransposer.m_DeadZoneHeight = 0.2f;
+                    framingTransposer.m_YDamping = 1.0f;
 
                     var confiner = vcamObject.AddComponent<CinemachineConfiner2D>();
                     confiner.m_BoundingShape2D = bounds;
@@ -105,7 +117,7 @@ namespace World {
                 }
 
                 var id = child.GetComponent<LDtkIid>();
-                _loadedLevels.Add(new LoadedLevel(child, level, id,bounds));
+                _loadedLevels.Add(new LoadedLevel(child, level, id,bounds, follow.transform));
             }
         }
 
@@ -243,7 +255,7 @@ namespace World {
             var levelComponent = levelObject.GetComponent<LDtkComponentLevel>();
             var id = levelObject.GetComponent<LDtkIid>();
             var bounds = levelObject.GetComponent<PolygonCollider2D>();
-            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent,id,bounds));
+            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent,id,bounds, follow.transform));
         }
     }
 }
