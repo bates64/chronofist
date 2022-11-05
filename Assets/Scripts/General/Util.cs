@@ -19,6 +19,17 @@ namespace General
             vector.y = Mathf.Abs(vector.y);
             return vector;
         }
-        
+
+        public static void SetLayerRecursively(this GameObject obj, int newLayer) {
+            if (obj == null) {
+                return;
+            }
+
+            obj.layer = newLayer;
+
+            foreach (Transform child in obj.transform) {
+                child.gameObject.SetLayerRecursively(newLayer);
+            }
+        }
     }
 }

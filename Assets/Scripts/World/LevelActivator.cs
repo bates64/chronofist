@@ -24,5 +24,9 @@ namespace World {
                 LevelManager.EnterLevel(other.gameObject);
             }
         }
+
+        public static Transform Transform() {
+            return _instance.gameObject.transform;
+        }
     }
 }

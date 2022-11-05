@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LDtkUnity;
+using Cinemachine;
 using General;
 
 namespace World {
@@ -15,11 +16,15 @@ namespace World {
             public readonly GameObject gameObject;
             public readonly LDtkComponentLevel level;
             public readonly PolygonCollider2D bounds;
+            public readonly GameObject vcamObject;
             public readonly LDtkIid id;
-            
+
             public bool MarkForUnload = false;
 
-            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id,PolygonCollider2D bounds) {
+            const int SCREEN_WIDTH_TILES = 48;
+            const int SCREEN_HEIGHT_TILES = 27;
+
+            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds) {
                 this.gameObject = gameObject;
                 this.level = level;
                 this.bounds = bounds;
@@ -31,8 +36,41 @@ namespace World {
         
                 // The children of the level need to be on the Level layer.
                 foreach (Transform childTransform in level.gameObject.transform) {
-                    childTransform.gameObject.layer = LayerMask.NameToLayer("Level");
+                    childTransform.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Level"));
                 }
+
+                // Create a child object to hold the virtual camera.
+                vcamObject = new GameObject("VirtualCamera");
+                vcamObject.transform.parent = gameObject.transform;
+
+                // Center it on the level.
+                vcamObject.transform.position = new Vector3(bounds.bounds.center.x, bounds.bounds.center.y, -10f);
+                
+                // Deactivate it by default (we will enable it when a LevelActivator enters).
+                vcamObject.SetActive(false);
+
+                // Set up the actual vcam component.
+                var vcam = vcamObject.AddComponent<CinemachineVirtualCamera>();
+                vcam.m_Lens.OrthographicSize = 13.5f;
+                if (!useStaticCamera()) {
+                    // FIXME
+                    //vcam.Follow = LevelActivator.Transform();
+
+                    var confiner = vcamObject.AddComponent<CinemachineConfiner2D>();
+                    confiner.m_BoundingShape2D = bounds;
+                }
+            }
+
+            public void Enter() {
+                vcamObject.SetActive(true);
+            }
+
+            public void Exit() {
+                vcamObject.SetActive(false);
+            }
+
+            private bool useStaticCamera() {
+                return level.BorderRect.width == SCREEN_WIDTH_TILES && level.BorderRect.height == SCREEN_HEIGHT_TILES;
             }
         }
 
@@ -41,6 +79,7 @@ namespace World {
 
         private LDtkComponentProject _project;
         private List<LoadedLevel> _loadedLevels = new List<LoadedLevel>();
+        private LoadedLevel _currentLevel;
 
         protected override void init() {
             _project = world.GetComponent<LDtkComponentProject>();
@@ -91,22 +130,38 @@ namespace World {
         }
 
         public static void EnterLevel(GameObject enteredLevelObject) {
-            var enteredLevel = Instance.getLoadedLevel(enteredLevelObject);
+            Instance.enterLevel(enteredLevelObject);
+        }
+
+        private void enterLevel(GameObject enteredLevelObject) {
+            var enteredLevel = getLoadedLevel(enteredLevelObject);
             if (enteredLevel == null) {
                 Debug.LogError($"Cannot enter unloaded level '{enteredLevelObject.name}'.");
                 return;
             }
 
-            Instance.LoadLevelNeighbours(enteredLevel.level.Identifier);
+            if (_currentLevel == enteredLevel) {
+                // This shouldn't happen, but whatever
+                return;
+            }
+
+            if (_currentLevel != null) {
+                _currentLevel.Exit();
+            }
+
+            _currentLevel = enteredLevel;
+            enteredLevel.Enter();
+
+            loadLevelNeighbours(enteredLevel.level.Identifier);
 
             // PERF: queue for later
-            Instance.GarbageCollectLevels(enteredLevel);
+            garbageCollectLevels(enteredLevel);
         }
 
         /// <summary>
         /// Destroys all loaded levels that are not the given level or its neighbours.
         /// </summary>
-        private void GarbageCollectLevels(LoadedLevel enteredLevel) {
+        private void garbageCollectLevels(LoadedLevel enteredLevel) {
             // We are going to perform mark-and-sweep garbage collection.
 
             // 1. Mark all levels for unload.
@@ -146,20 +201,20 @@ namespace World {
             _loadedLevels.RemoveAll(level => level.MarkForUnload);
         }
 
-        private void LoadLevelNeighbours(string levelIdentifier) {
+        private void loadLevelNeighbours(string levelIdentifier) {
             var levels = _project.FromJson().Levels;
 
             foreach (var level in levels) {
                 if (level.Identifier == levelIdentifier) {
                     foreach (var neighbour in level.Neighbours) {
-                        LoadLevel(neighbour.Level);
+                        loadLevel(neighbour.Level);
                     }
                     break;
                 }
             }
         }
 
-        private void LoadLevel(Level level) {
+        private void loadLevel(Level level) {
             // Check if the level is already loaded.
             foreach (var loadedLevel in _loadedLevels) {
                 if (loadedLevel.level.Identifier == level.Identifier) {
