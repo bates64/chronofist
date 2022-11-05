@@ -8,6 +8,8 @@ namespace Player_.PlayerSFM.States.BaseClasses
     {
         protected Player Player => Machine;
         protected readonly List<Util.DBool> Subscriptions = new List<Util.DBool>();
+        
+        public virtual bool PerformMovement => true;
         public abstract int StateId
         {
             get;
@@ -68,17 +70,11 @@ namespace Player_.PlayerSFM.States.BaseClasses
             storedVelocity = InputManager.PlayerInput.Movement.x * Player.MovementSpeed;
             Player.AddVelocity(new Vector2(storedVelocity,0));
         }
-        
-        protected void PerformMovement()
-        {
-            Player.Move(Player.Velocity * Physics.LocalTime.deltaTimeAt(Player.transform.position));
-        }
 
         protected void CommonUpdate(ref float storedVelocity)
         {
             ApplyGravity();
             ApplyMovementVelocity(ref storedVelocity);
-            PerformMovement();
         }
         
         #endregion
@@ -87,20 +83,20 @@ namespace Player_.PlayerSFM.States.BaseClasses
         
         protected void SubscribeLanding(bool subscribe)
         {
-            if(subscribe) Player.Controller2D.OnLanding += OnLanding;
-            else Player.Controller2D.OnLanding -= OnLanding;
+            if(subscribe) Player.Controller2D.Collisions.OnLanding += OnLanding;
+            else Player.Controller2D.Collisions.OnLanding -= OnLanding;
         }
 
         protected void SubscribeOnTakeOff(bool subscribe)
         {
-            if(subscribe) Player.Controller2D.OnTakeoff += OnTakeOff;
-            else Player.Controller2D.OnTakeoff -= OnTakeOff;
+            if(subscribe) Player.Controller2D.Collisions.OnTakeoff += OnTakeOff;
+            else Player.Controller2D.Collisions.OnTakeoff -= OnTakeOff;
         }
 
         protected void SubscribeOnCeilingBump(bool subscribe)
         {
-            if(subscribe) Player.Controller2D.OnCeilingBump += OnCeilingBump;
-            else Player.Controller2D.OnCeilingBump -= OnCeilingBump;
+            if(subscribe) Player.Controller2D.Collisions.OnCeilingBump += OnCeilingBump;
+            else Player.Controller2D.Collisions.OnCeilingBump -= OnCeilingBump;
         }
         
         protected void SubscribeOnJumpPress(bool subscribe)

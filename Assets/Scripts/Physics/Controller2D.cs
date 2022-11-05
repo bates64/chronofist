@@ -1,4 +1,5 @@
-﻿using General;
+﻿using System;
+using General;
 using UI;
 using UnityEngine;
 
@@ -10,26 +11,23 @@ namespace Physics
 		public LayerMask collisionMask;
 
 		const float SkinWidth = .015f;
+		private const float MaxSlopeAngle = 80;
 
+		private bool _isSlope;
 		private BoxCollider2D _collider;
-		protected float obj;
 		private RaycastOrigins _raycastOrigins;
-		private Direction _horizontal = new Direction(4, 0, Vector2.right);
-		private Direction _vertical =  new Direction(4, 0, Vector2.up);
-		public event Util.DVoid OnLanding;
-		public event Util.DVoid OnTakeoff;
-		public event Util.DVoid OnCeilingBump;
-
-		public bool isGrounded => _vertical.NegativeCollision;
+		private Direction _horizontal = new Direction(4, 0, Vector2.right,true);
+		private Direction _vertical =  new Direction(4, 0, Vector2.up,false);
+		public CollisionGroup Collisions = new CollisionGroup();
 		
 		#region Properties
-
+		
 		private Bounds Bounds
 		{
 			get
 			{
 				Bounds bounds = _collider.bounds;
-				bounds.Expand (SkinWidth * -2);
+				bounds.Expand (SkinWidth * -2); //Removes the skin before being used for any calculations.
 				return bounds;
 			}
 		}
@@ -41,11 +39,9 @@ namespace Physics
 		private void Awake() 
 		{
 			_collider = GetComponent<BoxCollider2D> ();
-			_vertical.OnNegativeChange += RelayGroundEvents;
-			_vertical.OnPositiveChange += RelayCeilingEvents;
 			CalculateRaySpacing();
 		}
-
+		
 		private void CalculateRaySpacing()
 		{
 			Bounds bounds = Bounds;
@@ -54,25 +50,46 @@ namespace Physics
 			_horizontal.RaySpacing = bounds.size.y / (_horizontal.RayCount - 1);
 			_vertical.RaySpacing = bounds.size.x / (_vertical.RayCount - 1);
 		}
-		
+
+		private void LateUpdate()
+		{
+			UpdateCollisions();
+		}
+
 		#endregion
 
 		#region Movement Functions
-
-		public void Move(Vector3 velocity, bool locked = false, bool skipSlope = false) 
+		
+		/// <summary>
+		/// Moves the object by the specified distance preventing overlapping with colliders in the specified layer.
+		/// </summary>
+		/// <param name="velocity">The vector containing the distance we wanna move</param>
+		public void Move(Vector2 velocity) 
 		{
-			LockCollisions(locked);
+			//1: It updates the points where the check needs to happen
 			UpdateRaycastOrigins();
-			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0,skipSlope);
-			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x,skipSlope);
+			// 2: It checks for collisions on X if the object would move the target distance, if it cant, it trims the distance
+			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0,ref velocity);
+			// 3: Same as X but for vertical collisions, except this time the check for collisions starts where it would be if it already moved on the X axis.
+			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x,ref velocity);
+			// 4: Performs the movement.
 			transform.Translate (velocity);
-			LockCollisions(false);
+			if(_isSlope) SlopeAdjustment();
 		}
 		
-		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset,bool skipSlope)
+		/// <summary>
+		/// Creates N number of raycasts towards the target direction, it checks for colliders of the specified layer in its trajectory and keeps track if a collision would happen.
+		/// </summary>
+		/// <param name="direction">direction we want to move</param>
+		/// <param name="positiveOrigin">first corner that defines where our raycasts will generate from</param>
+		/// <param name="distance">amount of distance we want to move</param>
+		/// <param name="offset">amount of horizontal offset that needs to be added to the point of origin of raycasts</param>
+		/// /// <param name="trueVelocity">a reference to the total velocity we are trying to move</param>
+		private void Measure(Direction direction,Vector2 positiveOrigin, ref float distance, float offset,ref Vector2 trueVelocity)
 		{
-			int sign = (int) Mathf.Sign(velocity);
-			float rayLength = Mathf.Abs(velocity) + SkinWidth;
+			Vector2 originalVelocity = trueVelocity;
+			int sign = (int) Mathf.Sign(distance);
+			float rayLength = Mathf.Abs(distance) + SkinWidth;
 			bool isHit = false;
 			for (int i = 0; i < direction.RayCount; i++)
 			{
@@ -83,19 +100,47 @@ namespace Physics
 				if (hit)
 				{
 					isHit = hit;
-					velocity = (hit.distance - SkinWidth) * sign;
+					if (direction.ClimbSlopes)
+					{
+						float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+						if (i == 0 && slopeAngle <= MaxSlopeAngle)
+						{
+							ClimbSlope(ref trueVelocity,slopeAngle);
+							continue;
+						}
+					}
+					distance = (hit.distance - SkinWidth) * sign;
 					rayLength = hit.distance;
 				}
 			}
-			direction.NegativeCollision = sign == -1 && isHit;
+			direction.NegativeCollision = (sign == -1 && isHit);
 			direction.PositiveCollision = sign == 1 && isHit;
-			//if (sign == -1) direction.NegativeCollision = isHit;
-			//if (sign == 1) direction.PositiveCollision = isHit;
 		}
 		
-		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
+		private void UpdateCollisions()
 		{
-			//velocity.y = Mathf.Sign()
+			Collisions.Down = _vertical.NegativeCollision;
+			Collisions.Up = _vertical.PositiveCollision;
+			Collisions.Left = _horizontal.NegativeCollision;
+			Collisions.Right = _horizontal.PositiveCollision;
+		}
+		
+		private void ClimbSlope(ref Vector2 velocity, float slopeAngle)
+		{
+			float moveDistance = Mathf.Abs(velocity.x);
+			float slopeVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+			if (slopeVelocityY >= velocity.y)
+			{
+				velocity.y = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+				_isSlope = true;
+			}
+			velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(velocity.x);
+		}
+
+		private void SlopeAdjustment()
+		{
+			_isSlope = false;
+			Move(new Vector2(0,-SkinWidth * 2));
 		}
 		
 		private void UpdateRaycastOrigins()
@@ -107,25 +152,6 @@ namespace Physics
 			_raycastOrigins.TopRight = new Vector2 (bounds.max.x, bounds.max.y);
 		}
 
-		private void LockCollisions(bool locked)
-		{
-			_vertical.LockCollisions = locked;
-			_horizontal.LockCollisions = locked;
-		}
-
-		private void RelayGroundEvents(bool isGround)
-		{
-			Debug.Log("Ground Event:" + isGround);
-			if(isGround) OnLanding?.Invoke();
-			else OnTakeoff?.Invoke();
-		}
-
-		private void RelayCeilingEvents(bool hasBumped)
-		{
-			Debug.Log("Ceiling Event:" + hasBumped);
-			if (hasBumped)OnCeilingBump?.Invoke();
-		}
-		
 		#endregion
 		
 		#region Structs
@@ -145,50 +171,35 @@ namespace Physics
 			public readonly Vector2 DirectionVector;
 			private bool _positiveCollision;
 			private bool _negativeCollision;
-			private bool _lockCollisions;
-			public event Util.DBool OnPositiveChange;
-			public event Util.DBool OnNegativeChange;
+			private bool _climbSlopes;
 			
-			public Direction(int rCount,int rSpacing,Vector2 dir)
+			public Direction(int rCount,int rSpacing,Vector2 dir,bool climbSlopes)
 			{
 				RayCount = rCount;
 				RaySpacing = rSpacing;
 				DirectionVector = dir;
 				_negativeCollision = false;
 				_positiveCollision = false;
-				_lockCollisions = false;
-				OnPositiveChange = null;
-				OnNegativeChange = null;
+				_climbSlopes = climbSlopes;
 			}
 
+			public bool ClimbSlopes => _climbSlopes;
+			
 			public bool NegativeCollision
 			{
 				get => _negativeCollision;
 				set
-				{
-					if (_lockCollisions) return;
-					if (_negativeCollision != value) OnNegativeChange?.Invoke(value);
+				{ 
 					_negativeCollision = value;
-				}
+				} 
 			}
 
 			public bool PositiveCollision
 			{
 				get => _positiveCollision;
-				set
-				{
-					if (_lockCollisions) return;
-					if (_positiveCollision != value) OnPositiveChange?.Invoke(value);
-					_positiveCollision = value;
-				}
+				set => _positiveCollision = value;
 			}
-			
-			public bool LockCollisions
-			{
-				get => _lockCollisions;
-				set => _lockCollisions = value;
-			}
-			
+
 			public void Reset()
 			{
 				_negativeCollision = false;
@@ -196,6 +207,83 @@ namespace Physics
 			}
 		}
 
+		public struct CollisionGroup
+		{
+			private bool _down;
+			private bool _up;
+			private bool _left;
+			private bool _right;
+			
+			public event Util.DVoid OnLanding;
+			public event Util.DVoid OnTakeoff;
+			public event Util.DVoid OnCeilingBump;
+			public event Util.DVoid OnLeftWallBump;
+			public event Util.DVoid OnRightWallBump;
+			public event Util.DVoid OnWallBump;
+			
+			public bool Down
+			{
+				get => _down;
+				set
+				{
+					if (_down != value)
+					{
+						if (value) OnLanding?.Invoke();
+						else OnTakeoff?.Invoke();
+					}
+					_down = value;
+				}
+			}
+			
+			public bool Up
+			{
+				get => _up;
+				set
+				{
+					if (_up != value)
+					{
+						if (value) OnCeilingBump?.Invoke();
+					}
+					_up = value;
+				}
+			}
+
+			public bool Left
+			{
+				get => _left;
+				set
+				{
+					if (_left != value)
+					{
+						if (value)
+						{
+							OnWallBump?.Invoke();
+							OnLeftWallBump?.Invoke();
+						}
+					}
+					_up = value;
+				}
+			}
+
+			public bool Right
+			{
+				get => _right;
+				set
+				{
+					if (_right != value)
+					{
+						if (value)
+						{
+							OnWallBump?.Invoke();
+							OnRightWallBump?.Invoke();
+						}
+					}
+					_up = value;
+				}
+			}
+			
+		}
+		
 		#endregion
 	}
 }

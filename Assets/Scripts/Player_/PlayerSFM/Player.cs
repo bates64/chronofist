@@ -57,7 +57,11 @@ namespace Player_.PlayerSFM
         private void Update()
         {
             Velocity = Vector2.zero;
-            _currentState?.Update();
+            if (!(_currentState is null))
+            {
+                _currentState.Update();
+                if(_currentState.PerformMovement) _controller2D.Move(Velocity * LocalTime.deltaTimeAt(transform.position));
+            }
             UiManager.DebugUi.SetLocalTime(LocalTime.multiplierAt(transform.position));
         }
 
@@ -78,11 +82,6 @@ namespace Player_.PlayerSFM
             _currentState?.EnterState(this);
         }
 
-        public void Move(Vector2 velocity)
-        {
-            _controller2D.Move(velocity);
-        }
-        
         public void AddVelocity(Vector2 velocity)
         {
             Velocity += velocity;

@@ -23,7 +23,6 @@ namespace Player_.PlayerSFM.States
             ApplyVerticalVelocities();
             ApplyMovementVelocity(ref _movementVelocity);
             float realVel = ApplyVerticalVelocities();
-            PerformMovement();
             if (realVel <= 0) OnFall();
         }
 
