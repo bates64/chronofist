@@ -10,7 +10,8 @@ namespace Input {
         public event Util.DVector2 OnMovementChange;
         public event Util.DBool OnJumpChange;
         public event Util.DBool OnAttackChange;
-        
+        public event Util.DVoid OnPause;
+
         #region Properties
 
         public Vector2 Movement => _movement;
@@ -28,6 +29,8 @@ namespace Input {
             _actions.Main.Jump.canceled += RelayJump;
             _actions.Main.Attack.performed += RelayAttack;
             _actions.Main.Attack.canceled += RelayAttack;
+            _actions.Main.Pause.performed += RelayPause;
+            _actions.Main.Pause.canceled += RelayPause;
         }
         
         #endregion
@@ -51,7 +54,13 @@ namespace Input {
             _attack = context.ReadValueAsButton();
             OnAttackChange?.Invoke(_attack);
         }
-        
+
+        private void RelayPause(InputAction.CallbackContext context) {
+            if (context.ReadValueAsButton()) {
+                OnPause?.Invoke();
+            }
+        }
+
         #endregion
     }
 }

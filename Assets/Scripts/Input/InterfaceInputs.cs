@@ -22,9 +22,10 @@ namespace Input {
             _actions.Interface.MoveLeft.canceled += RelayMoveUp;
             _actions.Interface.MoveRight.performed += RelayMoveUp;
             _actions.Interface.MoveRight.canceled += RelayMoveUp;
-
             _actions.Interface.Back.performed += RelayBack;
+            _actions.Interface.Back.canceled += RelayBack;
             _actions.Interface.Interact.performed += RelayInteract;
+            _actions.Interface.Interact.canceled += RelayInteract;
         }
 
         private void RelayMoveUp(InputAction.CallbackContext context) {

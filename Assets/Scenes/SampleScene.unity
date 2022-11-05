@@ -3046,6 +3046,7 @@ GameObject:
   - component: {fileID: 1738652977}
   - component: {fileID: 1738652978}
   - component: {fileID: 1738652979}
+  - component: {fileID: 1738652980}
   m_Layer: 0
   m_Name: GameMaster
   m_TagString: Untagged
@@ -3112,6 +3113,18 @@ MonoBehaviour:
   mainCamera: {fileID: 519420031}
   world: {fileID: 1931833902}
   follow: {fileID: 2146169970}
+--- !u!114 &1738652980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738652975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81ffcf56f63d49a6b856d79b5f84ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1857638776
 GameObject:
   m_ObjectHideFlags: 0

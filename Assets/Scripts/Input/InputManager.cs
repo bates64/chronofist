@@ -8,6 +8,8 @@ public class InputManager : Singleton<InputManager> {
         Interface,
     }
 
+    public Mode initialMode = Mode.None;
+
     private PlayerInputs _playerInput;
     private InterfaceInputs _interfaceInput;
 
@@ -23,10 +25,14 @@ public class InputManager : Singleton<InputManager> {
     protected override void init() {
         _playerInput = new PlayerInputs();
         _interfaceInput = new InterfaceInputs();
-        SetMode(Mode.Player);
+        SetMode(initialMode);
     }
 
-    public void SetMode(Mode mode) {
+    public static void SetMode(Mode mode) {
+        Instance.setMode(mode);
+    }
+
+    private void setMode(Mode mode) {
         switch (this.mode) {
             case Mode.Player:
                 _playerInput.Disable();
