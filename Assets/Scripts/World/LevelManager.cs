@@ -75,11 +75,11 @@ namespace World {
 
         public Camera mainCamera;
         public GameObject world;
+        public GameObject follow; // Probably the player
 
         private LDtkComponentProject _project;
         private List<LoadedLevel> _loadedLevels = new List<LoadedLevel>();
         private LoadedLevel _currentLevel;
-        private LoadedLevel _previousLevel;
 
         protected override void init() {
             _project = world.GetComponent<LDtkComponentProject>();
@@ -109,6 +109,16 @@ namespace World {
             }
         }
 
+        private void Update() {
+            // Make the level where 'follow' object is the current level.
+            if (follow != null) {
+                var level = getLoadedLevelAt(new Vector2(follow.transform.position.x, follow.transform.position.y));
+                if (level != null) {
+                    makeLevelCurrent(level);
+                }
+            }
+        }
+
         private LoadedLevel getLoadedLevel(GameObject gameObject) {
             foreach (var level in _loadedLevels) {
                 if (level.gameObject == gameObject) {
@@ -129,25 +139,17 @@ namespace World {
             return null;
         }
 
-        public static void EnterLevel(GameObject enteredLevelObject) {
-            Instance.enterLevel(enteredLevelObject);
-        }
-
-        public static void ExitLevel(GameObject exitedLevelObject) {
-            Instance.exitLevel(exitedLevelObject);
-        }
-
-        private void enterLevel(GameObject enteredLevelObject) {
-            var enteredLevel = getLoadedLevel(enteredLevelObject);
-            if (enteredLevel == null) {
-                Debug.LogError($"Cannot enter unloaded level '{enteredLevelObject.name}'.");
-                return;
+        private LoadedLevel getLoadedLevelAt(Vector2 position) {
+            foreach (var level in _loadedLevels) {
+                if (level.bounds.OverlapPoint(position)) {
+                    return level;
+                }
             }
 
-            enterLevel(enteredLevel);
+            return null;
         }
 
-        private void enterLevel(LoadedLevel enteredLevel) {
+        private void makeLevelCurrent(LoadedLevel enteredLevel) {
             if (_currentLevel == enteredLevel || enteredLevel == null) {
                 return;
             }
@@ -156,37 +158,18 @@ namespace World {
                 _currentLevel.Exit();
             }
 
-            _previousLevel = _currentLevel;
             _currentLevel = enteredLevel;
             enteredLevel.Enter();
 
             // PERF: we could do this asynchronously
             loadLevelNeighbours(enteredLevel.level.Identifier);
-            garbageCollectLevels(enteredLevel);
-        }
-
-        private void exitLevel(GameObject exitedLevelObject) {
-            var exitedLevel = getLoadedLevel(exitedLevelObject);
-            if (exitedLevel == null) {
-                Debug.LogError($"Cannot exit unloaded level '{exitedLevelObject.name}'.");
-                return;
-            }
-
-            if (_currentLevel == exitedLevel) {
-                // Avoids this issue:
-                // 1. Player is in level A
-                // 2. Enters level B
-                // 3. *Does not exit level A* (e.g. by standing on the seam)
-                // 4. Exits level B
-                // -> what level are we in??
-                enterLevel(_previousLevel);
-            }
+            unloadDistantLevels(enteredLevel);
         }
 
         /// <summary>
         /// Destroys all loaded levels that are not the given level or its neighbours.
         /// </summary>
-        private void garbageCollectLevels(LoadedLevel enteredLevel) {
+        private void unloadDistantLevels(LoadedLevel enteredLevel) {
             // We are going to perform mark-and-sweep garbage collection.
 
             // 1. Mark all levels for unload.
