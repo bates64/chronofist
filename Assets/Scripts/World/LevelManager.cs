@@ -7,24 +7,28 @@ namespace World {
     /// <summary>
     /// Loads/unloads levels and controls the camera based on the LevelActivator's position.
     /// </summary>
-    public class LevelManager : Singleton<LevelManager> {
+    public class LevelManager : Singleton<LevelManager>
+    {
+        public static GameObject go;
         private class LoadedLevel {
 
             public readonly GameObject gameObject;
             public readonly LDtkComponentLevel level;
             public readonly PolygonCollider2D bounds;
-
+            public readonly LDtkIid id;
+            
             public bool MarkForUnload = false;
 
-            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, PolygonCollider2D bounds) {
+            public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id,PolygonCollider2D bounds) {
                 this.gameObject = gameObject;
                 this.level = level;
                 this.bounds = bounds;
+                this.id = id;
 
                 // The bounds needs to be on the LevelBounds layer.
                 bounds.gameObject.layer = LayerMask.NameToLayer("LevelBounds");
                 bounds.isTrigger = true;
-
+        
                 // The children of the level need to be on the Level layer.
                 foreach (Transform childTransform in level.gameObject.transform) {
                     childTransform.gameObject.layer = LayerMask.NameToLayer("Level");
@@ -61,7 +65,8 @@ namespace World {
                     Debug.LogError($"Level '{child.name}' is missing a PolygonCollider2D - ensure 'Use Composite Collider' is enabled on the World asset.");
                 }
 
-                _loadedLevels.Add(new LoadedLevel(child, level, bounds));
+                var id = child.GetComponent<LDtkIid>();
+                _loadedLevels.Add(new LoadedLevel(child, level, id,bounds));
             }
         }
 
@@ -77,7 +82,7 @@ namespace World {
 
         private LoadedLevel getLoadedLevel(LDtkIid id) {
             foreach (var level in _loadedLevels) {
-                if (level.level.Identifier == id.Iid) {
+                if (level.id.Iid == id.Iid) {
                     return level;
                 }
             }
@@ -167,17 +172,16 @@ namespace World {
             Debug.Log($"Loading level: {level.Identifier}");
             var path = level.ExternalRelPath.Replace(".ldtkl", "");
             var prefab = Resources.Load<GameObject>(path);
-
             if (prefab == null) {
                 Debug.LogError($"Failed to load resource: {path}");
                 return;
             }
-    
-            var levelObject = Instantiate(prefab, world.transform); // FIXME: doesnt appear to be adding to the scene
+            GameObject levelObject = Instantiate(prefab,world.transform); // FIXME: doesnt appear to be adding to the scene
             var levelComponent = levelObject.GetComponent<LDtkComponentLevel>();
+            var id = levelObject.GetComponent<LDtkIid>();
             var bounds = levelObject.GetComponent<PolygonCollider2D>();
-
-            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent, bounds));
+            if(go is null) go = levelObject;
+            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent,id,bounds));
         }
     }
 }
