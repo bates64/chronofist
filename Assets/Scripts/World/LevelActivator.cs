@@ -25,6 +25,12 @@ namespace World {
             }
         }
 
+        private void OnTriggerExit2D(Collider2D other) {
+            if (other.gameObject.layer == LayerMask.NameToLayer("LevelBounds")) {
+                LevelManager.ExitLevel(other.gameObject);
+            }
+        }
+
         public static Transform Transform() {
             return _instance.gameObject.transform;
         }

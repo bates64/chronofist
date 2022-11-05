@@ -80,6 +80,7 @@ namespace World {
         private LDtkComponentProject _project;
         private List<LoadedLevel> _loadedLevels = new List<LoadedLevel>();
         private LoadedLevel _currentLevel;
+        private LoadedLevel _previousLevel;
 
         protected override void init() {
             _project = world.GetComponent<LDtkComponentProject>();
@@ -133,6 +134,10 @@ namespace World {
             Instance.enterLevel(enteredLevelObject);
         }
 
+        public static void ExitLevel(GameObject exitedLevelObject) {
+            Instance.exitLevel(exitedLevelObject);
+        }
+
         private void enterLevel(GameObject enteredLevelObject) {
             var enteredLevel = getLoadedLevel(enteredLevelObject);
             if (enteredLevel == null) {
@@ -140,8 +145,11 @@ namespace World {
                 return;
             }
 
-            if (_currentLevel == enteredLevel) {
-                // This shouldn't happen, but whatever
+            enterLevel(enteredLevel);
+        }
+
+        private void enterLevel(LoadedLevel enteredLevel) {
+            if (_currentLevel == enteredLevel || enteredLevel == null) {
                 return;
             }
 
@@ -149,13 +157,31 @@ namespace World {
                 _currentLevel.Exit();
             }
 
+            _previousLevel = _currentLevel;
             _currentLevel = enteredLevel;
             enteredLevel.Enter();
 
+            // PERF: we could do this asynchronously
             loadLevelNeighbours(enteredLevel.level.Identifier);
-
-            // PERF: queue for later
             garbageCollectLevels(enteredLevel);
+        }
+
+        private void exitLevel(GameObject exitedLevelObject) {
+            var exitedLevel = getLoadedLevel(exitedLevelObject);
+            if (exitedLevel == null) {
+                Debug.LogError($"Cannot exit unloaded level '{exitedLevelObject.name}'.");
+                return;
+            }
+
+            if (_currentLevel == exitedLevel) {
+                // Avoids this issue:
+                // 1. Player is in level A
+                // 2. Enters level B
+                // 3. *Does not exit level A* (e.g. by standing on the seam)
+                // 4. Exits level B
+                // -> what level are we in??
+                enterLevel(_previousLevel);
+            }
         }
 
         /// <summary>
