@@ -10,7 +10,6 @@ namespace World {
     /// </summary>
     public class LevelManager : Singleton<LevelManager>
     {
-        public static GameObject go;
         private class LoadedLevel {
 
             public readonly GameObject gameObject;
@@ -261,7 +260,6 @@ namespace World {
             var levelComponent = levelObject.GetComponent<LDtkComponentLevel>();
             var id = levelObject.GetComponent<LDtkIid>();
             var bounds = levelObject.GetComponent<PolygonCollider2D>();
-            if(go is null) go = levelObject;
             _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent,id,bounds));
         }
     }
