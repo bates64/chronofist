@@ -1,25 +1,24 @@
 ﻿using General;
-using UI;
 using UnityEngine;
 
-namespace Physics
-{
-	    [RequireComponent (typeof (BoxCollider2D))]
+namespace Physics {
+	[RequireComponent (typeof (BoxCollider2D))]
 	public class Controller2D : MonoBehaviour {
-
 		public LayerMask collisionMask;
 
 		const float SkinWidth = .015f;
-		
+
 		private BoxCollider2D _collider;
 		private RaycastOrigins _raycastOrigins;
-		private Direction _horizontal = new Direction(4, 0, Vector2.right);
-		private Direction _vertical =  new Direction(4, 0, Vector2.up);
+		private Direction _horizontal = new Direction(8, 0, Vector2.right);
+		private Direction _vertical =  new Direction(8, 0, Vector2.up);
 		private CollisionGroup _collisions = new CollisionGroup();
 
 		public bool isGrounded => _vertical.NegativeCollision;
-		public CollisionGroup Collision => _collisions;
-		
+		public CollisionGroup collision => _collisions;
+        public float airTime { get; private set; } = 0f;
+        public float groundTime { get; private set; } = 0f;
+
 		#region Properties
 
 		private Bounds Bounds
@@ -36,7 +35,7 @@ namespace Physics
 
 		#region Unity and Setup Functions
 
-		private void Awake() 
+		private void Awake()
 		{
 			_collider = GetComponent<BoxCollider2D> ();
 			CalculateRaySpacing();
@@ -45,16 +44,29 @@ namespace Physics
 		private void LateUpdate()
 		{
 			UpdateCollisions();
+            UpdateTimes();
 		}
-		
+
 		private void UpdateCollisions()
 		{
-			Collision.Down = _vertical.NegativeCollision;
-			Collision.Up = _vertical.PositiveCollision;
-			Collision.Left = _horizontal.NegativeCollision;
-			Collision.Right = _horizontal.PositiveCollision;
+			collision.down = _vertical.NegativeCollision;
+			collision.up = _vertical.PositiveCollision;
+			collision.left = _horizontal.NegativeCollision;
+			collision.right = _horizontal.PositiveCollision;
 		}
-		
+
+        private void UpdateTimes() {
+            float deltaTime = LocalTime.DeltaTimeAt(this);
+
+            if (isGrounded) {
+                groundTime += Time.deltaTime;
+                airTime = 0f;
+            } else {
+                groundTime = 0f;
+                airTime += Time.deltaTime;
+            }
+        }
+
 		private void CalculateRaySpacing()
 		{
 			Bounds bounds = Bounds;
@@ -63,19 +75,19 @@ namespace Physics
 			_horizontal.RaySpacing = bounds.size.y / (_horizontal.RayCount - 1);
 			_vertical.RaySpacing = bounds.size.x / (_vertical.RayCount - 1);
 		}
-		
+
 		#endregion
 
 		#region Movement Functions
 
-		public void Move(Vector3 velocity) 
+		public void Move(Vector3 velocity)
 		{
 			UpdateRaycastOrigins();
 			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0);
 			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x);
 			transform.Translate (velocity);
 		}
-		
+
 		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset)
 		{
 			int sign = (int) Mathf.Sign(velocity);
@@ -97,12 +109,12 @@ namespace Physics
 			direction.NegativeCollision = sign == -1 && isHit;
 			direction.PositiveCollision = sign == 1 && isHit;
 		}
-		
+
 		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
 		{
 			//velocity.y = Mathf.Sign()
 		}
-		
+
 		private void UpdateRaycastOrigins()
 		{
 			Bounds bounds = Bounds;
@@ -113,14 +125,14 @@ namespace Physics
 		}
 
 		#endregion
-		
+
 		#region Structs
 
 		struct RaycastOrigins
 		{
 			public Vector2 TopLeft;
 			public Vector2 TopRight;
-			public Vector2 BottomLeft; 
+			public Vector2 BottomLeft;
 			public Vector2 BottomRight;
 		}
 
@@ -152,7 +164,7 @@ namespace Physics
 				get => _positiveCollision;
 				set => _positiveCollision = value;
 			}
-			
+
 		}
 
 		public class CollisionGroup
@@ -161,15 +173,15 @@ namespace Physics
 			private bool _up;
 			private bool _left;
 			private bool _right;
-			
+
 			public event Util.DVoid OnLanding;
 			public event Util.DVoid OnTakeoff;
 			public event Util.DVoid OnCeilingBump;
 			public event Util.DVoid OnLeftWallBump;
 			public event Util.DVoid OnRightWallBump;
 			public event Util.DVoid OnWallBump;
-			
-			public bool Down
+
+			public bool down
 			{
 				get => _down;
 				set
@@ -182,8 +194,8 @@ namespace Physics
 					_down = value;
 				}
 			}
-			
-			public bool Up
+
+			public bool up
 			{
 				get => _up;
 				set
@@ -196,7 +208,7 @@ namespace Physics
 				}
 			}
 
-			public bool Left
+			public bool left
 			{
 				get => _left;
 				set
@@ -213,7 +225,7 @@ namespace Physics
 				}
 			}
 
-			public bool Right
+			public bool right
 			{
 				get => _right;
 				set
@@ -230,7 +242,7 @@ namespace Physics
 				}
 			}
 		}
-		
+
 		#endregion
 	}
 }

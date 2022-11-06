@@ -12,7 +12,7 @@ namespace Physics {
         /// <summary>
         /// Returns the time multiplier for a given position by querying collisions with LocalTimeProviders.
         /// </summary>
-        static public float multiplierAt(Vector2Int position) {
+        static public float MultiplierAt(Vector2Int position) {
             // Check cache
             if (_multiplierAtCache.ContainsKey(position)) {
                 return _multiplierAtCache[position];
@@ -38,17 +38,29 @@ namespace Physics {
             return time;
         }
 
-        static public float multiplierAt(Vector3 position) {
+        static public float MultiplierAt(Vector3 position) {
             Vector2Int tilePos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
-            return multiplierAt(tilePos);
+            return MultiplierAt(tilePos);
         }
 
         static public void InvalidateMultiplierAtCache() {
             _multiplierAtCache.Clear();
         }
 
-        static public float deltaTimeAt(Vector3 position) {
-            return Time.deltaTime * multiplierAt(position);
+        static public float DeltaTimeAt(Vector3 position) {
+            return Time.deltaTime * MultiplierAt(position);
+        }
+
+        static public float DeltaTimeAt(Transform transform) {
+            return DeltaTimeAt(transform.position);
+        }
+
+        static public float DeltaTimeAt(GameObject obj) {
+            return DeltaTimeAt(obj.transform);
+        }
+
+        static public float DeltaTimeAt(MonoBehaviour obj) {
+            return DeltaTimeAt(obj.transform);
         }
     }
 }
