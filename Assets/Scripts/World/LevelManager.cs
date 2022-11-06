@@ -20,8 +20,8 @@ namespace World {
 
             public bool MarkForUnload = false;
 
-            const int SCREEN_WIDTH_TILES = 48;
-            const int SCREEN_HEIGHT_TILES = 27;
+            const int SCREEN_WIDTH_TILES = 384 / 8;
+            const int SCREEN_HEIGHT_TILES = 216 / 8;
 
             public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds, Transform follow) {
                 this.gameObject = gameObject;
@@ -54,7 +54,7 @@ namespace World {
                 if (!useStaticCamera()) {
                     vcam.Follow = follow;
 
-                    vcamObject.AddComponent<CinemachinePixelPerfect>();
+                    vcamObject.AddComponent<CustomCinemachinePixelPerfect>();
 
                     var framingTransposer = vcam.AddCinemachineComponent<CinemachineFramingTransposer>();
                     framingTransposer.m_LookaheadTime = 0.6f;
