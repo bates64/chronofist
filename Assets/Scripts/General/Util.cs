@@ -12,6 +12,8 @@ namespace General
         public delegate void DFloat(float f);
         public delegate void DVector2(Vector2 vector);
 
+        public static float PIXEL = 1f / 8f;
+
         public static Vector2 absPerpendicular(Vector2 vector)
         {
             vector = Vector2.Perpendicular(vector);

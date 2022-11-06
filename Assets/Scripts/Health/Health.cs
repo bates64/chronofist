@@ -4,21 +4,25 @@ using General;
 namespace Health {
     [RequireComponent(typeof(Rigidbody2D))]
     public class Health : MonoBehaviour {
-        public float health = 100f;
-        public float maxHealth = 100f;
-        public float minHealth = 0f;
+        public float health = 16f;
+        public float maxHealth = 16f;
 
-        public bool isDead => health <= minHealth;
+        public bool isDead => health <= 0f;
 
         public event Util.DFloat OnTakeDamage;
         public event Util.DFloat OnHeal;
         public event Util.DVoid OnFullHealth;
         public event Util.DVoid OnDeath;
 
+        public event DChange OnChange;
+        public delegate void DChange(float health, float maxHealth);
+
         public void Start() {
             if (GetComponent<DeathHandler>() == null) {
                 Debug.LogWarning($"'{gameObject.name}' has Health but no DeathHandler");
             }
+
+            // TODO: if maxHealth changes, check health & invoke OnChange
         }
 
         public void ApplyDamage(float damage) {
@@ -28,9 +32,10 @@ namespace Health {
 
             health -= damage;
             OnTakeDamage?.Invoke(damage);
+            OnChange?.Invoke(health, maxHealth);
 
-            if (health <= minHealth) {
-                health = minHealth;
+            if (health <= 0f) {
+                health = 0f;
                 OnDeath?.Invoke();
             }
         }
@@ -46,6 +51,7 @@ namespace Health {
 
             health += heal;
             OnHeal?.Invoke(heal);
+            OnChange?.Invoke(health, maxHealth);
 
             if (health >= maxHealth) {
                 health = maxHealth;
