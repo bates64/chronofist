@@ -1,17 +1,12 @@
 ﻿using Player_.PlayerSFM.States.BaseClasses;
 
-namespace Player_.PlayerSFM.States
-{
-    public class GroundedState : PlayerState
-    {
-        private float _movementVelocity;
+namespace Player_.PlayerSFM.States {
+    public class GroundedState : PlayerState {
         #region Propertiees
 
-        public override int StateId
-        {
-            get
-            {
-                if (_movementVelocity != 0) return RunningId;
+        public override int StateId {
+            get {
+                if (Player.MovementVelocity.SqrMagnitude() > 0.0f) return RunningId;
                 return IdleId;
             }
         }
@@ -24,14 +19,13 @@ namespace Player_.PlayerSFM.States
         public override void EnterState(Player machine)
         {
             base.EnterState(machine);
-            _movementVelocity = 0;
             Player.Gravity.ResetForce();
         }
 
         public override void Update()
         {
             Player.Gravity.ResetForce();
-            CommonUpdate(ref _movementVelocity);
+            CommonUpdate();
         }
         
         protected override void RegisterSubscriptions()

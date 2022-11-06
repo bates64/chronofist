@@ -5,13 +5,11 @@ namespace Player_.PlayerSFM.States
 {
     public class FallingState : PlayerState
     {
-        private float _movementVelocity;
         public override int StateId => 2;
 
         public override void EnterState(Player machine)
         {
             base.EnterState(machine);
-            _movementVelocity = 0;
         }
 
         protected override void RegisterSubscriptions()
@@ -21,7 +19,7 @@ namespace Player_.PlayerSFM.States
 
         public override void Update()
         {
-            CommonUpdate(ref _movementVelocity);
+            CommonUpdate();
         }
 
         public override string ToString()

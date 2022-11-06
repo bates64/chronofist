@@ -2693,6 +2693,8 @@ MonoBehaviour:
     jumpHeight: 5
     timeToJumpApex: 0.3
     movementSpeed: 10
+    accelerationFactor: 0.1
+    decelerationFactor: 0.3
     passiveItems: []
 --- !u!114 &2146169975
 MonoBehaviour:

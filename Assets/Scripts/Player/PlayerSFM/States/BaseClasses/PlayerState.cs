@@ -53,31 +53,43 @@ namespace Player_.PlayerSFM.States.BaseClasses
         protected void ApplyGravity()
         {
             Player.Gravity.AddForce(Physics.LocalTime.deltaTimeAt(Player.transform.position));
-            float realVel = Player.Gravity.AccumulatedVelocity + Player.Velocity.y;
+            float realVel = Player.Gravity.AccumulatedVelocity + Player.PushVelocity.y;
             float multiplier = realVel <= 0 ? 2 : 1;
-            Player.AddVelocity(new Vector2(0,realVel * multiplier));
+            Player.Push(new Vector2(0, realVel * multiplier));
         }
 
         protected void ApplyAscendingVelocity(float ascendingVelocity)
         {
-            Player.AddVelocity(new Vector2(0,ascendingVelocity));
-        }
-        
-        protected void ApplyMovementVelocity(ref float storedVelocity)
-        {
-            storedVelocity = InputManager.PlayerInput.Movement.x * Player.MovementSpeed;
-            Player.AddVelocity(new Vector2(storedVelocity,0));
-        }
-        
-        protected void PerformMovement()
-        {
-            Player.Move(Player.Velocity * Physics.LocalTime.deltaTimeAt(Player.transform.position));
+            Player.Push(new Vector2(0,ascendingVelocity));
         }
 
-        protected void CommonUpdate(ref float storedVelocity)
+        protected void ApplyMovementVelocity() {
+            var input = InputManager.PlayerInput.Movement.x;
+            var isAccelerating = Mathf.Abs(input) > 0.01f;
+            var dt = Physics.LocalTime.deltaTimeAt(Player.transform.position);
+            var vel = Player.MovementVelocity;
+
+            if (isAccelerating) {
+                vel.x += dt * Player.MovementSpeed * input * Player.AccelerationFactor;
+
+                if (Mathf.Abs(vel.x) > Player.MovementSpeed) {
+                    vel.x = Mathf.Sign(vel.x) * Player.MovementSpeed;
+                }
+            } else {
+                vel *= dt * Player.DecelerationFactor;
+            }
+        }
+
+        protected void PerformMovement()
+        {
+            Player.Move((Player.PushVelocity + Player.MovementVelocity) * Physics.LocalTime.deltaTimeAt(Player.transform.position));
+            Player.PushVelocity = Vector2.zero;
+        }
+
+        protected void CommonUpdate()
         {
             ApplyGravity();
-            ApplyMovementVelocity(ref storedVelocity);
+            ApplyMovementVelocity();
             PerformMovement();
         }
         

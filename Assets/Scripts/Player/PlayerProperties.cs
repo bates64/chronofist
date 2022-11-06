@@ -13,6 +13,8 @@ namespace Player_
         [SerializeField] private float jumpHeight;
         [SerializeField] private float timeToJumpApex;
         [SerializeField] private float movementSpeed;
+        [SerializeField] private float accelerationFactor;
+        [SerializeField] private float decelerationFactor;
         [SerializeField] private List<PassiveItem> passiveItems;
         private Health.Health _health;
         private Gravity _gravity;
@@ -27,6 +29,8 @@ namespace Player_
         public Gravity Gravity => _gravity;
         public float JumpVelocity => _jumpVelocity;
         public float MovementSpeed => movementSpeed;
+        public float AccelerationFactor => accelerationFactor;
+        public float DecelerationFactor => decelerationFactor;
 
         public List<PassiveItem> PassiveItems => passiveItems;
 

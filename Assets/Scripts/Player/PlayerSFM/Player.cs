@@ -15,28 +15,46 @@ namespace Player_.PlayerSFM
         [SerializeField] private PlayerProperties _properties = new PlayerProperties();
         private Controller2D _controller2D;
         private PlayerState _currentState;
-        private Vector2 _velocity;
+        private Vector2 _pushVelocity;
+        private Vector2 _movementVelocity;
         public readonly PlayerStates States = new PlayerStates();
 
         #region Properties
 
         public PlayerProperties Properties => _properties;
         public float MovementSpeed => _properties.MovementSpeed;
+        public float AccelerationFactor => _properties.AccelerationFactor;
+        public float DecelerationFactor => _properties.DecelerationFactor;
         public float JumpVelocity => _properties.JumpVelocity;
 
-        public Vector2 Velocity
-        {
-            private set
-            {
+        /// <summary>
+        /// Push velocity, used for things that aren't the player's movement.
+        /// Set to zero after being applied.
+        /// </summary>
+        public Vector2 PushVelocity {
+            set {
                 
-                _velocity = value;
-                UiManager.DebugUi.SetVelocity(_velocity);
+                _pushVelocity = value;
+                UiManager.DebugUi.SetVelocity(_pushVelocity + _movementVelocity);
             }
-            get
-            {
-                return _velocity;
+            get {
+                return _pushVelocity;
             }
         }
+
+        /// <summary>
+        /// Movement velocity, stored between frames.
+        /// </summary>
+        public Vector2 MovementVelocity {
+            set {
+                _movementVelocity = value;
+                UiManager.DebugUi.SetVelocity(_pushVelocity + _movementVelocity);
+            }
+            get {
+                return _movementVelocity;
+            }
+        }
+
         public Gravity Gravity => _properties.Gravity;
         public Controller2D Controller2D => _controller2D;
         public PlayerState CurrentState => _currentState;
@@ -51,10 +69,8 @@ namespace Player_.PlayerSFM
             States.Init();
             SetState(States.FallingState);
         }
-        
-        private void Update()
-        {
-            Velocity = Vector2.zero;
+
+        private void Update() {
             _currentState?.Update();
             SearchItems();
             UiManager.DebugUi.SetLocalTime(LocalTime.multiplierAt(transform.position));
@@ -93,10 +109,10 @@ namespace Player_.PlayerSFM
         {
             _controller2D.Move(velocity);
         }
-        
-        public void AddVelocity(Vector2 velocity)
+
+        public void Push(Vector2 velocity)
         {
-            Velocity += velocity;
+            PushVelocity += velocity;
         }
 
         private void DebugPostState()

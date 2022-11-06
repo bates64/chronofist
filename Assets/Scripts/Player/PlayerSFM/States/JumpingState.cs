@@ -5,7 +5,6 @@ namespace Player_.PlayerSFM.States
 {
     public class JumpingState : PlayerState
     {
-        private float _movementVelocity;
         private float _ascendingVelocity;
         public override int StateId => 3;
 
@@ -14,14 +13,13 @@ namespace Player_.PlayerSFM.States
         public override void EnterState(Player machine)
         {
             base.EnterState(machine);
-            _movementVelocity = 0;
             _ascendingVelocity = Player.JumpVelocity;
         }
 
         public override void Update()
         {
             ApplyVerticalVelocities();
-            ApplyMovementVelocity(ref _movementVelocity);
+            ApplyMovementVelocity();
             float realVel = ApplyVerticalVelocities();
             PerformMovement();
             if (realVel <= 0) OnFall();
@@ -31,7 +29,7 @@ namespace Player_.PlayerSFM.States
         {
             Player.Gravity.AddForce(Physics.LocalTime.deltaTimeAt(Player.transform.position));
             float realVelocity = _ascendingVelocity + Player.Gravity.AccumulatedVelocity;
-            Player.AddVelocity(new Vector2(0,realVelocity));
+            Player.Push(new Vector2(0,realVelocity));
             return realVelocity;
         }
         

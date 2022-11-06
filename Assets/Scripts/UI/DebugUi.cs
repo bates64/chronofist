@@ -20,7 +20,7 @@ namespace UI
         {
             double x = System.Math.Round(velocity.x, 3);
             double y = System.Math.Round(velocity.y, 3);
-            textMeshVel.SetText("X:" + x + "\n" + "Y:" + y);
+            textMeshVel.SetText($"XV: {x}\nYV:{y}");
         }
 
         public void SetLocalTime(float localTime)
