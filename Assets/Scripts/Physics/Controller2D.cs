@@ -88,6 +88,22 @@ namespace Physics {
 			transform.Translate (velocity);
 		}
 
+        public bool CheckLeft() {
+			UpdateRaycastOrigins();
+
+            float x = -Util.PIXEL;
+			Measure(_horizontal, _raycastOrigins.BottomLeft, ref x, 0);
+            return Mathf.Abs(x) < Util.PIXEL;
+		}
+
+        public bool CheckRight() {
+			UpdateRaycastOrigins();
+
+            float x = Util.PIXEL;
+			Measure(_horizontal, _raycastOrigins.BottomRight, ref x, 0);
+            return Mathf.Abs(x) < Util.PIXEL;
+		}
+
 		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset)
 		{
 			int sign = (int) Mathf.Sign(velocity);
