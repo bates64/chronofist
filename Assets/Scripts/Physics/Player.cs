@@ -12,12 +12,14 @@ namespace Physics {
             controller = GetComponent<Controller2D>();
             controller.collision.OnWallBump += OnWallBump;
             controller.collision.OnLanding += OnLanding;
+            controller.collision.OnCeilingBump += OnCeilingBump;
+
+            InputManager.PlayerInput.OnJumpChange += OnInputJump;
         }
 
         private void Update() {
             UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
             ApplyGravity();
-            UpdateJump(InputManager.PlayerInput.Jump);
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
             controller.Move(totalVelocity);
@@ -37,7 +39,13 @@ namespace Physics {
         private void OnLanding() {
             // Kill vertical movement
             yVelocity = 0f;
-            timeHeldJumpInput = 0f;
+        }
+
+        private void OnCeilingBump() {
+            // Bounce off ceiling
+            if (yVelocity > 0f) {
+                yVelocity *= -0.1f;
+            }
         }
 
         #region Horizontal Movement
@@ -59,7 +67,8 @@ namespace Physics {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
             if (Mathf.Abs(input) >= 0.8f) {
-                timeHeldMaxXInput += deltaTime;
+                if (controller.isGrounded)
+                    timeHeldMaxXInput += deltaTime;
             } else {
                 timeHeldMaxXInput = 0f;
             }
@@ -82,36 +91,31 @@ namespace Physics {
 
         #region Vertical Movement
 
-        private float jumpVelocity = 2f;
-        private float jumpTime = 0.2f;
-        private float gravity = 0.01f;
-        private float terminalFallVelocity = 1f;
+        private float walkJumpForce = 0.09f;
+        private float runJumpForce = 0.12f;
+        private float jumpCoyoteTime = 0.1f;
+        private float gravity = 0.5f;
+        private float terminalFallVelocity = 0.2f;
 
         private float yVelocity = 0f;
-        private float timeHeldJumpInput = 0f;
 
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
-            if (!controller.isGrounded) {
-                yVelocity -= gravity * deltaTime;
-                if (yVelocity < -terminalFallVelocity) {
-                    yVelocity = -terminalFallVelocity;
-                }
+            float multiplier = 1f;
+            if (yVelocity > 0f && InputManager.PlayerInput.Jump) {
+                multiplier = 0.5f;
+            }
+
+            yVelocity -= gravity * deltaTime * multiplier;
+            if (yVelocity < -terminalFallVelocity) {
+                yVelocity = -terminalFallVelocity;
             }
         }
 
-        private void UpdateJump(bool input) {
-            float deltaTime = LocalTime.DeltaTimeAt(this);
-
-            if (input) {
-                timeHeldJumpInput += deltaTime;
-            } else {
-                timeHeldJumpInput = 0f;
-            }
-
-            if (input && controller.isGrounded) {
-                yVelocity = jumpVelocity;
+        private void OnInputJump(bool isPressed) {
+            if (isPressed && (controller.isGrounded || controller.airTime < jumpCoyoteTime)) {
+                yVelocity = isRunning ? runJumpForce : walkJumpForce;
             }
         }
 
