@@ -63,7 +63,6 @@ namespace Player_.PlayerSFM.States
         
         protected void OnFall()
         {
-            Debug.Log("Fall");
             Player.Gravity.ResetForce();
             Player.SetState(Player.States.FallingState);
         }

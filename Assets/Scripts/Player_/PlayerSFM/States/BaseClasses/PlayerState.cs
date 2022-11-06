@@ -89,14 +89,14 @@ namespace Player_.PlayerSFM.States.BaseClasses
 
         protected void SubscribeOnTakeOff(bool subscribe)
         {
-            if(subscribe) Player.Controller2D.Collisions.OnTakeoff += OnTakeOff;
-            else Player.Controller2D.Collisions.OnTakeoff -= OnTakeOff;
+            if(subscribe) Player.Controller2D.Collisions.OnTakeOff += OnTakeOff;
+            else Player.Controller2D.Collisions.OnTakeOff -= OnTakeOff;
         }
 
         protected void SubscribeOnCeilingBump(bool subscribe)
         {
-            if(subscribe) Player.Controller2D.Collisions.OnCeilingBump += OnCeilingBump;
-            else Player.Controller2D.Collisions.OnCeilingBump -= OnCeilingBump;
+            if(subscribe) Player.Controller2D.Collisions.OnBonk += OnCeilingBump;
+            else Player.Controller2D.Collisions.OnBonk -= OnCeilingBump;
         }
         
         protected void SubscribeOnJumpPress(bool subscribe)
@@ -120,7 +120,8 @@ namespace Player_.PlayerSFM.States.BaseClasses
         }
 
         protected void OnCeilingBump()
-         {
+        {
+            Debug.Log("BUMP");     
             Player.SetState(Player.States.FallingState);
         }
         
