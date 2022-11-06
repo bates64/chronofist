@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Player_.PlayerSFM;
+using Physics;
 using UnityEngine;
 
 namespace PassiveItems
@@ -28,13 +28,13 @@ namespace PassiveItems
             ActivePickups.Remove(this);
         }
         
-        public void PickUp(Player player)
+        public void PickUp(Pickupper pickupper)
         {
             ActivePickups.Remove(this);
-            OnPickup(player);
+            OnPickup(pickupper);
         }
 
-        protected abstract void OnPickup(Player player);
+        protected abstract void OnPickup(Pickupper pickupper);
 
         private void OnDrawGizmos()
         {   

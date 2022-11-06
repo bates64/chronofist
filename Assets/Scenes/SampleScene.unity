@@ -2686,14 +2686,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2146169970}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9650d50286d54f589a1bce0782df9364, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cb91cbd8017e4155a38417f69ee634a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties:
-    jumpHeight: 5
-    timeToJumpApex: 0.3
-    movementSpeed: 10
-    passiveItems: []
+  velocity: {x: 0, y: 0}
 --- !u!114 &2146169975
 MonoBehaviour:
   m_ObjectHideFlags: 0

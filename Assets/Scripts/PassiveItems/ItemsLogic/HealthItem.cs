@@ -1,6 +1,4 @@
-﻿using System;
-using Player_;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PassiveItems
 {
@@ -10,11 +8,17 @@ namespace PassiveItems
         [SerializeField] private int amount;
         [SerializeField] private bool isHeal;
         
-        public override void EquipItem(PlayerProperties player)
+        public override void EquipItem(Pickupper pickupper)
         {
-            player.PassiveItems.Add(this);
-            player.Health.maxHealth += amount;
-            if (isHeal) player.Health.Heal(amount, false);
+            var health = pickupper.gameObject.GetComponent<Health.Health>();
+
+            if (health == null) {
+                Debug.LogError($"Object {pickupper.gameObject.name} missing Health component");
+                return;
+            }
+
+            health.maxHealth += amount;
+            if (isHeal) health.Heal(amount, false);
         }
     }
 }
