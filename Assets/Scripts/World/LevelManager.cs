@@ -32,7 +32,7 @@ namespace World {
                 // The bounds needs to be on the LevelBounds layer.
                 bounds.gameObject.layer = LayerMask.NameToLayer("LevelBounds");
                 bounds.isTrigger = true;
-        
+
                 // The children of the level need to be on the Level layer.
                 foreach (Transform childTransform in level.gameObject.transform) {
                     childTransform.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Level"));
@@ -44,7 +44,7 @@ namespace World {
 
                 // Center it on the level.
                 vcamObject.transform.position = new Vector3(bounds.bounds.center.x, bounds.bounds.center.y, -10f);
-                
+
                 // Deactivate it by default (we will enable it when a LevelActivator enters).
                 vcamObject.SetActive(false);
 
@@ -199,7 +199,7 @@ namespace World {
                     Debug.LogError($"Level '{enteredLevel.level.Identifier}' has unloaded neighbour(s). Aborting garbage collection.");
                     return;
                 }
-    
+
                 var neighbour = getLoadedLevel(id);
                 if (neighbour != null) {
                     neighbour.MarkForUnload = false;

@@ -6,6 +6,8 @@ namespace Physics {
     [RequireComponent(typeof(Controller2D))]
     [RequireComponent(typeof(Health.Health))]
     public class Player : MonoBehaviour {
+        public GameObject jabAttackPrefab;
+
         private Controller2D controller;
 
         private void Awake() {
@@ -15,11 +17,13 @@ namespace Physics {
             controller.collision.OnCeilingBump += OnCeilingBump;
 
             InputManager.PlayerInput.OnJumpChange += OnInputJump;
+            InputManager.PlayerInput.OnAttackChange += OnInputAttack;
         }
 
         private void Update() {
             UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
             ApplyGravity();
+            UpdateAttackType();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
             controller.Move(totalVelocity);
@@ -116,7 +120,6 @@ namespace Physics {
 
             // Pushing against a wall slows fall speed (sliding)
             if (yVelocity < 0f && InputManager.PlayerInput.Movement.x < -0.1f && controller.CheckLeft()) {
-                Debug.Log("slide");
                 multiplier *= 0.2f;
             } else if (yVelocity < 0f && InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight()) {
                 multiplier *= 0.2f;
@@ -132,12 +135,76 @@ namespace Physics {
             if (isPressed) {
                 if (controller.isGrounded || controller.airTime < jumpCoyoteTime) {
                     yVelocity = isRunning ? runJumpForce : walkJumpForce;
-                } else if (isRunning && (controller.CheckLeft() || controller.CheckRight()) && !didWallJump) { // FIXME: left wall jump is broken
+                } else if ((controller.CheckLeft() || controller.CheckRight()) && !didWallJump) {
                     yVelocity = wallJumpForce;
                     moveVelocity = controller.CheckLeft() ? maxRunSpeed : -maxRunSpeed;
                     didWallJump = true;
                 }
             }
+        }
+
+        #endregion
+
+        #region Attack
+
+        enum AttackDirection {
+            Up,
+            Down,
+            Left,
+            Right,
+        }
+
+        private AttackDirection attackDirection = AttackDirection.Left;
+
+        private void UpdateAttackType() {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+            Vector3 direction = (mousePosition - transform.position).normalized;
+
+            // Direction to degrees
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            // Normalize angle to 0-360
+            if (angle < 0f) {
+                angle += 360f;
+            }
+
+            // Convert to attack type
+            if (angle >= 45f && angle < 135f) {
+                attackDirection = AttackDirection.Up;
+            } else if (angle >= 135f && angle < 225f) {
+                attackDirection = AttackDirection.Left;
+            } else if (angle >= 225f && angle < 315f) {
+                attackDirection = AttackDirection.Down;
+            } else {
+                attackDirection = AttackDirection.Right;
+            }
+        }
+
+        private void OnInputAttack(bool isPressed) {
+            if (isPressed) {
+                switch (attackDirection) {
+                    case AttackDirection.Up:
+                        // TODO
+                        break;
+                    case AttackDirection.Down:
+                        // TODO
+                        break;
+                    case AttackDirection.Left:
+                    case AttackDirection.Right:
+                        SpawnJabAttack(attackDirection == AttackDirection.Left);
+                        break;
+                }
+            }
+        }
+
+        private void SpawnJabAttack(bool isLeft) {
+            if (jabAttackPrefab == null) {
+                Debug.LogError("Jab attack prefab not set");
+                return;
+            }
+
+            var jab = Instantiate(jabAttackPrefab, transform.position + new Vector3(isLeft ? -1f : 1f, 0f, 0f), Quaternion.identity);
+            jab.transform.localScale = new Vector3(isLeft ? -1f : 1f, 1f, 1f);
         }
 
         #endregion
