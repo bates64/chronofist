@@ -20,8 +20,8 @@ namespace World {
 
             public bool MarkForUnload = false;
 
-            const int SCREEN_WIDTH_TILES = 384 / 8;
-            const int SCREEN_HEIGHT_TILES = 216 / 8;
+            const float SCREEN_WIDTH_TILES = 480f / 8f;
+            const float SCREEN_HEIGHT_TILES = 270f / 8f;
 
             public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds, Transform follow) {
                 this.gameObject = gameObject;
@@ -50,7 +50,7 @@ namespace World {
 
                 // Set up the actual vcam component.
                 var vcam = vcamObject.AddComponent<CinemachineVirtualCamera>();
-                vcam.m_Lens.OrthographicSize = 13.5f;
+                vcam.m_Lens.OrthographicSize = CustomCinemachinePixelPerfect.ORTHO_SIZE;
                 if (!useStaticCamera()) {
                     vcam.Follow = follow;
 
@@ -81,7 +81,8 @@ namespace World {
             }
 
             private bool useStaticCamera() {
-                return level.BorderRect.width == SCREEN_WIDTH_TILES && level.BorderRect.height == SCREEN_HEIGHT_TILES;
+                Debug.Log($"Level {level.Identifier} is {level.BorderRect.width}x{level.BorderRect.height} tiles");
+                return (level.BorderRect.width - SCREEN_WIDTH_TILES) < 0.1f && (level.BorderRect.height - SCREEN_HEIGHT_TILES) < 0.1f;
             }
         }
 

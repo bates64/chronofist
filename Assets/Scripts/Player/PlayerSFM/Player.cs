@@ -58,6 +58,10 @@ namespace Player_.PlayerSFM
             _currentState?.Update();
             SearchItems();
             UiManager.DebugUi.SetLocalTime(LocalTime.multiplierAt(transform.position));
+
+            if (float.IsNaN(transform.position.x) || float.IsNaN(transform.position.y)) {
+                Debug.LogError("Player position is NaN");
+            }
         }
 
         private void SearchItems()
