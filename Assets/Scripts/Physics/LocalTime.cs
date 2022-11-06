@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//#define USE_LOCAL_TIME_CACHE
+
 namespace Physics {
     public class LocalTime {
         static private Collider2D[] _hits = new Collider2D[8]; // To avoid GC pressure
@@ -13,10 +15,12 @@ namespace Physics {
         /// Returns the time multiplier for a given position by querying collisions with LocalTimeProviders.
         /// </summary>
         static public float MultiplierAt(Vector2Int position) {
+#if USE_LOCAL_TIME_CACHE
             // Check cache
             if (_multiplierAtCache.ContainsKey(position)) {
                 return _multiplierAtCache[position];
             }
+#endif
 
             float time = 1.0f;
             int count = Physics2D.OverlapPointNonAlloc(position, _hits, _layerMask);
@@ -32,8 +36,10 @@ namespace Physics {
                 time *= provider.TimeMultiplier;
             }
 
+#if USE_LOCAL_TIME_CACHE
             // Cache result
             _multiplierAtCache.Add(position, time);
+#endif
 
             return time;
         }

@@ -26,7 +26,7 @@ namespace Physics {
             UpdateAttackType();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
-            controller.Move(totalVelocity);
+            controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
             UiManager.DebugUi.SetStateName($"cx={InputManager.PlayerInput.Movement.x} checkLeft={controller.CheckLeft()}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
@@ -57,13 +57,13 @@ namespace Physics {
 
         #region Horizontal Movement
 
-        private float maxWalkSpeed = 0.02f;
-        private float maxRunSpeed = 0.06f;
-        private float timeToHoldMaxXInputToRun = 0.2f;
-        private float accelerationFactorAir = 0.3f;
-        private float accelerationFactorGround = 0.4f;
-        private float deccelerationFactorAir = 0.3f;
-        private float deccelerationFactorGround = 0.8f;
+        private float maxWalkSpeed = 8f;
+        private float maxRunSpeed = 14f;
+        private float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
+        private float accelerationAir = 20f;
+        private float accelerationGround = 20f;
+        //private float accelerationReverseDirection = 1f;
+        private float decceleration = 10f;
 
         private float moveVelocity = 0f;
         private float moveTime = 0f;
@@ -82,15 +82,33 @@ namespace Physics {
 
             isRunning = timeHeldMaxXInput >= timeToHoldMaxXInputToRun;
             float targetVelocity = input * (isRunning ? maxRunSpeed : maxWalkSpeed);
-            float accelerationFactor = controller.isGrounded ? accelerationFactorGround : accelerationFactorAir;
-            float deccelerationFactor = controller.isGrounded ? deccelerationFactorGround : deccelerationFactorAir;
 
             if (Mathf.Abs(targetVelocity) == 0f) {
-                moveVelocity = Mathf.MoveTowards(moveVelocity, 0f, deccelerationFactor * deltaTime);
+                var oldSign = Mathf.Sign(moveVelocity);
+
+                moveVelocity -= Mathf.Sign(moveVelocity) * decceleration * deltaTime;
+
+                if (Mathf.Sign(moveVelocity) != oldSign)
+                    moveVelocity = 0f;
+                if (Mathf.Abs(moveVelocity) < 0.1f)
+                    moveVelocity = 0f;
+
                 moveTime = 0f;
             } else {
-                moveVelocity = Mathf.MoveTowards(moveVelocity, targetVelocity, accelerationFactor * deltaTime);
+                float acceleration = controller.isGrounded ? accelerationGround : accelerationAir;
+                //if (Mathf.Sign(targetVelocity) != Mathf.Sign(moveVelocity))
+                //    acceleration = accelerationReverseDirection;
+
+                var oldSign = Mathf.Sign(moveVelocity);
+
+                moveVelocity += input * acceleration * deltaTime;
                 moveTime += deltaTime;
+
+                if (Mathf.Sign(moveVelocity) != oldSign) {
+                    // TOOD: turn around really fast
+                } else if (Mathf.Abs(moveVelocity) > Mathf.Abs(targetVelocity)) {
+                    moveVelocity = targetVelocity;
+                }
             }
         }
 
@@ -98,12 +116,12 @@ namespace Physics {
 
         #region Vertical Movement
 
-        private float walkJumpForce = 0.09f;
-        private float runJumpForce = 0.1f;
-        private float wallJumpForce = 0.1f;
+        private float walkJumpForce = 8f;
+        private float runJumpForce = 10f;
+        private float wallJumpForce = 8f;
         private float jumpCoyoteTime = 0.1f;
-        private float gravity = 0.5f;
-        private float terminalFallVelocity = 0.2f;
+        private float gravity = 12f;
+        private float terminalFallVelocity = 20f;
 
         private float yVelocity = 0f;
         private bool didWallJump = false;
