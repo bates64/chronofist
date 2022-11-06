@@ -36,7 +36,7 @@ namespace Physics {
 
         private void OnLanding() {
             // Kill vertical movement
-            jumpVelocity = 0f;
+            yVelocity = 0f;
             timeHeldJumpInput = 0f;
         }
 
@@ -112,7 +112,6 @@ namespace Physics {
 
             if (input && controller.isGrounded) {
                 yVelocity = jumpVelocity;
-                // FIXME
             }
         }
 
