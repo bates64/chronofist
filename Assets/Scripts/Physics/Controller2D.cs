@@ -10,17 +10,15 @@ namespace Physics
 		public LayerMask collisionMask;
 
 		const float SkinWidth = .015f;
-
+		
 		private BoxCollider2D _collider;
-		protected float obj;
 		private RaycastOrigins _raycastOrigins;
 		private Direction _horizontal = new Direction(4, 0, Vector2.right);
 		private Direction _vertical =  new Direction(4, 0, Vector2.up);
-		public event Util.DVoid OnLanding;
-		public event Util.DVoid OnTakeoff;
-		public event Util.DVoid OnCeilingBump;
+		private CollisionGroup _collisions = new CollisionGroup();
 
 		public bool isGrounded => _vertical.NegativeCollision;
+		public CollisionGroup Collision => _collisions;
 		
 		#region Properties
 
@@ -41,11 +39,22 @@ namespace Physics
 		private void Awake() 
 		{
 			_collider = GetComponent<BoxCollider2D> ();
-			_vertical.OnNegativeChange += RelayGroundEvents;
-			_vertical.OnPositiveChange += RelayCeilingEvents;
 			CalculateRaySpacing();
 		}
 
+		private void LateUpdate()
+		{
+			UpdateCollisions();
+		}
+		
+		private void UpdateCollisions()
+		{
+			Collision.Down = _vertical.NegativeCollision;
+			Collision.Up = _vertical.PositiveCollision;
+			Collision.Left = _horizontal.NegativeCollision;
+			Collision.Right = _horizontal.PositiveCollision;
+		}
+		
 		private void CalculateRaySpacing()
 		{
 			Bounds bounds = Bounds;
@@ -59,17 +68,15 @@ namespace Physics
 
 		#region Movement Functions
 
-		public void Move(Vector3 velocity, bool locked = false, bool skipSlope = false) 
+		public void Move(Vector3 velocity) 
 		{
-			LockCollisions(locked);
 			UpdateRaycastOrigins();
-			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0,skipSlope);
-			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x,skipSlope);
+			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0);
+			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x);
 			transform.Translate (velocity);
-			LockCollisions(false);
 		}
 		
-		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset,bool skipSlope)
+		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset)
 		{
 			int sign = (int) Mathf.Sign(velocity);
 			float rayLength = Mathf.Abs(velocity) + SkinWidth;
@@ -89,8 +96,6 @@ namespace Physics
 			}
 			direction.NegativeCollision = sign == -1 && isHit;
 			direction.PositiveCollision = sign == 1 && isHit;
-			//if (sign == -1) direction.NegativeCollision = isHit;
-			//if (sign == 1) direction.PositiveCollision = isHit;
 		}
 		
 		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
@@ -107,25 +112,6 @@ namespace Physics
 			_raycastOrigins.TopRight = new Vector2 (bounds.max.x, bounds.max.y);
 		}
 
-		private void LockCollisions(bool locked)
-		{
-			_vertical.LockCollisions = locked;
-			_horizontal.LockCollisions = locked;
-		}
-
-		private void RelayGroundEvents(bool isGround)
-		{
-			Debug.Log("Ground Event:" + isGround);
-			if(isGround) OnLanding?.Invoke();
-			else OnTakeoff?.Invoke();
-		}
-
-		private void RelayCeilingEvents(bool hasBumped)
-		{
-			Debug.Log("Ceiling Event:" + hasBumped);
-			if (hasBumped)OnCeilingBump?.Invoke();
-		}
-		
 		#endregion
 		
 		#region Structs
@@ -145,10 +131,7 @@ namespace Physics
 			public readonly Vector2 DirectionVector;
 			private bool _positiveCollision;
 			private bool _negativeCollision;
-			private bool _lockCollisions;
-			public event Util.DBool OnPositiveChange;
-			public event Util.DBool OnNegativeChange;
-			
+
 			public Direction(int rCount,int rSpacing,Vector2 dir)
 			{
 				RayCount = rCount;
@@ -156,46 +139,98 @@ namespace Physics
 				DirectionVector = dir;
 				_negativeCollision = false;
 				_positiveCollision = false;
-				_lockCollisions = false;
-				OnPositiveChange = null;
-				OnNegativeChange = null;
 			}
 
 			public bool NegativeCollision
 			{
 				get => _negativeCollision;
-				set
-				{
-					if (_lockCollisions) return;
-					if (_negativeCollision != value) OnNegativeChange?.Invoke(value);
-					_negativeCollision = value;
-				}
+				set => _negativeCollision = value;
 			}
 
 			public bool PositiveCollision
 			{
 				get => _positiveCollision;
+				set => _positiveCollision = value;
+			}
+			
+		}
+
+		public class CollisionGroup
+		{
+			private bool _down;
+			private bool _up;
+			private bool _left;
+			private bool _right;
+			
+			public event Util.DVoid OnLanding;
+			public event Util.DVoid OnTakeoff;
+			public event Util.DVoid OnCeilingBump;
+			public event Util.DVoid OnLeftWallBump;
+			public event Util.DVoid OnRightWallBump;
+			public event Util.DVoid OnWallBump;
+			
+			public bool Down
+			{
+				get => _down;
 				set
 				{
-					if (_lockCollisions) return;
-					if (_positiveCollision != value) OnPositiveChange?.Invoke(value);
-					_positiveCollision = value;
+					if (_down != value)
+					{
+						if (value) OnLanding?.Invoke();
+						else OnTakeoff?.Invoke();
+					}
+					_down = value;
 				}
 			}
 			
-			public bool LockCollisions
+			public bool Up
 			{
-				get => _lockCollisions;
-				set => _lockCollisions = value;
+				get => _up;
+				set
+				{
+					if (_up != value)
+					{
+						if (value) OnCeilingBump?.Invoke();
+					}
+					_up = value;
+				}
 			}
-			
-			public void Reset()
+
+			public bool Left
 			{
-				_negativeCollision = false;
-				_positiveCollision = false;
+				get => _left;
+				set
+				{
+					if (_left != value)
+					{
+						if (value)
+						{
+							OnWallBump?.Invoke();
+							OnLeftWallBump?.Invoke();
+						}
+					}
+					_up = value;
+				}
+			}
+
+			public bool Right
+			{
+				get => _right;
+				set
+				{
+					if (_right != value)
+					{
+						if (value)
+						{
+							OnWallBump?.Invoke();
+							OnRightWallBump?.Invoke();
+						}
+					}
+					_up = value;
+				}
 			}
 		}
-
+		
 		#endregion
 	}
 }

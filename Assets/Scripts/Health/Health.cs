@@ -4,12 +4,21 @@ using General;
 namespace Health {
     [RequireComponent(typeof(Rigidbody2D))]
     public class Health : MonoBehaviour {
-        public float health = 100f;
+        [SerializeField] private float health = 100f;
         public float maxHealth = 100f;
         public float minHealth = 0f;
 
         public bool isDead => health <= minHealth;
 
+        public float CurrentHealth
+        {
+            get => health;
+            set
+            {
+                health = Mathf.Clamp(value,minHealth, maxHealth);
+            }
+        }
+        
         public event Util.DFloat OnTakeDamage;
         public event Util.DFloat OnHeal;
         public event Util.DVoid OnFullHealth;

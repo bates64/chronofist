@@ -290,7 +290,7 @@
 			"__cHei": 3,
 			"identifier": "DebugDungeonWalls",
 			"uid": 1,
-			"relPath": "../Tilesets/DebugDungeonWalls.png",
+			"relPath": "../../Tilesets/DebugDungeonWalls.png",
 			"embedAtlas": null,
 			"pxWid": 48,
 			"pxHei": 48,

@@ -38,7 +38,7 @@
 			"__pxTotalOffsetX": 0,
 			"__pxTotalOffsetY": 0,
 			"__tilesetDefUid": 1,
-			"__tilesetRelPath": "../Tilesets/DebugDungeonWalls.png",
+			"__tilesetRelPath": "../../Tilesets/DebugDungeonWalls.png",
 			"iid": "14dc9dc0-5110-11ed-a3f5-793bb37efe1b",
 			"levelId": 19,
 			"layerDefUid": 3,
