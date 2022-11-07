@@ -116,13 +116,14 @@ namespace Physics {
 
         #region Vertical Movement
 
-        [Range(0f,100f)][SerializeField] private float walkJumpForce = 16f;
-        [Range(0f,100f)][SerializeField] private float runJumpForce = 20f;
-        [Range(0f,100f)][SerializeField] private float wallJumpForce = 16f;
-        [Range(0f,100f)][SerializeField] private float jumpCoyoteTime = 0.1f;
-        [Range(0f,100f)][SerializeField] private float gravity = 40f;
-        [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 20f;
-        [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 8f;
+        [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
+        [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
+        [Range(0f,100f)][SerializeField] private float wallJumpForce = 30f;
+        [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
+        [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
+        [Range(0f,100f)][SerializeField] private float gravity = 60f;
+        [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 25f;
+        [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 6f;
 
         private float yVelocity = 0f;
         private bool didWallJump = false;
@@ -132,9 +133,11 @@ namespace Physics {
             float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
             float multiplier = 1f;
 
-            // During upwards part of jump, apply less gravity if jump is held
-            if (yVelocity > 0f && InputManager.PlayerInput.Jump) {
-                multiplier *= 0.5f;
+            // Short jump: during upwards part of jump, kill velocity if input is released
+            if (yVelocity > 0f && !InputManager.PlayerInput.Jump) {
+                yVelocity -= shortJumpKillForce * deltaTime;
+                if (yVelocity < 0f)
+                    yVelocity = 0f;
             }
 
             // Pushing against a wall limits fall speed
@@ -157,13 +160,6 @@ namespace Physics {
                     yVelocity = wallJumpForce;
                     moveVelocity = controller.CheckLeft() ? maxRunSpeed : -maxRunSpeed;
                     didWallJump = true;
-                }
-            }
-            else
-            {
-                if (yVelocity > 0)
-                {
-                    yVelocity = 0;
                 }
             }
         }
