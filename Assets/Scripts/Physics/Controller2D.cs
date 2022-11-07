@@ -88,23 +88,23 @@ namespace Physics {
 			transform.Translate (velocity);
 		}
 
-        public bool CheckLeft() {
+        public bool CheckLeft(bool updateCollision = false) {
 			UpdateRaycastOrigins();
 
             float x = -Util.PIXEL;
-			Measure(_horizontal, _raycastOrigins.BottomLeft, ref x, 0);
+            Measure(_horizontal, _raycastOrigins.BottomLeft, ref x, 0,updateCollision);
             return Mathf.Abs(x) < Util.PIXEL;
 		}
 
-        public bool CheckRight() {
+        public bool CheckRight(bool updateCollision = false) {
 			UpdateRaycastOrigins();
 
             float x = Util.PIXEL;
-			Measure(_horizontal, _raycastOrigins.BottomRight, ref x, 0);
+			Measure(_horizontal, _raycastOrigins.BottomRight, ref x, 0,updateCollision);
             return Mathf.Abs(x) < Util.PIXEL;
 		}
 
-		private void Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset)
+		private bool Measure(Direction direction,Vector2 positiveOrigin, ref float velocity, float offset,bool updateCollision = true)
 		{
 			int sign = (int) Mathf.Sign(velocity);
 			float rayLength = Mathf.Abs(velocity) + SkinWidth;
@@ -122,9 +122,11 @@ namespace Physics {
 					rayLength = hit.distance;
 				}
 			}
-			direction.NegativeCollision = sign == -1 && isHit;
+            if (!updateCollision) return isHit;
+            direction.NegativeCollision = sign == -1 && isHit;
 			direction.PositiveCollision = sign == 1 && isHit;
-		}
+            return isHit;
+        }
 
 		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
 		{
@@ -237,7 +239,7 @@ namespace Physics {
 							OnLeftWallBump?.Invoke();
 						}
 					}
-					_up = value;
+					_left = value;
 				}
 			}
 
@@ -254,7 +256,7 @@ namespace Physics {
 							OnRightWallBump?.Invoke();
 						}
 					}
-					_up = value;
+					_right = value;
 				}
 			}
 		}

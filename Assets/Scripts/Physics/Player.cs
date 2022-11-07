@@ -60,10 +60,10 @@ namespace Physics {
         private float maxWalkSpeed = 8f;
         private float maxRunSpeed = 14f;
         private float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
-        private float accelerationAir = 20f;
-        private float accelerationGround = 20f;
+        private float accelerationAir = 80f;
+        private float accelerationGround = 80f;
         //private float accelerationReverseDirection = 1f;
-        private float decceleration = 10f;
+        private float decceleration = 80f;
 
         private float moveVelocity = 0f;
         private float moveTime = 0f;
@@ -116,19 +116,19 @@ namespace Physics {
 
         #region Vertical Movement
 
-        private float walkJumpForce = 8f;
-        private float runJumpForce = 10f;
-        private float wallJumpForce = 8f;
-        private float jumpCoyoteTime = 0.1f;
-        private float gravity = 12f;
-        private float terminalFallVelocity = 20f;
+        [Range(0f,100f)][SerializeField] private float walkJumpForce = 16f;
+        [Range(0f,100f)][SerializeField] private float runJumpForce = 20f;
+        [Range(0f,100f)][SerializeField] private float wallJumpForce = 16f;
+        [Range(0f,100f)][SerializeField] private float jumpCoyoteTime = 0.1f;
+        [Range(0f,100f)][SerializeField] private float gravity = 40f;
+        [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 20f;
 
         private float yVelocity = 0f;
         private bool didWallJump = false;
 
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
-
+            float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
             float multiplier = 1f;
 
             // During upwards part of jump, apply less gravity if jump is held
@@ -137,15 +137,14 @@ namespace Physics {
             }
 
             // Pushing against a wall slows fall speed (sliding)
-            if (yVelocity < 0f && InputManager.PlayerInput.Movement.x < -0.1f && controller.CheckLeft()) {
+            if (yVelocity < 0f && InputManager.PlayerInput.Movement.x < -0.1f && (controller.CheckLeft()) && !controller.isGrounded) {
                 multiplier *= 0.2f;
-            } else if (yVelocity < 0f && InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight()) {
+            } else if (yVelocity < 0f && InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight() && !controller.isGrounded) {
                 multiplier *= 0.2f;
             }
-
             yVelocity -= gravity * deltaTime * multiplier;
-            if (yVelocity < -terminalFallVelocity) {
-                yVelocity = -terminalFallVelocity;
+            if (yVelocity < -currentTerminalVel) {
+                yVelocity = -currentTerminalVel;
             }
         }
 
@@ -157,6 +156,13 @@ namespace Physics {
                     yVelocity = wallJumpForce;
                     moveVelocity = controller.CheckLeft() ? maxRunSpeed : -maxRunSpeed;
                     didWallJump = true;
+                }
+            }
+            else
+            {
+                if (yVelocity > 0)
+                {
+                    yVelocity = 0;
                 }
             }
         }
