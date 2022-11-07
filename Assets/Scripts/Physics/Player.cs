@@ -122,6 +122,7 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float jumpCoyoteTime = 0.1f;
         [Range(0f,100f)][SerializeField] private float gravity = 40f;
         [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 20f;
+        [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 8f;
 
         private float yVelocity = 0f;
         private bool didWallJump = false;
@@ -136,11 +137,11 @@ namespace Physics {
                 multiplier *= 0.5f;
             }
 
-            // Pushing against a wall slows fall speed (sliding)
+            // Pushing against a wall limits fall speed
             if (yVelocity < 0f && InputManager.PlayerInput.Movement.x < -0.1f && (controller.CheckLeft()) && !controller.isGrounded) {
-                multiplier *= 0.2f;
+                currentTerminalVel = wallSlideSpeed;
             } else if (yVelocity < 0f && InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight() && !controller.isGrounded) {
-                multiplier *= 0.2f;
+                currentTerminalVel = wallSlideSpeed;
             }
             yVelocity -= gravity * deltaTime * multiplier;
             if (yVelocity < -currentTerminalVel) {
