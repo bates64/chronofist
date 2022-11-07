@@ -55,13 +55,15 @@ namespace Physics {
 
         #region Horizontal Movement
 
+        [Header("Horizontal Movement")]
+
         private float maxWalkSpeed = 8f;
-        private float maxRunSpeed = 14f;
+        [Range(1,30)][SerializeField] private float maxRunSpeed = 14f;
         private float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
-        private float accelerationAir = 80f;
-        private float accelerationGround = 80f;
+        [Range(0,150)][SerializeField] private float accelerationAir = 80f;
+        [Range(0,100)][SerializeField] private float accelerationGround = 80f;
         //private float accelerationReverseDirection = 1f;
-        private float decceleration = 80f;
+        [Range(0,200)][SerializeField] private float decceleration = 80f;
 
         private float moveVelocity = 0f;
         private float moveTime = 0f;
@@ -143,6 +145,7 @@ namespace Physics {
 
         #region Vertical Movement
 
+        [Header("Vertical Movement")]
         [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
         [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
         public Vector2 wallJumpForce = new Vector2(21f, 20f);
