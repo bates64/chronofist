@@ -23,7 +23,7 @@ namespace Physics {
         private void Update() {
             UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
             ApplyGravity();
-            UpdateTimeSinceWall();
+            UpdateWalls();
             UpdateAttackType();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
@@ -36,7 +36,7 @@ namespace Physics {
 
         private void OnWallBump() {
             // Kill horizontal movement
-            moveVelocity = 0f;
+            moveVelocity = 0f; // Also done in UpdateWalls()
             timeHeldMaxXInput = 0f;
             moveTime = 0f;
         }
@@ -44,9 +44,6 @@ namespace Physics {
         private void OnLanding() {
             // Kill vertical movement
             yVelocity = 0f;
-
-            // Allow wall jumps when next airbourne
-            didWallJump = false;
         }
 
         private void OnCeilingBump() {
@@ -70,10 +67,17 @@ namespace Physics {
         private float moveTime = 0f;
         private float timeHeldMaxXInput = 0f;
         private float timeSinceWall = Mathf.Infinity;
+        private float wallJumpDirection = 0f;
         private bool isRunning = false;
+        private float updateMoveVelocityCooldown = 0f;
 
         private void UpdateMoveVelocity(float input) {
             float deltaTime = LocalTime.DeltaTimeAt(this);
+
+            if (updateMoveVelocityCooldown > 0f) {
+                updateMoveVelocityCooldown -= deltaTime;
+                return;
+            }
 
             if (Mathf.Abs(input) >= 0.8f) {
                 if (controller.isGrounded)
@@ -85,11 +89,12 @@ namespace Physics {
             isRunning = timeHeldMaxXInput >= timeToHoldMaxXInputToRun;
             float targetVelocity = input * (isRunning ? maxRunSpeed : maxWalkSpeed);
 
-            if (Mathf.Abs(targetVelocity) == 0f) {
+            if (Mathf.Abs(targetVelocity) == 0f || Mathf.Abs(targetVelocity) < Mathf.Abs(moveVelocity)) { // Deccelerate if no input or we are above max speed
                 var oldSign = Mathf.Sign(moveVelocity);
 
                 moveVelocity -= Mathf.Sign(moveVelocity) * decceleration * deltaTime;
 
+                // If we've crossed zero, stop
                 if (Mathf.Sign(moveVelocity) != oldSign)
                     moveVelocity = 0f;
                 if (Mathf.Abs(moveVelocity) < 0.1f)
@@ -97,28 +102,38 @@ namespace Physics {
 
                 moveTime = 0f;
             } else {
-                float acceleration = controller.isGrounded ? accelerationGround : accelerationAir;
-                //if (Mathf.Sign(targetVelocity) != Mathf.Sign(moveVelocity))
-                //    acceleration = accelerationReverseDirection;
+                // Accelerate
+                float acceleration = input * (controller.isGrounded ? accelerationGround : accelerationAir) * deltaTime;
 
-                var oldSign = Mathf.Sign(moveVelocity);
+                // Reversing direction is faster
+                if (acceleration < 0f && isRunning && controller.isGrounded)
+                    acceleration *= 2f;
 
-                moveVelocity += input * acceleration * deltaTime;
-                moveTime += deltaTime;
-
-                if (Mathf.Sign(moveVelocity) != oldSign) {
-                    // TOOD: turn around really fast
-                } else if (Mathf.Abs(moveVelocity) > Mathf.Abs(targetVelocity)) {
+                if (Mathf.Abs(moveVelocity + acceleration) <= Mathf.Abs(targetVelocity)) { // If accelerating will not exceed target...
+                    // Apply acceleration normally
+                    moveVelocity += acceleration;
+                } else if (Mathf.Abs(moveVelocity) < Mathf.Abs(targetVelocity)) { // If above target velocity already, don't accelerate
+                    // We've reached target velocity
                     moveVelocity = targetVelocity;
                 }
+
+                moveTime += deltaTime;
             }
         }
 
-        private void UpdateTimeSinceWall() {
+        private void UpdateWalls() {
             var deltaTime = LocalTime.DeltaTimeAt(this);
+            var left = moveVelocity < 0f && controller.CheckLeft();
+            var right = moveVelocity > 0f && controller.CheckRight();
 
-            if (controller.CheckLeft() || controller.CheckRight()) {
+            if (left || right) {
                 timeSinceWall = 0f;
+                wallJumpDirection = left ? 1f : -1f;
+
+                // Hitting wall kills x velocity
+                if (Mathf.Abs(moveVelocity) > 0.1f) {
+                    moveVelocity = 0.1f;
+                }
             } else {
                 timeSinceWall += deltaTime;
             }
@@ -130,7 +145,7 @@ namespace Physics {
 
         [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
         [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
-        [Range(0f,100f)][SerializeField] private float wallJumpForce = 30f;
+        public Vector2 wallJumpForce = new Vector2(21f, 20f);
         [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
         [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
         [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
@@ -139,7 +154,6 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 6f;
 
         private float yVelocity = 0f;
-        private bool didWallJump = false;
 
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
@@ -170,11 +184,11 @@ namespace Physics {
                 if (controller.isGrounded || controller.airTime < jumpCoyoteTime) {
                     // Jump
                     yVelocity = isRunning ? runJumpForce : walkJumpForce;
-                } else if (timeSinceWall < wallJumpCoyoteTime && !didWallJump) {
+                } else if (timeSinceWall < wallJumpCoyoteTime) {
                     // Wall jump
-                    yVelocity = wallJumpForce;
-                    moveVelocity = controller.CheckLeft() ? maxRunSpeed : -maxRunSpeed;
-                    didWallJump = true;
+                    moveVelocity = wallJumpDirection * wallJumpForce.x;
+                    yVelocity = wallJumpForce.y;
+                    updateMoveVelocityCooldown = 0.05f; // No control for a bit
                 }
             }
         }

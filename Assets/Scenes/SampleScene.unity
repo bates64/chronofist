@@ -2942,8 +2942,9 @@ MonoBehaviour:
   jabAttackPrefab: {fileID: 7976835893613702979, guid: 5f938257f8dd14c3aaf51f2025754877, type: 3}
   walkJumpForce: 20
   runJumpForce: 30
-  wallJumpForce: 30
+  wallJumpForce: {x: 21, y: 20}
   jumpCoyoteTime: 0.1
+  wallJumpCoyoteTime: 0.1
   shortJumpKillForce: 25
   gravity: 60
   terminalFallVelocity: 25
