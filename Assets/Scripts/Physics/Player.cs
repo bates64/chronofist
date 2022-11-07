@@ -23,6 +23,7 @@ namespace Physics {
         private void Update() {
             UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
             ApplyGravity();
+            UpdateTimeSinceWall();
             UpdateAttackType();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
@@ -68,6 +69,7 @@ namespace Physics {
         private float moveVelocity = 0f;
         private float moveTime = 0f;
         private float timeHeldMaxXInput = 0f;
+        private float timeSinceWall = Mathf.Infinity;
         private bool isRunning = false;
 
         private void UpdateMoveVelocity(float input) {
@@ -112,6 +114,16 @@ namespace Physics {
             }
         }
 
+        private void UpdateTimeSinceWall() {
+            var deltaTime = LocalTime.DeltaTimeAt(this);
+
+            if (controller.CheckLeft() || controller.CheckRight()) {
+                timeSinceWall = 0f;
+            } else {
+                timeSinceWall += deltaTime;
+            }
+        }
+
         #endregion
 
         #region Vertical Movement
@@ -120,6 +132,7 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
         [Range(0f,100f)][SerializeField] private float wallJumpForce = 30f;
         [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
+        [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
         [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
         [Range(0f,100f)][SerializeField] private float gravity = 60f;
         [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 25f;
@@ -155,8 +168,10 @@ namespace Physics {
         private void OnInputJump(bool isPressed) {
             if (isPressed) {
                 if (controller.isGrounded || controller.airTime < jumpCoyoteTime) {
+                    // Jump
                     yVelocity = isRunning ? runJumpForce : walkJumpForce;
-                } else if ((controller.CheckLeft() || controller.CheckRight()) && !didWallJump) {
+                } else if (timeSinceWall < wallJumpCoyoteTime && !didWallJump) {
+                    // Wall jump
                     yVelocity = wallJumpForce;
                     moveVelocity = controller.CheckLeft() ? maxRunSpeed : -maxRunSpeed;
                     didWallJump = true;
