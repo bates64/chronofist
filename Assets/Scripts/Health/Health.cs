@@ -2,13 +2,12 @@ using UnityEngine;
 using General;
 
 namespace Health {
-    [RequireComponent(typeof(Rigidbody2D))]
     public class Health : MonoBehaviour {
         public float health = 16f;
         public float maxHealth = 16f;
 
         public bool isDead => health <= 0f;
-        
+
         public event Util.DFloat OnTakeDamage;
         public event Util.DFloat OnHeal;
         public event Util.DVoid OnFullHealth;

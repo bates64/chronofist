@@ -2,8 +2,7 @@
 using UnityEngine;
 
 namespace Physics {
-	[RequireComponent (typeof (BoxCollider2D))]
-	public class Controller2D : MonoBehaviour {
+    public class Controller2D : MonoBehaviour {
 		public LayerMask collisionMask;
 
 		const float SkinWidth = .015f;
@@ -37,7 +36,7 @@ namespace Physics {
 
 		private void Awake()
 		{
-			_collider = GetComponent<BoxCollider2D> ();
+			_collider = GetComponentInChildren<BoxCollider2D>();
 			CalculateRaySpacing();
 		}
 
@@ -80,12 +79,13 @@ namespace Physics {
 
 		#region Movement Functions
 
-		public void Move(Vector3 velocity)
+		public void Move(Vector2 velocity)
 		{
 			UpdateRaycastOrigins();
-			if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0);
+            ValidateVelocity(ref velocity);
+            if (velocity.x != 0) Measure(_horizontal,_raycastOrigins.BottomRight,ref velocity.x,0);
 			if (velocity.y != 0) Measure(_vertical,_raycastOrigins.TopLeft,ref velocity.y,velocity.x);
-			transform.Translate (velocity);
+            transform.Translate (velocity);
 		}
 
         public bool CheckLeft(bool updateCollision = false) {
@@ -128,10 +128,11 @@ namespace Physics {
             return isHit;
         }
 
-		private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
-		{
-			//velocity.y = Mathf.Sign()
-		}
+        private void ValidateVelocity(ref Vector2 velocity)
+        {
+            if (Mathf.Abs(velocity.x) < 0.005f) velocity.x = 0;
+            if (Mathf.Abs(velocity.x) < 0.0005f) velocity.x = 0;
+        }
 
 		private void UpdateRaycastOrigins()
 		{
