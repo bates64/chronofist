@@ -59,6 +59,7 @@ namespace Health {
         }
 
         public void OnGUI() {
+            /*
             var screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
             GUI.Label(
@@ -72,6 +73,7 @@ namespace Health {
                     }
                 }
             );
+            */
         }
     }
 }
