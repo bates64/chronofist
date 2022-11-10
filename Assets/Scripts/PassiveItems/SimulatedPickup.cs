@@ -1,7 +1,5 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using Physics;
-using Player_.PlayerSFM;
 
 namespace PassiveItems
 {
@@ -21,7 +19,7 @@ namespace PassiveItems
             
         }
 
-        protected override void OnPickup(Player player)
+        protected override void OnPickup(Pickupper pickupper)
         {
             
         }

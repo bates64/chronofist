@@ -1,5 +1,5 @@
-﻿using Player_.PlayerSFM;
-using UnityEngine;
+﻿using UnityEngine;
+using Physics;
 
 namespace PassiveItems
 {
@@ -13,10 +13,10 @@ namespace PassiveItems
             SpriteRenderer.sprite = item.Sprite;
         }
 
-        protected override void OnPickup(Player entity)
+        protected override void OnPickup(Pickupper pickupper)
         {
             gameObject.SetActive(false);
-            item.EquipItem(entity.Properties);
+            item.EquipItem(pickupper);
         }
     }
 }

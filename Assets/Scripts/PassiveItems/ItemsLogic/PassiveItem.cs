@@ -1,8 +1,6 @@
 ﻿using System;
-using Player_;
-using Player_.PlayerSFM;
 using UnityEngine;
-
+using Physics;
 
 namespace PassiveItems
 {
@@ -17,6 +15,6 @@ namespace PassiveItems
         public Sprite Sprite => sprite;
         public string Description => description;
         
-        abstract public void EquipItem(PlayerProperties player);
+        abstract public void EquipItem(Pickupper pickupper);
     }
 }

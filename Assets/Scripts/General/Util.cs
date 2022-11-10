@@ -4,8 +4,7 @@ namespace General
 {
     public static class Util
     {
-        public static bool defaultBool = false;
-        
+
         public delegate void DBool(bool b);
         public delegate void DVoid();
         public delegate void DInt(int i);
