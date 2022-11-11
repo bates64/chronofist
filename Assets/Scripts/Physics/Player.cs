@@ -206,16 +206,27 @@ namespace Physics {
 
         private void OnInputJump(bool isPressed) {
             if (isPressed) {
-                if (controller.isGrounded || controller.airTime < jumpCoyoteTime) {
-                    // Jump
-                    yVelocity = isRunning ? runJumpForce : walkJumpForce;
-                } else if (timeSinceWall < wallJumpCoyoteTime) {
-                    // Wall jump
-                    moveVelocity = wallJumpDirection * wallJumpForce.x;
-                    yVelocity = wallJumpForce.y;
-                    updateMoveVelocityCooldown = 0.05f; // No control for a bit
+                if (controller.isGrounded || controller.airTime < jumpCoyoteTime)
+                {
+                    Jump();
+                } else if (timeSinceWall < wallJumpCoyoteTime)
+                {
+                    WallJump();
                 }
             }
+        }
+
+        private void WallJump()
+        {
+            // Wall jump
+            moveVelocity = wallJumpDirection * wallJumpForce.x;
+            yVelocity = wallJumpForce.y;
+            updateMoveVelocityCooldown = 0.05f; // No control for a bit
+        }
+
+        private void Jump()
+        {
+            yVelocity = isRunning ? runJumpForce : walkJumpForce;
         }
 
         public bool IsJumping() {
