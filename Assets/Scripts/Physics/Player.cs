@@ -227,12 +227,17 @@ namespace Physics {
             // TerminalY velocity
             float totalVel = yVelocity + jumpVelocity.y;
             float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            if (!controller.isGrounded && (controller.CheckLeft() || controller.CheckRight())) {
+            if (!controller.isGrounded) {
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
-                if (totalVel < 0f)
-                    currentTerminalVel = wallSlideSpeed;
-                isFacingLeft = controller.CheckRight();
+                bool isPushing = (controller.CheckLeft() && moveVelocity < 0f) || (controller.CheckRight() && moveVelocity > 0f);
+                if (isPushing) {
+                    if (totalVel < 0f)
+                        currentTerminalVel = wallSlideSpeed;
+                    isFacingLeft = controller.CheckRight();
+
+                    // TODO: produce particles
+                }
             }
             if (totalVel < -currentTerminalVel) {
                 yVelocity = -currentTerminalVel;
