@@ -29,7 +29,7 @@ namespace Physics {
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity}");
+            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity} wallJumpDirection={wallJumpDirection}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -167,7 +167,7 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
         [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
         public Vector2 wallJumpForce = new Vector2(21f, 20f);
-        public Vector2 jumpVelocityDamping = new Vector2(0.6f, 0.6f);
+        public Vector2 jumpVelocityDamping = new Vector2(0.25f, 0.25f);
         [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
         [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
         [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
@@ -193,8 +193,11 @@ namespace Physics {
                 var damping = didJumpCancel ? jumpVelocityDamping * 2f : jumpVelocityDamping;
                 jumpVelocity -= jumpVelocity * damping * deltaTime;
 
-                // If we've passed the apex of the jump, kill the jump velocity
-                if ((jumpVelocity.y + yVelocity) < 0f) jumpVelocity.y = 0f;
+                // If we've passed the apex of the jump, transfer jump velocity to yVelocity
+                if ((jumpVelocity.y + yVelocity) < 0f) {
+                    jumpVelocity.y = 0f;
+                    yVelocity = 0f;
+                }
             } else {
                 // We're not on the upwards part of the jump
                 jumpVelocity = Vector2.zero;
@@ -240,9 +243,10 @@ namespace Physics {
 
             yVelocity = 0f;
             jumpVelocity = wallJumpForce;
+            jumpVelocity.x *= wallJumpDirection;
 
-            moveVelocity = 0f;
-            updateMoveVelocityCooldown = 0.05f; // No control for a bit
+            //moveVelocity = 0f;
+            //updateMoveVelocityCooldown = 0.05f; // No control for a bit
 
             return true;
         }
