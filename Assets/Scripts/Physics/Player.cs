@@ -21,6 +21,10 @@ namespace Physics {
         }
 
         private void Update() {
+            float deltaTime = LocalTime.DeltaTimeAt(this);
+
+            timeSinceStoredJump += deltaTime;
+
             UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
             ApplyGravity();
             UpdateWalls();
@@ -45,6 +49,8 @@ namespace Physics {
         private void OnLanding() {
             // Kill vertical movement
             yVelocity = 0f;
+
+            ApplyStoredJump();
         }
 
         private void OnCeilingBump() {
@@ -111,7 +117,7 @@ namespace Physics {
 
                 // Reversing direction is faster
                 if (acceleration < 0f && isRunning && controller.isGrounded)
-                    acceleration *= 2f;
+                    acceleration *= 2f; // TODO: slide anim
 
                 if (Mathf.Abs(moveVelocity + acceleration) <= Mathf.Abs(targetVelocity)) { // If accelerating will not exceed target...
                     // Apply acceleration normally
@@ -145,6 +151,9 @@ namespace Physics {
                 } else if (moveVelocity < -0.1f && left) {
                     moveVelocity = -0.1f;
                 }
+
+                // Check for stored wall jump
+                ApplyStoredJump();
             } else {
                 timeSinceWall += deltaTime;
             }
@@ -180,6 +189,7 @@ namespace Physics {
         private Vector2 jumpVelocity = Vector2.zero;
         bool didJumpCancel = false;
         private float yVelocity = 0f; // TODO: rename to fallVelocity?
+        private float timeSinceStoredJump = Mathf.Infinity;
 
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
@@ -231,16 +241,34 @@ namespace Physics {
 
         private void OnInputJump(bool isPressed) {
             if (isPressed) {
-                if (controller.isGrounded || controller.airTime < jumpCoyoteTime)
-                {
-                    Jump();
-                } else if (timeSinceWall < wallJumpCoyoteTime)
-                {
-                    WallJump();
+                if (controller.airTime < jumpCoyoteTime && Jump()) {
+                    // We jumped.
+                } else if (timeSinceWall < wallJumpCoyoteTime && WallJump()) {
+                    // We wall-jumped.
                 } else {
-                    // TODO: store jump input and apply it when we hit the ground/wall
+                    // Store jump input and apply it when we hit the ground/wall
+                    timeSinceStoredJump = 0f;
                 }
             }
+        }
+
+        // If there's an input stored and its possible to jump, jump and discard the input.
+        private bool ApplyStoredJump() {
+            if (timeSinceStoredJump < jumpCoyoteTime && Jump()) {
+                Debug.Log("Stored jump!");
+                timeSinceStoredJump = Mathf.Infinity;
+                return true;
+            }
+
+            if (timeSinceStoredJump < wallJumpCoyoteTime && WallJump()) {
+                Debug.Log("Stored wall jump!");
+                timeSinceStoredJump = Mathf.Infinity;
+                return true;
+            }
+
+            Debug.Log("Stored jump fail");
+
+            return false;
         }
 
         private bool WallJump() {
@@ -252,13 +280,14 @@ namespace Physics {
             jumpVelocity.x *= wallJumpDirection;
 
             //moveVelocity = 0f;
-            //updateMoveVelocityCooldown = 0.05f; // No control for a bit
+            updateMoveVelocityCooldown = 0.2f; // No control for a bit
 
             return true;
         }
 
         private bool Jump() {
             if (IsJumping()) return false;
+            if (!controller.isGrounded) return false;
 
             yVelocity = 0f;
             jumpVelocity = Vector2.up * (isRunning ? runJumpForce : walkJumpForce);
