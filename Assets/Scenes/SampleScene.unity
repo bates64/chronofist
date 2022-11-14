@@ -7086,12 +7086,11 @@ MonoBehaviour:
   accelerationGround: 80
   decceleration: 80
   walkJumpForce: 20
-  runJumpForce: 30
-  wallJumpForce: {x: 21, y: 20}
-  jumpVelocityDamping: {x: 0.25, y: 0.25}
+  runJumpForce: 36
+  wallJumpForce: {x: 25, y: 20}
+  jumpVelocityDamping: {x: 0.2, y: 0.25}
   jumpCoyoteTime: 0.1
   wallJumpCoyoteTime: 0.1
-  shortJumpKillForce: 25
   gravity: 60
   terminalFallVelocity: 25
   wallSlideSpeed: 6

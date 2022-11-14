@@ -37,6 +37,7 @@ namespace Physics {
         private void OnWallBump() {
             // Kill horizontal movement
             moveVelocity = 0f; // Also done in UpdateWalls()
+            jumpVelocity.x = 0f;
             timeHeldMaxXInput = 0f;
             moveTime = 0f;
         }
@@ -47,9 +48,9 @@ namespace Physics {
         }
 
         private void OnCeilingBump() {
-            // Bounce off ceiling
-            if (yVelocity > 0f) {
-                yVelocity *= -0.1f;
+            // Kill jump velocity
+            if (jumpVelocity.y > 0f) {
+                jumpVelocity.y *= -0.1f;
             }
         }
 
@@ -131,16 +132,18 @@ namespace Physics {
 
         private void UpdateWalls() {
             var deltaTime = LocalTime.DeltaTimeAt(this);
-            var left = moveVelocity < 0f && controller.CheckLeft();
-            var right = moveVelocity > 0f && controller.CheckRight();
+            var left = controller.CheckLeft();
+            var right = controller.CheckRight();
 
             if (left || right) {
                 timeSinceWall = 0f;
                 wallJumpDirection = left ? 1f : -1f;
 
                 // Hitting wall kills x velocity
-                if (Mathf.Abs(moveVelocity) > 0.1f) {
+                if (moveVelocity > 0.1f && right) {
                     moveVelocity = 0.1f;
+                } else if (moveVelocity < -0.1f && left) {
+                    moveVelocity = -0.1f;
                 }
             } else {
                 timeSinceWall += deltaTime;
@@ -170,7 +173,6 @@ namespace Physics {
         public Vector2 jumpVelocityDamping = new Vector2(0.25f, 0.25f);
         [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
         [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
-        [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
         [Range(0f,100f)][SerializeField] private float gravity = 60f;
         [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 25f;
         [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 6f;
@@ -189,8 +191,8 @@ namespace Physics {
                     didJumpCancel = true;
                 }
 
-                // Apply jump damping (double if cancelled)
-                var damping = didJumpCancel ? jumpVelocityDamping * 2f : jumpVelocityDamping;
+                // Apply jump damping (30x if cancelled)
+                var damping = didJumpCancel ? jumpVelocityDamping * 30f : jumpVelocityDamping;
                 jumpVelocity -= jumpVelocity * damping * deltaTime;
 
                 // If we've passed the apex of the jump, transfer jump velocity away
@@ -215,15 +217,12 @@ namespace Physics {
             // TerminalY velocity
             float totalVel = yVelocity + jumpVelocity.y;
             float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            // Pushing against a wall limits fall speed & faces player away from wall
-            if (InputManager.PlayerInput.Movement.x < -0.1f && (controller.CheckLeft()) && !controller.isGrounded) {
+            if (!controller.isGrounded && (controller.CheckLeft() || controller.CheckRight())) {
+                // Wall slide.
+                // Pushing against a wall limits fall speed & faces player away from wall
                 if (totalVel < 0f)
                     currentTerminalVel = wallSlideSpeed;
-                isFacingLeft = false;
-            } else if (InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight() && !controller.isGrounded) {
-                if (totalVel < 0f)
-                    currentTerminalVel = wallSlideSpeed;
-                isFacingLeft = true;
+                isFacingLeft = controller.CheckRight();
             }
             if (totalVel < -currentTerminalVel) {
                 yVelocity = -currentTerminalVel;
@@ -238,12 +237,13 @@ namespace Physics {
                 } else if (timeSinceWall < wallJumpCoyoteTime)
                 {
                     WallJump();
+                } else {
+                    // TODO: store jump input and apply it when we hit the ground/wall
                 }
             }
         }
 
         private bool WallJump() {
-            if (IsJumping()) return false;
             if (controller.isGrounded) return false;
             if (!controller.CheckLeft() && !controller.CheckRight()) return false;
 
