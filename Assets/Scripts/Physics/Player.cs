@@ -29,7 +29,7 @@ namespace Physics {
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity} wallJumpDirection={wallJumpDirection}");
+            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -193,10 +193,15 @@ namespace Physics {
                 var damping = didJumpCancel ? jumpVelocityDamping * 2f : jumpVelocityDamping;
                 jumpVelocity -= jumpVelocity * damping * deltaTime;
 
-                // If we've passed the apex of the jump, transfer jump velocity to yVelocity
+                // If we've passed the apex of the jump, transfer jump velocity away
                 if ((jumpVelocity.y + yVelocity) < 0f) {
-                    jumpVelocity.y = 0f;
+                    // X: jumpVelocity->moveVelocity
+                    moveVelocity = jumpVelocity.x;
+
+                    // Y: jumpVelocity->0 & yVelocity->0 to apply gravity from zero
                     yVelocity = 0f;
+
+                    jumpVelocity = Vector2.zero;
                 }
             } else {
                 // We're not on the upwards part of the jump
@@ -207,19 +212,20 @@ namespace Physics {
             // Gravity
             yVelocity -= gravity * deltaTime;
 
-            // Terminal velocity
+            // TerminalY velocity
+            float totalVel = yVelocity + jumpVelocity.y;
             float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
             // Pushing against a wall limits fall speed & faces player away from wall
             if (InputManager.PlayerInput.Movement.x < -0.1f && (controller.CheckLeft()) && !controller.isGrounded) {
-                if (yVelocity < 0f)
+                if (totalVel < 0f)
                     currentTerminalVel = wallSlideSpeed;
                 isFacingLeft = false;
             } else if (InputManager.PlayerInput.Movement.x > 0.1f && controller.CheckRight() && !controller.isGrounded) {
-                if (yVelocity < 0f)
+                if (totalVel < 0f)
                     currentTerminalVel = wallSlideSpeed;
                 isFacingLeft = true;
             }
-            if (yVelocity < -currentTerminalVel) {
+            if (totalVel < -currentTerminalVel) {
                 yVelocity = -currentTerminalVel;
             }
         }
