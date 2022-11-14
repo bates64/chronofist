@@ -26,10 +26,10 @@ namespace Physics {
             UpdateWalls();
             UpdateAttackType();
 
-            Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity);
+            Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"cx={InputManager.PlayerInput.Movement.x} checkLeft={controller.CheckLeft()}");
+            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -167,6 +167,7 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
         [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
         public Vector2 wallJumpForce = new Vector2(21f, 20f);
+        public Vector2 jumpVelocityDamping = new Vector2(0.6f, 0.6f);
         [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
         [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
         [Range(0f, 100f)][SerializeField] private float shortJumpKillForce = 25f;
@@ -174,20 +175,37 @@ namespace Physics {
         [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 25f;
         [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 6f;
 
-        private float yVelocity = 0f;
+        private Vector2 jumpVelocity = Vector2.zero;
+        bool didJumpCancel = false;
+        private float yVelocity = 0f; // TODO: rename to fallVelocity?
 
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
-            float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            float multiplier = 1f;
 
-            // Short jump: during upwards part of jump, kill velocity if input is released
-            if (yVelocity > 0f && !InputManager.PlayerInput.Jump) {
-                yVelocity -= shortJumpKillForce * deltaTime;
-                if (yVelocity < 0f)
-                    yVelocity = 0f;
+            // Jumping
+            if (jumpVelocity.SqrMagnitude() > 1f) {
+                // Check for jump cancel (jump button released before apex)
+                if (!InputManager.PlayerInput.Jump) {
+                    didJumpCancel = true;
+                }
+
+                // Apply jump damping (double if cancelled)
+                var damping = didJumpCancel ? jumpVelocityDamping * 2f : jumpVelocityDamping;
+                jumpVelocity -= jumpVelocity * damping * deltaTime;
+
+                // If we've passed the apex of the jump, kill the jump velocity
+                if ((jumpVelocity.y + yVelocity) < 0f) jumpVelocity.y = 0f;
+            } else {
+                // We're not on the upwards part of the jump
+                jumpVelocity = Vector2.zero;
+                didJumpCancel = false;
             }
 
+            // Gravity
+            yVelocity -= gravity * deltaTime;
+
+            // Terminal velocity
+            float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
             // Pushing against a wall limits fall speed & faces player away from wall
             if (InputManager.PlayerInput.Movement.x < -0.1f && (controller.CheckLeft()) && !controller.isGrounded) {
                 if (yVelocity < 0f)
@@ -198,7 +216,6 @@ namespace Physics {
                     currentTerminalVel = wallSlideSpeed;
                 isFacingLeft = true;
             }
-            yVelocity -= gravity * deltaTime * multiplier;
             if (yVelocity < -currentTerminalVel) {
                 yVelocity = -currentTerminalVel;
             }
@@ -216,25 +233,35 @@ namespace Physics {
             }
         }
 
-        private void WallJump()
-        {
-            // Wall jump
-            moveVelocity = wallJumpDirection * wallJumpForce.x;
-            yVelocity = wallJumpForce.y;
+        private bool WallJump() {
+            if (IsJumping()) return false;
+            if (controller.isGrounded) return false;
+            if (!controller.CheckLeft() && !controller.CheckRight()) return false;
+
+            yVelocity = 0f;
+            jumpVelocity = wallJumpForce;
+
+            moveVelocity = 0f;
             updateMoveVelocityCooldown = 0.05f; // No control for a bit
+
+            return true;
         }
 
-        private void Jump()
-        {
-            yVelocity = isRunning ? runJumpForce : walkJumpForce;
+        private bool Jump() {
+            if (IsJumping()) return false;
+
+            yVelocity = 0f;
+            jumpVelocity = Vector2.up * (isRunning ? runJumpForce : walkJumpForce);
+
+            return true;
         }
 
         public bool IsJumping() {
-            return yVelocity > 0f;
+            return !controller.isGrounded && jumpVelocity.SqrMagnitude() > 0f;
         }
 
         public bool IsFalling() {
-            return yVelocity < 0f && !controller.isGrounded;
+            return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
         }
 
         #endregion

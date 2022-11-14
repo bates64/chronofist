@@ -7088,6 +7088,7 @@ MonoBehaviour:
   walkJumpForce: 20
   runJumpForce: 30
   wallJumpForce: {x: 21, y: 20}
+  jumpVelocityDamping: {x: 0.6, y: 0.6}
   jumpCoyoteTime: 0.1
   wallJumpCoyoteTime: 0.1
   shortJumpKillForce: 25
@@ -7152,7 +7153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ec64af211546edae6bdf5ec826828a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: 0
 --- !u!114 &2146169980
 MonoBehaviour:
   m_ObjectHideFlags: 0
