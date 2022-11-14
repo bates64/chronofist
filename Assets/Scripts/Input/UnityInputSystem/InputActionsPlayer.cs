@@ -64,6 +64,15 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""SpecialAttack1"",
+                    ""type"": ""Button"",
+                    ""id"": ""6ece0454-0672-489b-8b50-1532f3c67263"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""40d60046-e579-414a-875e-e5ef6eab2bb3"",
@@ -77,7 +86,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""2D Vector"",
                     ""id"": ""35973e72-00c6-4fba-8e9c-0c78d9116125"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""2DVector(mode=1)"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -130,6 +139,50 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
+                    ""name"": ""up"",
+                    ""id"": ""32ec5026-7587-4b4a-aadc-1b3f5a4954e5"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""bc28087e-a782-4705-a4be-9629da0e0de6"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a5e1b746-2bf8-4111-9cfc-cebb7d657db9"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""1b0151e7-b0a5-4540-8abf-f5b27b58e8c0"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""d584d596-e3d7-431d-98bf-3ae6a0363deb"",
                     ""path"": ""<Keyboard>/space"",
@@ -142,19 +195,8 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""19272bff-0a97-46eb-9c17-d1cca7684ac0"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f6f4bdb7-7a08-4b55-b503-9ed00c0283aa"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""id"": ""3ba98b0a-ca32-4e87-8280-6025eb264f48"",
+                    ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -166,6 +208,17 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""1b9335fe-a120-42b5-894d-1e8e52cdefb8"",
                     ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1f59d4d-65b8-4293-ae06-7a4c00c625de"",
+                    ""path"": ""<Keyboard>/h"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -187,11 +240,44 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1dccf183-4f5a-4936-8e15-16eb0e835ff1"",
-                    ""path"": ""<Mouse>/rightButton"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SpecialAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cf3c0a01-9b7a-4772-98fc-4763cffaef96"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cfe18f9e-4f93-4eb0-bca7-73d3eb7e686d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialAttack1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea098ffe-9df1-4687-ae9b-19cdf951094f"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpecialAttack1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -422,6 +508,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         m_Main_Jump = m_Main.FindAction("Jump", throwIfNotFound: true);
         m_Main_Attack = m_Main.FindAction("Attack", throwIfNotFound: true);
         m_Main_SpecialAttack = m_Main.FindAction("SpecialAttack", throwIfNotFound: true);
+        m_Main_SpecialAttack1 = m_Main.FindAction("SpecialAttack1", throwIfNotFound: true);
         m_Main_Pause = m_Main.FindAction("Pause", throwIfNotFound: true);
         // Interface
         m_Interface = asset.FindActionMap("Interface", throwIfNotFound: true);
@@ -494,6 +581,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_Jump;
     private readonly InputAction m_Main_Attack;
     private readonly InputAction m_Main_SpecialAttack;
+    private readonly InputAction m_Main_SpecialAttack1;
     private readonly InputAction m_Main_Pause;
     public struct MainActions
     {
@@ -503,6 +591,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Main_Jump;
         public InputAction @Attack => m_Wrapper.m_Main_Attack;
         public InputAction @SpecialAttack => m_Wrapper.m_Main_SpecialAttack;
+        public InputAction @SpecialAttack1 => m_Wrapper.m_Main_SpecialAttack1;
         public InputAction @Pause => m_Wrapper.m_Main_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
@@ -525,6 +614,9 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 @SpecialAttack.started -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
                 @SpecialAttack.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
                 @SpecialAttack.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
+                @SpecialAttack1.started -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
+                @SpecialAttack1.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
+                @SpecialAttack1.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
                 @Pause.started -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
@@ -544,6 +636,9 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 @SpecialAttack.started += instance.OnSpecialAttack;
                 @SpecialAttack.performed += instance.OnSpecialAttack;
                 @SpecialAttack.canceled += instance.OnSpecialAttack;
+                @SpecialAttack1.started += instance.OnSpecialAttack1;
+                @SpecialAttack1.performed += instance.OnSpecialAttack1;
+                @SpecialAttack1.canceled += instance.OnSpecialAttack1;
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
@@ -630,6 +725,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnSpecialAttack(InputAction.CallbackContext context);
+        void OnSpecialAttack1(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
     }
     public interface IInterfaceActions
