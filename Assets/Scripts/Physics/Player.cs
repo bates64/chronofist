@@ -205,8 +205,9 @@ namespace Physics {
                 var damping = didJumpCancel ? jumpVelocityDamping * 30f : jumpVelocityDamping;
                 jumpVelocity -= jumpVelocity * damping * deltaTime;
 
-                // If we've passed the apex of the jump, transfer jump velocity away
-                if ((jumpVelocity.y + yVelocity) < 0f) {
+                // If we've passed the apex of the jump or the user wall jump cancelled, transfer jump velocity away
+                bool reachedApex = (jumpVelocity.y + yVelocity) < 0f;
+                if (reachedApex || checkWallJumpCancel()) {
                     // X: jumpVelocity->moveVelocity
                     moveVelocity = jumpVelocity.x;
 
@@ -307,6 +308,24 @@ namespace Physics {
 
         public bool IsFalling() {
             return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
+        }
+
+        // Wall jump cancels are when you release the opposite direction of the direction you are wall-jumping off of.
+        // e.g. player wall-jumps off the left wall, then pushes the stick in the left direction to cancel it.
+        private bool _wallJumpCancel_previousIsInputDown = false;
+        private bool checkWallJumpCancel() {
+            if (!isWallJumping) return false;
+
+            bool isInputDown = false;
+            if (wallJumpDirection <= 0)
+                isInputDown = InputManager.PlayerInput.Movement.x <= 0;
+            else
+                isInputDown = InputManager.PlayerInput.Movement.x >= 0;
+
+            bool isRisingEdge = !isInputDown && _wallJumpCancel_previousIsInputDown;
+            _wallJumpCancel_previousIsInputDown = isInputDown;
+
+            return isRisingEdge;
         }
 
         #endregion
