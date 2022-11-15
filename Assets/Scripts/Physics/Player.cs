@@ -78,16 +78,10 @@ namespace Physics {
         private float timeSinceWall = Mathf.Infinity;
         private float wallJumpDirection = 0f;
         private bool isRunning = false;
-        private bool isWallJumping = false; // Set to false at apex
         private bool isFacingLeft = false;
 
         private void UpdateMoveVelocity(float input) {
             float deltaTime = LocalTime.DeltaTimeAt(this);
-
-            // No horizontal movement control until wall jump apex
-            if (isWallJumping) {
-                return;
-            }
 
             if (Mathf.Abs(input) >= 0.8f) {
                 if (controller.isGrounded)
@@ -151,6 +145,13 @@ namespace Physics {
                 } else if (moveVelocity < -0.1f && left) {
                     moveVelocity = -0.1f;
                 }
+                if (jumpVelocity.y <= 0f) {
+                    if (jumpVelocity.x > 0.1f && left) {
+                        jumpVelocity.x = 0f;
+                    } else if (jumpVelocity.x < -0.1f && right) {
+                        jumpVelocity.x = 0f;
+                    }
+                }
 
                 // Check for stored wall jump
                 ApplyStoredJump();
@@ -194,35 +195,31 @@ namespace Physics {
         private void ApplyGravity() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
-            // Jumping
-            if (jumpVelocity.SqrMagnitude() > 1f) {
+            // Jumping (upwards portion)
+            if (jumpVelocity.y > 0f) {
                 // Check for jump cancel (jump button released before apex)
                 if (!InputManager.PlayerInput.Jump) {
                     didJumpCancel = true;
                 }
 
-                // Apply jump damping (30x if cancelled)
-                var damping = didJumpCancel ? jumpVelocityDamping * 30f : jumpVelocityDamping;
-                jumpVelocity -= jumpVelocity * damping * deltaTime;
+                // Apply y-axis jump damping (24x if cancelled)
+                var yJumpDamping = didJumpCancel ? jumpVelocityDamping.y * 24f : jumpVelocityDamping.y;
+                jumpVelocity.y -= jumpVelocity.y * yJumpDamping * deltaTime;
 
-                // If we've passed the apex of the jump or the user wall jump cancelled, transfer jump velocity away
-                bool reachedApex = (jumpVelocity.y + yVelocity) < 0f;
-                if (reachedApex || checkWallJumpCancel()) {
-                    // X: jumpVelocity->moveVelocity
-                    moveVelocity = jumpVelocity.x;
-
+                // If we've passed the apex of the jump, transfer jump y velocity away
+                if ((jumpVelocity.y + yVelocity) < 0f) {
                     // Y: jumpVelocity->0 & yVelocity->0 to apply gravity from zero
                     yVelocity = 0f;
+                    jumpVelocity.y = 0f;
 
-                    jumpVelocity = Vector2.zero;
-
-                    isWallJumping = false;
+                    didJumpCancel = false;
                 }
             } else {
-                // We're not on the upwards part of the jump
-                jumpVelocity = Vector2.zero;
-                didJumpCancel = false;
+                jumpVelocity.y = 0f;
             }
+            // Apply x-axis jump damping (24x if grounded)
+            var xJumpDamping = controller.isGrounded ? jumpVelocityDamping.x * 24f  : jumpVelocityDamping.x;
+            jumpVelocity.x -= jumpVelocity.x * xJumpDamping * deltaTime;
 
             // Gravity
             yVelocity -= gravity * deltaTime;
@@ -284,10 +281,11 @@ namespace Physics {
             if (!controller.CheckLeft() && !controller.CheckRight()) return false;
 
             yVelocity = 0f;
-            jumpVelocity = wallJumpForce;
-            jumpVelocity.x *= wallJumpDirection;
 
-            isWallJumping = true; // No control for a bit
+            // wallJumpForce.x is partially given to moveVelocity, the rest is given to jumpVelocity.x
+            float moveForce = Mathf.Min(wallJumpForce.x, maxRunSpeed);
+            moveVelocity = moveForce * wallJumpDirection;
+            jumpVelocity = new Vector2(Mathf.Max(0f, wallJumpForce.x - moveForce) * wallJumpDirection, wallJumpForce.y);
 
             return true;
         }
@@ -308,24 +306,6 @@ namespace Physics {
 
         public bool IsFalling() {
             return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
-        }
-
-        // Wall jump cancels are when you release the opposite direction of the direction you are wall-jumping off of.
-        // e.g. player wall-jumps off the left wall, then pushes the stick in the left direction to cancel it.
-        private bool _wallJumpCancel_previousIsInputDown = false;
-        private bool checkWallJumpCancel() {
-            if (!isWallJumping) return false;
-
-            bool isInputDown = false;
-            if (wallJumpDirection <= 0)
-                isInputDown = InputManager.PlayerInput.Movement.x <= 0;
-            else
-                isInputDown = InputManager.PlayerInput.Movement.x >= 0;
-
-            bool isRisingEdge = !isInputDown && _wallJumpCancel_previousIsInputDown;
-            _wallJumpCancel_previousIsInputDown = isInputDown;
-
-            return isRisingEdge;
         }
 
         #endregion
