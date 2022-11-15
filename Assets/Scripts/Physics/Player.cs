@@ -71,6 +71,7 @@ namespace Physics {
         [Range(0,100)][SerializeField] private float accelerationGround = 80f;
         //private float accelerationReverseDirection = 1f;
         [Range(0,200)][SerializeField] private float decceleration = 80f;
+        [Range(0f, 5f)] public float slideAccelerationMultiplier = 1.5f;
 
         private float moveVelocity = 0f;
         private float moveTime = 0f;
@@ -79,6 +80,7 @@ namespace Physics {
         private float wallJumpDirection = 0f;
         private bool isRunning = false;
         private bool isFacingLeft = false;
+        private bool isSliding = false;
 
         private void UpdateMoveVelocity(float input) {
             float deltaTime = LocalTime.DeltaTimeAt(this);
@@ -91,6 +93,7 @@ namespace Physics {
             }
 
             isRunning = timeHeldMaxXInput >= timeToHoldMaxXInputToRun;
+            isSliding = false; // set to true later
             float targetVelocity = input * (isRunning ? maxRunSpeed : maxWalkSpeed);
 
             if (Mathf.Abs(targetVelocity) == 0f || Mathf.Abs(targetVelocity) < Mathf.Abs(moveVelocity)) { // Deccelerate if no input or we are above max speed
@@ -110,8 +113,10 @@ namespace Physics {
                 float acceleration = input * (controller.isGrounded ? accelerationGround : accelerationAir) * deltaTime;
 
                 // Reversing direction is faster
-                if (acceleration < 0f && isRunning && controller.isGrounded)
-                    acceleration *= 2f; // TODO: slide anim
+                if (Mathf.Sign(moveVelocity) == -Mathf.Sign(acceleration) && controller.isGrounded) {
+                    acceleration *= slideAccelerationMultiplier;
+                    isSliding = true;
+                }
 
                 if (Mathf.Abs(moveVelocity + acceleration) <= Mathf.Abs(targetVelocity)) { // If accelerating will not exceed target...
                     // Apply acceleration normally
@@ -174,6 +179,10 @@ namespace Physics {
 
         public bool IsFacingLeft() {
             return isFacingLeft;
+        }
+
+        public bool IsSlidng() {
+            return isSliding;
         }
 
         #endregion

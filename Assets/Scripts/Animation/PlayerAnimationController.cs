@@ -30,6 +30,8 @@ namespace Animation {
                 anim = Anim.Jump;
             } else if (player.IsFalling()) {
                 anim = Anim.Fall;
+            } else if (player.IsSlidng()) {
+                anim = Anim.Slide;
             } else if (player.IsMovingHorizontally()) {
                 anim = Anim.Run;
             } else {
