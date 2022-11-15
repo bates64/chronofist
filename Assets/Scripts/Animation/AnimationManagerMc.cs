@@ -32,6 +32,17 @@ namespace Animation
             WallCling = 4,
             DashForward = 5,
             DashBackward = 6,
+            Slide = 7,
+            Push = 8,
+            Punch1 = 9,
+            Punch2 = 10,
+            Punch3 = 11,
+            AirPunch1 = 12,
+            AirPunch2 = 13,
+            AirPunch3 = 14,
+            Uppercut = 15,
+            Slam = 16,
+            Damage = 17
         }
     }
 }
