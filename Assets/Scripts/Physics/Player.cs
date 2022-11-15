@@ -170,7 +170,7 @@ namespace Physics {
         }
 
         public bool IsWallSliding() {
-            return timeSinceWall < 0.01f && !controller.isGrounded && Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f;
+            return timeSinceWall < 0.01f && !controller.isGrounded && Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f && moveVelocity != 0f;
         }
 
         public bool IsWallPushing() {
