@@ -26,6 +26,12 @@ namespace Animation {
                 anim = Anim.DashForward;
             } else if (player.GetAttackType() == Player.AttackType.DashBackward) {
                 anim = Anim.DashBackward;
+            } else if (player.GetAttackType() == Player.AttackType.Jab1) {
+                anim = player.IsAirbourne() ? Anim.AirPunch1 : Anim.Punch1;
+            } else if (player.GetAttackType() == Player.AttackType.Jab2) {
+                anim = player.IsAirbourne() ? Anim.AirPunch2 : Anim.Punch2;
+            } else if (player.GetAttackType() == Player.AttackType.Jab3) {
+                anim = player.IsAirbourne() ? Anim.AirPunch3 : Anim.Punch3;
             } else if (player.IsWallPushing()) {
                 anim = Anim.Push;
             } else if (player.IsWallSliding()) {

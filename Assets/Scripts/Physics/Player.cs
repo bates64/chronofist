@@ -334,6 +334,10 @@ namespace Physics {
             return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
         }
 
+        public bool IsAirbourne() {
+            return !controller.isGrounded;
+        }
+
         private bool isPushingWall() {
             return (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) || (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
         }
@@ -341,6 +345,14 @@ namespace Physics {
         #endregion
 
         #region Attack
+
+        [Header("Jab")]
+        public float jabForce = 10f;
+        public float jabAttackDuration = 0.2f;
+        public float jabAttackCooldown = 0.5f;
+        public float jabMovementSpeedMultiplier = 0f;
+        public float jabFallSpeedMultiplier = 0f;
+        public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
 
         [Header("Dash")]
         public float dashForce = 40f;
@@ -359,6 +371,9 @@ namespace Physics {
 
         public enum AttackType {
             None,
+            Jab1,
+            Jab2,
+            Jab3,
             DashForward,
             DashBackward,
         }
@@ -374,7 +389,7 @@ namespace Physics {
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
-                // TODO
+                Jab();
             }
         }
 
@@ -388,6 +403,36 @@ namespace Physics {
             if (isPressed) {
                 Dash();
             }
+        }
+
+        private void Jab() {
+            if (attackDisableTime > 0f) {
+                // Combo
+                if (attackType == AttackType.Jab1) {
+                    attackType = AttackType.Jab2;
+                } else if (attackType == AttackType.Jab2) {
+                    attackType = AttackType.Jab3;
+                } else {
+                    return;
+                }
+            } else {
+                attackType = AttackType.Jab1;
+            }
+
+            // Jab is in direction player is facing...
+            float direction = isFacingLeft ? -1f : 1f;
+            // ...overriden by input.
+            if (InputManager.PlayerInput.Movement.x != 0f) {
+                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            }
+
+            // Jab!
+            moveVelocity *= jabMovementSpeedMultiplier;
+            yVelocity *= jabFallSpeedMultiplier;
+            jumpVelocity *= jabJumpSpeedMultiplier;
+            jumpVelocity += Vector2.right * direction * jabForce;
+            physicsDisableTime = jabAttackDuration;
+            attackDisableTime = jabAttackCooldown;
         }
 
         private void Dash() {

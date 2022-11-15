@@ -7094,6 +7094,12 @@ MonoBehaviour:
   gravity: 60
   terminalFallVelocity: 40
   wallSlideSpeed: 6
+  jabForce: 5
+  jabAttackDuration: 0.4
+  jabAttackCooldown: 0.5
+  jabMovementSpeedMultiplier: 0.4
+  jabFallSpeedMultiplier: 0.8
+  jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
   dashForce: 30
   dashDuration: 0.2
   dashCooldown: 0.5
