@@ -243,8 +243,7 @@ namespace Physics {
             if (!controller.isGrounded && totalVel <= 0f) {
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
-                bool isPushing = (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) || (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
-                if (isPushing) {
+                if (isPushingWall()) {
                     if (totalVel < 0f)
                         currentTerminalVel = wallSlideSpeed;
                     isFacingLeft = controller.CheckRight();
@@ -295,7 +294,7 @@ namespace Physics {
 
         private bool WallJump() {
             if (controller.isGrounded) return false;
-            if (!controller.CheckLeft() && !controller.CheckRight()) return false;
+            if (!isPushingWall()) return false;
 
             yVelocity = 0f;
 
@@ -323,6 +322,10 @@ namespace Physics {
 
         public bool IsFalling() {
             return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
+        }
+
+        private bool isPushingWall() {
+            return (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) || (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
         }
 
         #endregion
