@@ -252,6 +252,10 @@ namespace Physics {
                     // TODO: produce particles
                 }
             }
+            if (!controller.isGrounded && InputManager.PlayerInput.Movement.y < 0) { // Fast fall
+                currentTerminalVel *= 4f * Mathf.Abs(InputManager.PlayerInput.Movement.y);
+                yVelocity -= 50f * deltaTime;
+            }
             if (totalVel < -currentTerminalVel) {
                 yVelocity = -currentTerminalVel;
             }
