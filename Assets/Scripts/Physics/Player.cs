@@ -243,7 +243,7 @@ namespace Physics {
             if (!controller.isGrounded && totalVel <= 0f) {
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
-                bool isPushing = (controller.CheckLeft() && moveVelocity < 0f) || (controller.CheckRight() && moveVelocity > 0f);
+                bool isPushing = (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) || (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
                 if (isPushing) {
                     if (totalVel < 0f)
                         currentTerminalVel = wallSlideSpeed;
