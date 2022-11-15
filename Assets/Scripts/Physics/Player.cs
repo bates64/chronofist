@@ -164,8 +164,12 @@ namespace Physics {
             return Mathf.Abs(moveVelocity) > 0.1f;
         }
 
-        public bool IsWallClinging() {
-            return timeSinceWall < 0.1f;
+        public bool IsWallSliding() {
+            return timeSinceWall < 0.01f && !controller.isGrounded;
+        }
+
+        public bool IsWallPushing() {
+            return timeSinceWall < 0.01f && controller.isGrounded && Mathf.Abs(moveVelocity) > 0f;
         }
 
         public bool IsFacingLeft() {

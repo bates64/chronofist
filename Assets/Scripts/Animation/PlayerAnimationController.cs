@@ -22,8 +22,10 @@ namespace Animation {
         private void LateUpdate() {
             var previousAnim = anim;
 
-            if (player.IsWallClinging()) {
-                anim = Anim.WallCling; // TODO: WallPush if IsGrounded
+            if (player.IsWallPushing()) {
+                anim = Anim.Push;
+            } else if (player.IsWallSliding()) {
+                anim = Anim.WallCling;
             } else if (player.IsJumping()) {
                 anim = Anim.Jump;
             } else if (player.IsFalling()) {
