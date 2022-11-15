@@ -7093,7 +7093,7 @@ MonoBehaviour:
   jumpCoyoteTime: 0.1
   wallJumpCoyoteTime: 0.1
   gravity: 60
-  terminalFallVelocity: 25
+  terminalFallVelocity: 40
   wallSlideSpeed: 6
 --- !u!114 &2146169975
 MonoBehaviour:
