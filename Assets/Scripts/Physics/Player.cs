@@ -78,14 +78,14 @@ namespace Physics {
         private float timeSinceWall = Mathf.Infinity;
         private float wallJumpDirection = 0f;
         private bool isRunning = false;
-        private float updateMoveVelocityCooldown = 0f;
+        private bool isWallJumping = false; // Set to false at apex
         private bool isFacingLeft = false;
 
         private void UpdateMoveVelocity(float input) {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
-            if (updateMoveVelocityCooldown > 0f) {
-                updateMoveVelocityCooldown -= deltaTime;
+            // No horizontal movement control until wall jump apex
+            if (isWallJumping) {
                 return;
             }
 
@@ -214,6 +214,8 @@ namespace Physics {
                     yVelocity = 0f;
 
                     jumpVelocity = Vector2.zero;
+
+                    isWallJumping = false;
                 }
             } else {
                 // We're not on the upwards part of the jump
@@ -284,8 +286,7 @@ namespace Physics {
             jumpVelocity = wallJumpForce;
             jumpVelocity.x *= wallJumpDirection;
 
-            //moveVelocity = 0f;
-            updateMoveVelocityCooldown = 0.2f; // No control for a bit
+            isWallJumping = true; // No control for a bit
 
             return true;
         }
