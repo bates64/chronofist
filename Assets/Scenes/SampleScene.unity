@@ -7080,7 +7080,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cb91cbd8017e4155a38417f69ee634a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jabAttackPrefab: {fileID: 7976835893613702979, guid: 5f938257f8dd14c3aaf51f2025754877, type: 3}
   maxRunSpeed: 21
   accelerationAir: 120
   accelerationGround: 80
@@ -7095,6 +7094,12 @@ MonoBehaviour:
   gravity: 60
   terminalFallVelocity: 40
   wallSlideSpeed: 6
+  dashForce: 30
+  dashDuration: 0.2
+  dashCooldown: 0.5
+  dashFallSpeedMultiplier: 0
+  dashJumpSpeedMultiplier: {x: 0.8, y: 0}
+  maxAirDashes: 0
 --- !u!114 &2146169975
 MonoBehaviour:
   m_ObjectHideFlags: 0

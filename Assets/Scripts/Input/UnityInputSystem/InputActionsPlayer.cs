@@ -55,7 +55,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SpecialAttack"",
+                    ""name"": ""Special"",
                     ""type"": ""Button"",
                     ""id"": ""0c8431d0-c890-49f4-b533-9ad33c24fb58"",
                     ""expectedControlType"": ""Button"",
@@ -64,7 +64,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SpecialAttack1"",
+                    ""name"": ""Dash"",
                     ""type"": ""Button"",
                     ""id"": ""6ece0454-0672-489b-8b50-1532f3c67263"",
                     ""expectedControlType"": ""Button"",
@@ -244,7 +244,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttack"",
+                    ""action"": ""Special"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -255,7 +255,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttack"",
+                    ""action"": ""Special"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -266,7 +266,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttack1"",
+                    ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -277,7 +277,7 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttack1"",
+                    ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -507,8 +507,8 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         m_Main_Move = m_Main.FindAction("Move", throwIfNotFound: true);
         m_Main_Jump = m_Main.FindAction("Jump", throwIfNotFound: true);
         m_Main_Attack = m_Main.FindAction("Attack", throwIfNotFound: true);
-        m_Main_SpecialAttack = m_Main.FindAction("SpecialAttack", throwIfNotFound: true);
-        m_Main_SpecialAttack1 = m_Main.FindAction("SpecialAttack1", throwIfNotFound: true);
+        m_Main_Special = m_Main.FindAction("Special", throwIfNotFound: true);
+        m_Main_Dash = m_Main.FindAction("Dash", throwIfNotFound: true);
         m_Main_Pause = m_Main.FindAction("Pause", throwIfNotFound: true);
         // Interface
         m_Interface = asset.FindActionMap("Interface", throwIfNotFound: true);
@@ -580,8 +580,8 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_Move;
     private readonly InputAction m_Main_Jump;
     private readonly InputAction m_Main_Attack;
-    private readonly InputAction m_Main_SpecialAttack;
-    private readonly InputAction m_Main_SpecialAttack1;
+    private readonly InputAction m_Main_Special;
+    private readonly InputAction m_Main_Dash;
     private readonly InputAction m_Main_Pause;
     public struct MainActions
     {
@@ -590,8 +590,8 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Main_Move;
         public InputAction @Jump => m_Wrapper.m_Main_Jump;
         public InputAction @Attack => m_Wrapper.m_Main_Attack;
-        public InputAction @SpecialAttack => m_Wrapper.m_Main_SpecialAttack;
-        public InputAction @SpecialAttack1 => m_Wrapper.m_Main_SpecialAttack1;
+        public InputAction @Special => m_Wrapper.m_Main_Special;
+        public InputAction @Dash => m_Wrapper.m_Main_Dash;
         public InputAction @Pause => m_Wrapper.m_Main_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
@@ -611,12 +611,12 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_MainActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnAttack;
-                @SpecialAttack.started -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
-                @SpecialAttack.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
-                @SpecialAttack.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack;
-                @SpecialAttack1.started -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
-                @SpecialAttack1.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
-                @SpecialAttack1.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecialAttack1;
+                @Special.started -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecial;
+                @Special.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecial;
+                @Special.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnSpecial;
+                @Dash.started -= m_Wrapper.m_MainActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnDash;
                 @Pause.started -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_MainActionsCallbackInterface.OnPause;
@@ -633,12 +633,12 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
-                @SpecialAttack.started += instance.OnSpecialAttack;
-                @SpecialAttack.performed += instance.OnSpecialAttack;
-                @SpecialAttack.canceled += instance.OnSpecialAttack;
-                @SpecialAttack1.started += instance.OnSpecialAttack1;
-                @SpecialAttack1.performed += instance.OnSpecialAttack1;
-                @SpecialAttack1.canceled += instance.OnSpecialAttack1;
+                @Special.started += instance.OnSpecial;
+                @Special.performed += instance.OnSpecial;
+                @Special.canceled += instance.OnSpecial;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
@@ -724,8 +724,8 @@ public partial class @InputActionsPlayer : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnSpecialAttack(InputAction.CallbackContext context);
-        void OnSpecialAttack1(InputAction.CallbackContext context);
+        void OnSpecial(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
     }
     public interface IInterfaceActions

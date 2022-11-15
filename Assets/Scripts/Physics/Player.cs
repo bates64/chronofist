@@ -6,8 +6,6 @@ namespace Physics {
     [RequireComponent(typeof(Controller2D))]
     [RequireComponent(typeof(Health.Health))]
     public class Player : MonoBehaviour {
-        public GameObject jabAttackPrefab;
-
         private Controller2D controller;
 
         private void Awake() {
@@ -18,22 +16,30 @@ namespace Physics {
 
             InputManager.PlayerInput.OnJumpChange += OnInputJump;
             InputManager.PlayerInput.OnAttackChange += OnInputAttack;
+            InputManager.PlayerInput.OnSpecialChange += OnInputSpecial;
+            InputManager.PlayerInput.OnDashChange += OnInputDash;
+
+            airDashesRemaining = maxAirDashes;
         }
 
         private void Update() {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
             timeSinceStoredJump += deltaTime;
+            physicsDisableTime -= deltaTime;
+            attackDisableTime -= deltaTime;
 
-            UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
-            ApplyGravity();
+            if (physicsDisableTime <= 0f) {
+                UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
+                ApplyGravity();
+            }
+
             UpdateWalls();
-            UpdateAttackType();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"jumpVelocity={jumpVelocity}");
+            UiManager.DebugUi.SetStateName($"attackType: {attackType}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -49,6 +55,8 @@ namespace Physics {
         private void OnLanding() {
             // Kill vertical movement
             yVelocity = 0f;
+
+            airDashesRemaining = maxAirDashes;
 
             ApplyStoredJump();
         }
@@ -295,6 +303,7 @@ namespace Physics {
         private bool WallJump() {
             if (controller.isGrounded) return false;
             if (!isPushingWall()) return false;
+            if (physicsDisableTime > 0f) return false;
 
             yVelocity = 0f;
 
@@ -309,6 +318,7 @@ namespace Physics {
         private bool Jump() {
             if (IsJumping()) return false;
             if (!controller.isGrounded) return false;
+            if (physicsDisableTime > 0f) return false;
 
             yVelocity = 0f;
             jumpVelocity = Vector2.up * (isRunning ? runJumpForce : walkJumpForce);
@@ -332,64 +342,89 @@ namespace Physics {
 
         #region Attack
 
-        enum AttackDirection {
+        [Header("Dash")]
+        public float dashForce = 40f;
+        public float dashDuration = 0.1f;
+        public float dashCooldown = 0.2f;
+        public float dashFallSpeedMultiplier = 0f;
+        public Vector2 dashJumpSpeedMultiplier = Vector2.zero;
+        public int maxAirDashes = 1;
+
+        private enum AttackDirection {
             Up,
             Down,
             Left,
             Right,
         }
 
-        private AttackDirection attackDirection = AttackDirection.Left;
+        public enum AttackType {
+            None,
+            DashForward,
+            DashBackward,
+        }
 
-        private void UpdateAttackType() {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-            Vector3 direction = (mousePosition - transform.position).normalized;
+        private AttackType attackType = AttackType.None;
+        private float physicsDisableTime = 0f; // Disables movement & gravity if positive
+        private float attackDisableTime = 0f; // No attacks during cooldown
+        private int airDashesRemaining;
 
-            // Direction to degrees
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            // Normalize angle to 0-360
-            if (angle < 0f) {
-                angle += 360f;
-            }
-
-            // Convert to attack type
-            if (angle >= 45f && angle < 135f) {
-                attackDirection = AttackDirection.Up;
-            } else if (angle >= 135f && angle < 225f) {
-                attackDirection = AttackDirection.Left;
-            } else if (angle >= 225f && angle < 315f) {
-                attackDirection = AttackDirection.Down;
-            } else {
-                attackDirection = AttackDirection.Right;
-            }
+        public AttackType GetAttackType() {
+            return physicsDisableTime > 0f ? attackType : AttackType.None;
         }
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
-                switch (attackDirection) {
-                    case AttackDirection.Up:
-                        // TODO
-                        break;
-                    case AttackDirection.Down:
-                        // TODO
-                        break;
-                    case AttackDirection.Left:
-                    case AttackDirection.Right:
-                        SpawnJabAttack(attackDirection == AttackDirection.Left);
-                        break;
-                }
+                // TODO
             }
         }
 
-        private void SpawnJabAttack(bool isLeft) {
-            if (jabAttackPrefab == null) {
-                Debug.LogError("Jab attack prefab not set");
-                return;
+        private void OnInputSpecial(bool isPressed) {
+            if (isPressed) {
+                // TODO
+            }
+        }
+
+        private void OnInputDash(bool isPressed) {
+            if (isPressed) {
+                Dash();
+            }
+        }
+
+        private void Dash() {
+            if (attackDisableTime > 0f) return;
+            if (!controller.isGrounded) {
+                if (airDashesRemaining == 0) return;
+                airDashesRemaining--;
             }
 
-            var jab = Instantiate(jabAttackPrefab, transform.position + new Vector3(isLeft ? -1f : 1f, 0f, 0f), Quaternion.identity);
-            jab.transform.localScale = new Vector3(isLeft ? -1f : 1f, 1f, 1f);
+            // Dash is in direction player is facing...
+            float direction = isFacingLeft ? -1f : 1f;
+            // ...overriden by movement velocity...
+            if (moveVelocity != 0f) {
+                direction = Mathf.Sign(moveVelocity);
+            }
+            // ...overriden by input...
+            if (InputManager.PlayerInput.Movement.x != 0f) {
+                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            }
+            // ...overriden by wall if they're against one.
+            if (isPushingWall()) {
+                direction = wallJumpDirection;
+            }
+
+            // If the dash is in the direction of current velocity, it's a dash forward.
+            if (Mathf.Sign(moveVelocity) == direction) {
+                attackType = AttackType.DashForward;
+            } else {
+                attackType = AttackType.DashBackward;
+            }
+
+            // Dash!
+            moveVelocity = direction * dashForce;
+            jumpVelocity *= dashJumpSpeedMultiplier;
+            yVelocity *= dashFallSpeedMultiplier;
+            physicsDisableTime = dashDuration;
+            attackDisableTime = dashCooldown;
         }
 
         #endregion

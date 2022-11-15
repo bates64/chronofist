@@ -22,7 +22,11 @@ namespace Animation {
         private void LateUpdate() {
             var previousAnim = anim;
 
-            if (player.IsWallPushing()) {
+            if (player.GetAttackType() == Player.AttackType.DashForward) {
+                anim = Anim.DashForward;
+            } else if (player.GetAttackType() == Player.AttackType.DashBackward) {
+                anim = Anim.DashBackward;
+            } else if (player.IsWallPushing()) {
                 anim = Anim.Push;
             } else if (player.IsWallSliding()) {
                 anim = Anim.WallCling;
