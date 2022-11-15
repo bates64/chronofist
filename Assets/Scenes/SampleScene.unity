@@ -7084,7 +7084,8 @@ MonoBehaviour:
   maxRunSpeed: 21
   accelerationAir: 120
   accelerationGround: 80
-  decceleration: 80
+  decceleration: 60
+  slideAccelerationMultiplier: 0.7
   walkJumpForce: 20
   runJumpForce: 36
   wallJumpForce: {x: 30, y: 15}

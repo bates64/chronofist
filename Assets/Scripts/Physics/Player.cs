@@ -170,7 +170,7 @@ namespace Physics {
         }
 
         public bool IsWallSliding() {
-            return timeSinceWall < 0.01f && !controller.isGrounded;
+            return timeSinceWall < 0.01f && !controller.isGrounded && Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f;
         }
 
         public bool IsWallPushing() {
@@ -237,10 +237,10 @@ namespace Physics {
             // Gravity
             yVelocity -= gravity * deltaTime;
 
-            // TerminalY velocity
+            // Terminal Y velocity
             float totalVel = yVelocity + jumpVelocity.y;
             float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            if (!controller.isGrounded) {
+            if (!controller.isGrounded && totalVel <= 0f) {
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
                 bool isPushing = (controller.CheckLeft() && moveVelocity < 0f) || (controller.CheckRight() && moveVelocity > 0f);
