@@ -1,10 +1,8 @@
 ﻿using General;
 using UnityEngine;
 
-namespace UI
-{
-    public class UiManager : Singleton<UiManager>
-    {
+namespace UI {
+    public class UiManager : Singleton<UiManager> {
         [SerializeField] private DebugUi debugUi;
 
         #region Properties
@@ -12,7 +10,8 @@ namespace UI
         public static DebugUi DebugUi => Instance.debugUi;
 
         #endregion
-        
-        protected override void init() {}
+
+        protected override void init() {
+        }
     }
 }

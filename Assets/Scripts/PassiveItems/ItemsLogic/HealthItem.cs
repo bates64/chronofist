@@ -1,15 +1,12 @@
 ﻿using UnityEngine;
 
-namespace PassiveItems
-{
+namespace PassiveItems {
     [CreateAssetMenu(fileName = "Passive Item", menuName = "Scriptable Objects/Passive Items/Stats Increase/Health")]
-    public class HealthItem : PassiveItem
-    {
+    public class HealthItem : PassiveItem {
         [SerializeField] private int amount;
         [SerializeField] private bool isHeal;
-        
-        public override void EquipItem(Pickupper pickupper)
-        {
+
+        public override void EquipItem(Pickupper pickupper) {
             var health = pickupper.gameObject.GetComponent<Health.Health>();
 
             if (health == null) {

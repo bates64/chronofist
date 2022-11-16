@@ -1,12 +1,9 @@
 ﻿using System;
 using UnityEngine;
-using Physics;
 
-namespace PassiveItems
-{
+namespace PassiveItems {
     [Serializable]
-    public abstract class PassiveItem : ScriptableObject
-    {
+    public abstract class PassiveItem : ScriptableObject {
         [SerializeField] private string itemName;
         [SerializeField] private Sprite sprite;
         [SerializeField] private string description;
@@ -14,7 +11,7 @@ namespace PassiveItems
         public string Name => itemName;
         public Sprite Sprite => sprite;
         public string Description => description;
-        
-        abstract public void EquipItem(Pickupper pickupper);
+
+        public abstract void EquipItem(Pickupper pickupper);
     }
 }

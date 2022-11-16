@@ -6,22 +6,20 @@ namespace Physics {
 
         public static int Layer => LayerMask.NameToLayer("Local Time");
 
-        void Start() {
-            if (gameObject.layer != Layer) {
-                Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
-            }
+        private void Start() {
+            if (gameObject.layer != Layer) Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
 
             LocalTime.InvalidateMultiplierAtCache();
         }
 
-        void Update() {
+        private void Update() {
             if (transform.hasChanged) {
                 LocalTime.InvalidateMultiplierAtCache();
                 transform.hasChanged = false;
             }
         }
 
-        void Destroy() {
+        private void Destroy() {
             LocalTime.InvalidateMultiplierAtCache();
         }
     }

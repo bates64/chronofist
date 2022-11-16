@@ -3,17 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace Input {
     public class InterfaceInputs : InputSystemConsumer {
-        public bool moveUp { get; private set; } = false;
-        public bool moveDown { get; private set; } = false;
-        public bool moveLeft { get; private set; } = false;
-        public bool moveRight { get; private set; } = false;
-
-        public bool back { get; private set; } = false;
-        public bool interact { get; private set; } = false;
-
-        public Vector2Int movement => getMovement();
-
-        public InterfaceInputs(): base() {
+        public InterfaceInputs() {
             _actions.Interface.MoveUp.performed += RelayMoveUp;
             _actions.Interface.MoveUp.canceled += RelayMoveUp;
             _actions.Interface.MoveDown.performed += RelayMoveUp;
@@ -27,6 +17,16 @@ namespace Input {
             _actions.Interface.Interact.performed += RelayInteract;
             _actions.Interface.Interact.canceled += RelayInteract;
         }
+
+        public bool moveUp { get; private set; }
+        public bool moveDown { get; private set; }
+        public bool moveLeft { get; private set; }
+        public bool moveRight { get; private set; }
+
+        public bool back { get; private set; }
+        public bool interact { get; private set; }
+
+        public Vector2Int movement => getMovement();
 
         private void RelayMoveUp(InputAction.CallbackContext context) {
             moveUp = context.ReadValueAsButton();
@@ -53,7 +53,7 @@ namespace Input {
         }
 
         private Vector2Int getMovement() {
-            Vector2Int movement = Vector2Int.zero;
+            var movement = Vector2Int.zero;
             if (moveUp) movement.y += 1;
             if (moveDown) movement.y -= 1;
             if (moveLeft) movement.x -= 1;

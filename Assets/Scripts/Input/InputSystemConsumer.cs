@@ -1,11 +1,7 @@
-using General;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
 namespace Input {
     public class InputSystemConsumer {
-        protected InputActionsPlayer _actions = new InputActionsPlayer();
-        
+        protected InputActionsPlayer _actions = new();
+
         public void Disable() {
             _actions.Disable();
         }

@@ -1,20 +1,15 @@
 ﻿using UnityEngine;
-using Physics;
 
-namespace PassiveItems
-{
-    public class PassiveItemPickup : Pickup
-    {
+namespace PassiveItems {
+    public class PassiveItemPickup : Pickup {
         [SerializeField] private PassiveItem item;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             base.Awake();
             SpriteRenderer.sprite = item.Sprite;
         }
 
-        protected override void OnPickup(Pickupper pickupper)
-        {
+        protected override void OnPickup(Pickupper pickupper) {
             gameObject.SetActive(false);
             item.EquipItem(pickupper);
         }

@@ -1,30 +1,23 @@
 ﻿using UnityEngine;
 
-namespace Physics
-{
-    public class Gravity
-    {
-        public Gravity(float forceValue)
-        {
-            _forceValue = forceValue;
-        }
-        
-        private readonly float _forceValue;
-        private float _accumulatedVelocity;
-
-        public float ForceValue => _forceValue;
-        public float AccumulatedVelocity => _accumulatedVelocity;
-
-        public void ResetForce()
-        {
-            _accumulatedVelocity = 0;
+namespace Physics {
+    public class Gravity {
+        public Gravity(float forceValue) {
+            ForceValue = forceValue;
         }
 
-        public float AddForce(float deltaTime)
-        {
-            _accumulatedVelocity += _forceValue * deltaTime;
-            if (Mathf.Abs(_accumulatedVelocity) < 0.1) _accumulatedVelocity = 0.1f * Mathf.Sign(_forceValue);
-            return _accumulatedVelocity;
+        public float ForceValue { get; }
+
+        public float AccumulatedVelocity { get; private set; }
+
+        public void ResetForce() {
+            AccumulatedVelocity = 0;
+        }
+
+        public float AddForce(float deltaTime) {
+            AccumulatedVelocity += ForceValue * deltaTime;
+            if (Mathf.Abs(AccumulatedVelocity) < 0.1) AccumulatedVelocity = 0.1f * Mathf.Sign(ForceValue);
+            return AccumulatedVelocity;
         }
     }
 }

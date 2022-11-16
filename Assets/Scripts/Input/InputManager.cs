@@ -5,22 +5,13 @@ public class InputManager : Singleton<InputManager> {
     public enum Mode {
         None,
         Player,
-        Interface,
+        Interface
     }
 
     public Mode initialMode = Mode.None;
-
-    private PlayerInputs _playerInput;
     private InterfaceInputs _interfaceInput;
 
-    #region Properties
-
-    public static PlayerInputs PlayerInput => Instance._playerInput;
-    public static InterfaceInputs InterfaceInput => Instance._interfaceInput;
-
-    public Mode mode { get; private set; } = Mode.None;
-
-    #endregion
+    private PlayerInputs _playerInput;
 
     protected override void init() {
         _playerInput = new PlayerInputs();
@@ -53,4 +44,13 @@ public class InputManager : Singleton<InputManager> {
                 break;
         }
     }
+
+    #region Properties
+
+    public static PlayerInputs PlayerInput => Instance._playerInput;
+    public static InterfaceInputs InterfaceInput => Instance._interfaceInput;
+
+    public Mode mode { get; private set; } = Mode.None;
+
+    #endregion
 }

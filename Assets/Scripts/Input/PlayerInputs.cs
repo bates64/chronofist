@@ -4,31 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace Input {
     public class PlayerInputs : InputSystemConsumer {
-        private Vector2 _movement = Vector2.zero;
-        private bool _jump = false;
-        private bool _attack = false;
-        private bool _special = false;
-        private bool _dash = false;
-        public event Util.DVector2 OnMovementChange;
-        public event Util.DBool OnJumpChange;
-        public event Util.DBool OnAttackChange;
-        public event Util.DBool OnSpecialChange;
-        public event Util.DBool OnDashChange;
-        public event Util.DVoid OnPause;
-
-        #region Properties
-
-        public Vector2 Movement => _movement;
-        public bool Jump => _jump;
-        public bool Attack => _attack;
-        public bool Special => _special;
-        public bool Dash => _dash;
-
-        #endregion
-
         #region Setup Functions
 
-        public PlayerInputs(): base() {
+        public PlayerInputs() {
             _actions.Main.Move.performed += RelayMovement;
             _actions.Main.Move.canceled += RelayMovement;
             _actions.Main.Jump.performed += RelayJump;
@@ -45,37 +23,56 @@ namespace Input {
 
         #endregion
 
+        public event Util.DVector2 OnMovementChange;
+        public event Util.DBool OnJumpChange;
+        public event Util.DBool OnAttackChange;
+        public event Util.DBool OnSpecialChange;
+        public event Util.DBool OnDashChange;
+        public event Util.DVoid OnPause;
+
+        #region Properties
+
+        public Vector2 Movement { get; private set; } = Vector2.zero;
+
+        public bool Jump { get; private set; }
+
+        public bool Attack { get; private set; }
+
+        public bool Special { get; private set; }
+
+        public bool Dash { get; private set; }
+
+        #endregion
+
         #region Input Functions
 
         private void RelayMovement(InputAction.CallbackContext context) {
-            _movement = context.ReadValue<Vector2>();
-            OnMovementChange?.Invoke(_movement);
+            Movement = context.ReadValue<Vector2>();
+            OnMovementChange?.Invoke(Movement);
         }
 
         private void RelayJump(InputAction.CallbackContext context) {
-            _jump = context.ReadValueAsButton();
-            OnJumpChange?.Invoke(_jump);
+            Jump = context.ReadValueAsButton();
+            OnJumpChange?.Invoke(Jump);
         }
 
         private void RelayAttack(InputAction.CallbackContext context) {
-            _attack = context.ReadValueAsButton();
-            OnAttackChange?.Invoke(_attack);
+            Attack = context.ReadValueAsButton();
+            OnAttackChange?.Invoke(Attack);
         }
 
         private void RelaySpecial(InputAction.CallbackContext context) {
-            _special = context.ReadValueAsButton();
-            OnSpecialChange?.Invoke(_special);
+            Special = context.ReadValueAsButton();
+            OnSpecialChange?.Invoke(Special);
         }
 
         private void RelayDash(InputAction.CallbackContext context) {
-            _dash = context.ReadValueAsButton();
-            OnDashChange?.Invoke(_dash);
+            Dash = context.ReadValueAsButton();
+            OnDashChange?.Invoke(Dash);
         }
 
         private void RelayPause(InputAction.CallbackContext context) {
-            if (context.ReadValueAsButton()) {
-                OnPause?.Invoke();
-            }
+            if (context.ReadValueAsButton()) OnPause?.Invoke();
         }
 
         #endregion

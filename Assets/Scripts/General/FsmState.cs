@@ -1,20 +1,15 @@
-﻿namespace General
-{
-    public abstract class FsmState<T>
-    {
-        private T _machine;
-        public T Machine => _machine;
-        
-        public virtual void EnterState(T machine)
-        {
-            _machine = machine;
+﻿namespace General {
+    public abstract class FsmState<T> {
+        public T Machine { get; private set; }
+
+        public virtual void EnterState(T machine) {
+            Machine = machine;
         }
 
         public abstract void Update();
 
-        public virtual void ExitState()
-        {
-            _machine = default;
+        public virtual void ExitState() {
+            Machine = default;
         }
     }
 }

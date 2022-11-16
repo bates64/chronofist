@@ -1,6 +1,5 @@
-using UnityEngine;
 using UI;
-using General;
+using UnityEngine;
 
 namespace Physics {
     [RequireComponent(typeof(Controller2D))]
@@ -23,7 +22,7 @@ namespace Physics {
         }
 
         private void Update() {
-            float deltaTime = LocalTime.DeltaTimeAt(this);
+            var deltaTime = LocalTime.DeltaTimeAt(this);
 
             timeSinceStoredJump += deltaTime;
             physicsDisableTime = Mathf.Max(0f, physicsDisableTime - deltaTime);
@@ -38,10 +37,11 @@ namespace Physics {
             UpdateWalls();
             UpdateAttacks();
 
-            Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
+            var totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"attackType: {attackType} attackAnimTime: {attackAnimTime} attackDisableTime: {attackDisableTime} physicsDisableTime: {physicsDisableTime}");
+            UiManager.DebugUi.SetStateName(
+                $"attackType: {attackType} attackAnimTime: {attackAnimTime} attackDisableTime: {attackDisableTime} physicsDisableTime: {physicsDisableTime}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -64,48 +64,49 @@ namespace Physics {
 
         private void OnCeilingBump() {
             // Kill jump velocity
-            if (jumpVelocity.y > 0f) {
-                jumpVelocity.y *= -0.1f;
-            }
+            if (jumpVelocity.y > 0f) jumpVelocity.y *= -0.1f;
         }
 
         #region Horizontal Movement
 
-        [Header("Horizontal Movement")]
+        [Header("Horizontal Movement")] private readonly float maxWalkSpeed = 8f;
 
-        private float maxWalkSpeed = 8f;
-        [Range(1,30)][SerializeField] private float maxRunSpeed = 14f;
-        private float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
-        [Range(0,150)][SerializeField] private float accelerationAir = 80f;
-        [Range(0,100)][SerializeField] private float accelerationGround = 80f;
+        [Range(1, 30)] [SerializeField] private float maxRunSpeed = 14f;
+        private readonly float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
+        [Range(0, 150)] [SerializeField] private float accelerationAir = 80f;
+
+        [Range(0, 100)] [SerializeField] private float accelerationGround = 80f;
+
         //private float accelerationReverseDirection = 1f;
-        [Range(0,200)][SerializeField] private float decceleration = 80f;
+        [Range(0, 200)] [SerializeField] private float decceleration = 80f;
         [Range(0f, 5f)] public float slideAccelerationMultiplier = 1.5f;
 
-        private float moveVelocity = 0f;
-        private float moveTime = 0f;
-        private float timeHeldMaxXInput = 0f;
+        private float moveVelocity;
+        private float moveTime;
+        private float timeHeldMaxXInput;
         private float timeSinceWall = Mathf.Infinity;
-        private float wallJumpDirection = 0f;
-        private bool isRunning = false;
-        private bool isFacingLeft = false;
-        private bool isSliding = false;
+        private float wallJumpDirection;
+        private bool isRunning;
+        private bool isFacingLeft;
+        private bool isSliding;
 
         private void UpdateMoveVelocity(float input) {
-            float deltaTime = LocalTime.DeltaTimeAt(this);
+            var deltaTime = LocalTime.DeltaTimeAt(this);
 
             if (Mathf.Abs(input) >= 0.8f) {
                 if (controller.isGrounded)
                     timeHeldMaxXInput += deltaTime;
-            } else {
+            }
+            else {
                 timeHeldMaxXInput = 0f;
             }
 
             isRunning = timeHeldMaxXInput >= timeToHoldMaxXInputToRun;
             isSliding = false; // set to true later
-            float targetVelocity = input * (isRunning ? maxRunSpeed : maxWalkSpeed);
+            var targetVelocity = input * (isRunning ? maxRunSpeed : maxWalkSpeed);
 
-            if (Mathf.Abs(targetVelocity) == 0f || Mathf.Abs(targetVelocity) < Mathf.Abs(moveVelocity)) { // Deccelerate if no input or we are above max speed
+            if (Mathf.Abs(targetVelocity) == 0f || Mathf.Abs(targetVelocity) < Mathf.Abs(moveVelocity)) {
+                // Deccelerate if no input or we are above max speed
                 var oldSign = Mathf.Sign(moveVelocity);
 
                 moveVelocity -= Mathf.Sign(moveVelocity) * decceleration * deltaTime;
@@ -117,9 +118,10 @@ namespace Physics {
                     moveVelocity = 0f;
 
                 moveTime = 0f;
-            } else {
+            }
+            else {
                 // Accelerate
-                float acceleration = input * (controller.isGrounded ? accelerationGround : accelerationAir) * deltaTime;
+                var acceleration = input * (controller.isGrounded ? accelerationGround : accelerationAir) * deltaTime;
 
                 // Reversing direction is faster
                 if (Mathf.Sign(moveVelocity) == -Mathf.Sign(acceleration) && controller.isGrounded) {
@@ -127,13 +129,14 @@ namespace Physics {
                     isSliding = true;
                 }
 
-                if (Mathf.Abs(moveVelocity + acceleration) <= Mathf.Abs(targetVelocity)) { // If accelerating will not exceed target...
+                if (Mathf.Abs(moveVelocity + acceleration) <=
+                    Mathf.Abs(targetVelocity)) // If accelerating will not exceed target...
                     // Apply acceleration normally
                     moveVelocity += acceleration;
-                } else if (Mathf.Abs(moveVelocity) < Mathf.Abs(targetVelocity)) { // If above target velocity already, don't accelerate
+                else if (Mathf.Abs(moveVelocity) <
+                         Mathf.Abs(targetVelocity)) // If above target velocity already, don't accelerate
                     // We've reached target velocity
                     moveVelocity = targetVelocity;
-                }
 
                 if (acceleration < 0f)
                     isFacingLeft = true;
@@ -154,22 +157,19 @@ namespace Physics {
                 wallJumpDirection = left ? 1f : -1f;
 
                 // Hitting wall kills x velocity
-                if (moveVelocity > 0.1f && right) {
+                if (moveVelocity > 0.1f && right)
                     moveVelocity = 0.1f;
-                } else if (moveVelocity < -0.1f && left) {
-                    moveVelocity = -0.1f;
-                }
+                else if (moveVelocity < -0.1f && left) moveVelocity = -0.1f;
                 if (jumpVelocity.y <= 0f) {
-                    if (jumpVelocity.x > 0.1f && left) {
+                    if (jumpVelocity.x > 0.1f && left)
                         jumpVelocity.x = 0f;
-                    } else if (jumpVelocity.x < -0.1f && right) {
-                        jumpVelocity.x = 0f;
-                    }
+                    else if (jumpVelocity.x < -0.1f && right) jumpVelocity.x = 0f;
                 }
 
                 // Check for stored wall jump
                 ApplyStoredJump();
-            } else {
+            }
+            else {
                 timeSinceWall += deltaTime;
             }
         }
@@ -179,7 +179,9 @@ namespace Physics {
         }
 
         public bool IsWallSliding() {
-            return timeSinceWall < 0.01f && !controller.isGrounded && Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f && moveVelocity != 0f;
+            return timeSinceWall < 0.01f && !controller.isGrounded &&
+                   Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f &&
+                   moveVelocity != 0f;
         }
 
         public bool IsWallPushing() {
@@ -198,58 +200,60 @@ namespace Physics {
 
         #region Vertical Movement
 
-        [Header("Vertical Movement")]
-        [Range(0f,100f)][SerializeField] private float walkJumpForce = 20f;
-        [Range(0f,100f)][SerializeField] private float runJumpForce = 30f;
-        public Vector2 wallJumpForce = new Vector2(21f, 20f);
-        public Vector2 jumpVelocityDamping = new Vector2(0.25f, 0.25f);
-        [Range(0f,1f)][SerializeField] private float jumpCoyoteTime = 0.1f;
-        [Range(0f,1f)][SerializeField] private float wallJumpCoyoteTime = 0.1f;
-        [Range(0f,100f)][SerializeField] private float gravity = 60f;
-        [Range(0f,100f)][SerializeField] private float terminalFallVelocity = 25f;
-        [Range(0f,100f)][SerializeField] private float wallSlideSpeed = 6f;
+        [Header("Vertical Movement")] [Range(0f, 100f)] [SerializeField]
+        private float walkJumpForce = 20f;
+
+        [Range(0f, 100f)] [SerializeField] private float runJumpForce = 30f;
+        public Vector2 wallJumpForce = new(21f, 20f);
+        public Vector2 jumpVelocityDamping = new(0.25f, 0.25f);
+        [Range(0f, 1f)] [SerializeField] private float jumpCoyoteTime = 0.1f;
+        [Range(0f, 1f)] [SerializeField] private float wallJumpCoyoteTime = 0.1f;
+        [Range(0f, 100f)] [SerializeField] private float gravity = 60f;
+        [Range(0f, 100f)] [SerializeField] private float terminalFallVelocity = 25f;
+        [Range(0f, 100f)] [SerializeField] private float wallSlideSpeed = 6f;
 
         private Vector2 jumpVelocity = Vector2.zero;
-        bool didJumpCancel = false;
-        private float yVelocity = 0f; // TODO: rename to fallVelocity?
+        private bool didJumpCancel;
+        private float yVelocity; // TODO: rename to fallVelocity?
         private float timeSinceStoredJump = Mathf.Infinity;
 
         private void ApplyGravity() {
-            float deltaTime = LocalTime.DeltaTimeAt(this);
+            var deltaTime = LocalTime.DeltaTimeAt(this);
 
             // Jumping (upwards portion)
             if (jumpVelocity.y > 0f) {
                 // Check for jump cancel (jump button released before apex)
-                if (!InputManager.PlayerInput.Jump) {
-                    didJumpCancel = true;
-                }
+                if (!InputManager.PlayerInput.Jump) didJumpCancel = true;
 
                 // Apply y-axis jump damping (24x if cancelled)
                 var yJumpDamping = didJumpCancel ? jumpVelocityDamping.y * 24f : jumpVelocityDamping.y;
                 jumpVelocity.y -= jumpVelocity.y * yJumpDamping * deltaTime;
 
                 // If we've passed the apex of the jump, transfer jump y velocity away
-                if ((jumpVelocity.y + yVelocity) < 0f) {
+                if (jumpVelocity.y + yVelocity < 0f) {
                     // Y: jumpVelocity->0 & yVelocity->0 to apply gravity from zero
                     yVelocity = 0f;
                     jumpVelocity.y = 0f;
 
                     didJumpCancel = false;
                 }
-            } else {
+            }
+            else {
                 jumpVelocity.y = 0f;
             }
+
             // Apply x-axis jump damping (24x if grounded)
-            var xJumpDamping = controller.isGrounded ? jumpVelocityDamping.x * 24f  : jumpVelocityDamping.x;
+            var xJumpDamping = controller.isGrounded ? jumpVelocityDamping.x * 24f : jumpVelocityDamping.x;
             jumpVelocity.x -= jumpVelocity.x * xJumpDamping * deltaTime;
 
             // Gravity
             yVelocity -= gravity * deltaTime;
 
             // Terminal Y velocity
-            float totalVel = yVelocity + jumpVelocity.y;
-            float currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            if (!controller.isGrounded && totalVel <= 0f) {
+            var totalVel = yVelocity + jumpVelocity.y;
+            var currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
+            if (!controller.isGrounded && totalVel <= 0f)
+
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
                 if (isPushingWall()) {
@@ -259,23 +263,23 @@ namespace Physics {
 
                     // TODO: produce particles
                 }
-            }
+
             /*if (!controller.isGrounded && InputManager.PlayerInput.Movement.y < 0) { // Fast fall
                 currentTerminalVel *= 4f * Mathf.Abs(InputManager.PlayerInput.Movement.y);
                 yVelocity -= 50f * deltaTime;
             }*/
-            if (totalVel < -currentTerminalVel) {
-                yVelocity = -currentTerminalVel;
-            }
+            if (totalVel < -currentTerminalVel) yVelocity = -currentTerminalVel;
         }
 
         private void OnInputJump(bool isPressed) {
             if (isPressed) {
                 if (controller.airTime < jumpCoyoteTime && Jump()) {
                     // We jumped.
-                } else if (timeSinceWall < wallJumpCoyoteTime && WallJump()) {
+                }
+                else if (timeSinceWall < wallJumpCoyoteTime && WallJump()) {
                     // We wall-jumped.
-                } else {
+                }
+                else {
                     // Store jump input and apply it when we hit the ground/wall
                     timeSinceStoredJump = 0f;
                 }
@@ -309,7 +313,7 @@ namespace Physics {
             yVelocity = 0f;
 
             // wallJumpForce.x is partially given to moveVelocity, the rest is given to jumpVelocity.x
-            float moveForce = Mathf.Min(wallJumpForce.x, maxRunSpeed);
+            var moveForce = Mathf.Min(wallJumpForce.x, maxRunSpeed);
             moveVelocity = moveForce * wallJumpDirection;
             jumpVelocity = new Vector2(Mathf.Max(0f, wallJumpForce.x - moveForce) * wallJumpDirection, wallJumpForce.y);
 
@@ -332,7 +336,7 @@ namespace Physics {
         }
 
         public bool IsFalling() {
-            return (yVelocity + jumpVelocity.y) < 0f && !controller.isGrounded;
+            return yVelocity + jumpVelocity.y < 0f && !controller.isGrounded;
         }
 
         public bool IsAirbourne() {
@@ -340,52 +344,53 @@ namespace Physics {
         }
 
         private bool isPushingWall() {
-            return (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) || (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
+            return (controller.CheckLeft() && InputManager.PlayerInput.Movement.x < 0f) ||
+                   (controller.CheckRight() && InputManager.PlayerInput.Movement.x > 0f);
         }
 
         #endregion
 
         #region Attack
 
-        [Header("Jab")]
-        public float jabForce = 10f;
+        [Header("Jab")] public float jabForce = 10f;
+
         public float jabAttackDuration = 0.5f;
         public float jabAttackCooldown = 0.5f;
         public float jabPhysicsDisableTime = 0.2f;
         public float finalJabAttackDuration = 1f;
         public float finalJabAttackCooldown = 1f;
         public float finalJabPhysicsDisableTime = 0.2f;
-        public float jabMovementSpeedMultiplier = 0f;
-        public float jabFallSpeedMultiplier = 0f;
+        public float jabMovementSpeedMultiplier;
+        public float jabFallSpeedMultiplier;
         public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
         public int maxAirJabs = -1;
 
-        [Header("Dash")]
-        public float dashForce = 40f;
+        [Header("Dash")] public float dashForce = 40f;
+
         public float dashDuration = 0.4f;
         public float dashCooldown = 0.2f;
         public float dashPhysicsDisableTime = 0.4f;
-        public float dashFallSpeedMultiplier = 0f;
+        public float dashFallSpeedMultiplier;
         public Vector2 dashJumpSpeedMultiplier = Vector2.zero;
         public int maxAirDashes = 1;
 
-        [Header("Uppercut")]
-        public float uppercutForce = 20f;
+        [Header("Uppercut")] public float uppercutForce = 20f;
+
         public float uppercutDuration = 0.4f;
         public float uppercutCooldown = 0.5f;
         public float uppercutPhysicsDisableTime = 0.1f;
-        public float uppercutMovementSpeedMultiplier = 0f;
-        public float uppercutFallSpeedMultiplier = 0f;
+        public float uppercutMovementSpeedMultiplier;
+        public float uppercutFallSpeedMultiplier;
         public Vector2 uppercutJumpSpeedMultiplier = Vector2.zero;
         public int maxAirUppercuts = 1;
 
-        [Header("Slam")]
-        public float slamForce = 20f;
+        [Header("Slam")] public float slamForce = 20f;
+
         public float slamDuration = Mathf.Infinity;
         public float slamCooldown = 0.5f;
         public float slamPhysicsDisableTime = 0.5f;
-        public float slamMovementSpeedMultiplier = 0f;
-        public float slamFallSpeedMultiplier = 0f;
+        public float slamMovementSpeedMultiplier;
+        public float slamFallSpeedMultiplier;
         public Vector2 slamJumpSpeedMultiplier = Vector2.zero;
         public int maxAirSlams = 1;
 
@@ -397,13 +402,13 @@ namespace Physics {
             DashForward,
             DashBackward,
             Uppercut,
-            Slam,
+            Slam
         }
 
         private AttackType attackType = AttackType.None;
-        private float physicsDisableTime = 0f; // Disables movement & gravity if positive
-        private float attackDisableTime = 0f; // No attacks during cooldown
-        private float attackAnimTime = 0f;
+        private float physicsDisableTime; // Disables movement & gravity if positive
+        private float attackDisableTime; // No attacks during cooldown
+        private float attackAnimTime;
         private int airJabsRemaining;
         private int airDashesRemaining;
         private int airUppercutsRemaining;
@@ -415,13 +420,12 @@ namespace Physics {
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
-                if (InputManager.PlayerInput.Movement.y > 0) {
+                if (InputManager.PlayerInput.Movement.y > 0)
                     Uppercut();
-                } else if (InputManager.PlayerInput.Movement.y < 0 && !controller.isGrounded) {
+                else if (InputManager.PlayerInput.Movement.y < 0 && !controller.isGrounded)
                     Slam();
-                } else {
+                else
                     Jab();
-                }
             }
         }
 
@@ -432,37 +436,35 @@ namespace Physics {
         }
 
         private void OnInputDash(bool isPressed) {
-            if (isPressed) {
-                Dash();
-            }
+            if (isPressed) Dash();
         }
 
         public bool Jab() {
-            AttackType nextType = AttackType.Jab1;
+            var nextType = AttackType.Jab1;
             if (attackDisableTime > 0f) {
                 // Combo
-                if (attackType == AttackType.Jab1) {
+                if (attackType == AttackType.Jab1)
                     nextType = AttackType.Jab2;
-                } else if (attackType == AttackType.Jab2) {
+                else if (attackType == AttackType.Jab2)
                     nextType = AttackType.Jab3;
-                } else if (attackType == AttackType.DashForward || attackType == AttackType.DashBackward) {
+                else if (attackType == AttackType.DashForward || attackType == AttackType.DashBackward)
+
                     // TODO: Suplex
                     nextType = AttackType.Jab1;
-                } else {
+                else
                     return false;
-                }
             }
+
             if (!controller.isGrounded) {
                 if (airJabsRemaining == 0) return false;
                 airJabsRemaining--;
             }
 
             // Jab is in direction player is facing...
-            float direction = isFacingLeft ? -1f : 1f;
+            var direction = isFacingLeft ? -1f : 1f;
+
             // ...overriden by input.
-            if (InputManager.PlayerInput.Movement.x != 0f) {
-                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
-            }
+            if (InputManager.PlayerInput.Movement.x != 0f) direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
 
             // Jab!
             attackType = nextType;
@@ -481,13 +483,15 @@ namespace Physics {
             if (attackDisableTime > 0f) {
                 if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
                     // Combo from non-finishing jab
-                } else {
+                }
+                else {
                     return false;
                 }
             }
-            if (!controller.isGrounded) {
-                if (airUppercutsRemaining == 0) return false;
-            }
+
+            if (!controller.isGrounded)
+                if (airUppercutsRemaining == 0)
+                    return false;
             if (airUppercutsRemaining > 0) airUppercutsRemaining--; // Uppercut pushes you airbourne
 
             // Uppercut!
@@ -507,10 +511,12 @@ namespace Physics {
             if (attackDisableTime > 0f) {
                 if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
                     // Combo from non-finishing jab
-                } else {
+                }
+                else {
                     return false;
                 }
             }
+
             if (!controller.isGrounded) {
                 if (airSlamsRemaining == 0) return false;
                 airSlamsRemaining--;
@@ -532,36 +538,34 @@ namespace Physics {
         public bool Dash() {
             if (attackDisableTime > 0f) {
                 if (attackType == AttackType.Jab1) {
-                     // TODO: Suplex
+                    // TODO: Suplex
                 }
+
                 return false;
             }
+
             if (!controller.isGrounded) {
                 if (airDashesRemaining == 0) return false;
                 airDashesRemaining--;
             }
 
             // Dash is in direction player is facing...
-            float direction = isFacingLeft ? -1f : 1f;
+            var direction = isFacingLeft ? -1f : 1f;
+
             // ...overriden by movement velocity...
-            if (moveVelocity != 0f) {
-                direction = Mathf.Sign(moveVelocity);
-            }
+            if (moveVelocity != 0f) direction = Mathf.Sign(moveVelocity);
+
             // ...overriden by input...
-            if (InputManager.PlayerInput.Movement.x != 0f) {
-                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
-            }
+            if (InputManager.PlayerInput.Movement.x != 0f) direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+
             // ...overriden by wall if they're against one.
-            if (isPushingWall()) {
-                direction = wallJumpDirection;
-            }
+            if (isPushingWall()) direction = wallJumpDirection;
 
             // If the dash is in the direction of current velocity, it's a dash forward.
-            if (Mathf.Sign(moveVelocity) == direction) {
+            if (Mathf.Sign(moveVelocity) == direction)
                 attackType = AttackType.DashForward;
-            } else {
+            else
                 attackType = AttackType.DashBackward;
-            }
 
             // Dash!
             moveVelocity = direction * dashForce;

@@ -1,20 +1,12 @@
-using UnityEngine;
 using Physics;
+using UnityEngine;
 
 namespace Effects {
     public class TimeEffect : Effect {
-        public float TimeMultiplier = 0f;
-        protected GameObject Obj;
-        protected LocalTimeProvider LocalTimeProvider;
+        public float TimeMultiplier;
         protected BoxCollider2D Collider;
-
-        public static GameObject Spawn(float duration, float timeMultiplier) {
-            var obj = new GameObject("TimeEffect");
-            var effect = obj.AddComponent<TimeEffect>();
-            effect.TimeToLive = duration;
-            effect.TimeMultiplier = timeMultiplier;
-            return obj;
-        }
+        protected LocalTimeProvider LocalTimeProvider;
+        protected GameObject Obj;
 
         public void Start() {
             Obj = new GameObject("TimeEffect's LocalTimeProvider");
@@ -33,6 +25,14 @@ namespace Effects {
 
         public void OnDestroy() {
             Destroy(Obj);
+        }
+
+        public static GameObject Spawn(float duration, float timeMultiplier) {
+            var obj = new GameObject("TimeEffect");
+            var effect = obj.AddComponent<TimeEffect>();
+            effect.TimeToLive = duration;
+            effect.TimeMultiplier = timeMultiplier;
+            return obj;
         }
     }
 }
