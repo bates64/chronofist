@@ -26,8 +26,9 @@ namespace Physics {
             float deltaTime = LocalTime.DeltaTimeAt(this);
 
             timeSinceStoredJump += deltaTime;
-            physicsDisableTime -= deltaTime;
-            attackDisableTime -= deltaTime;
+            physicsDisableTime = Mathf.Max(0f, physicsDisableTime - deltaTime);
+            attackDisableTime = Mathf.Max(0f, attackDisableTime - deltaTime);
+            attackAnimTime = Mathf.Max(0f, attackAnimTime - deltaTime);
 
             if (physicsDisableTime <= 0f) {
                 UpdateMoveVelocity(InputManager.PlayerInput.Movement.x);
@@ -35,11 +36,12 @@ namespace Physics {
             }
 
             UpdateWalls();
+            UpdateAttacks();
 
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"jabs: {airJabsRemaining}, uppercuts: {airUppercutsRemaining}, slams: {airSlamsRemaining}, dashes: {airDashesRemaining}");
+            UiManager.DebugUi.SetStateName($"attackType: {attackType} attackAnimTime: {attackAnimTime} attackDisableTime: {attackDisableTime} physicsDisableTime: {physicsDisableTime}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -349,8 +351,10 @@ namespace Physics {
         public float jabForce = 10f;
         public float jabAttackDuration = 0.5f;
         public float jabAttackCooldown = 0.5f;
+        public float jabPhysicsDisableTime = 0.2f;
         public float finalJabAttackDuration = 1f;
         public float finalJabAttackCooldown = 1f;
+        public float finalJabPhysicsDisableTime = 0.2f;
         public float jabMovementSpeedMultiplier = 0f;
         public float jabFallSpeedMultiplier = 0f;
         public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
@@ -358,16 +362,18 @@ namespace Physics {
 
         [Header("Dash")]
         public float dashForce = 40f;
-        public float dashDuration = 0.1f;
+        public float dashDuration = 0.4f;
         public float dashCooldown = 0.2f;
+        public float dashPhysicsDisableTime = 0.4f;
         public float dashFallSpeedMultiplier = 0f;
         public Vector2 dashJumpSpeedMultiplier = Vector2.zero;
         public int maxAirDashes = 1;
 
         [Header("Uppercut")]
         public float uppercutForce = 20f;
-        public float uppercutAttackDuration = 0.2f;
-        public float uppercutAttackCooldown = 0.5f;
+        public float uppercutDuration = 0.4f;
+        public float uppercutCooldown = 0.5f;
+        public float uppercutPhysicsDisableTime = 0.1f;
         public float uppercutMovementSpeedMultiplier = 0f;
         public float uppercutFallSpeedMultiplier = 0f;
         public Vector2 uppercutJumpSpeedMultiplier = Vector2.zero;
@@ -375,8 +381,9 @@ namespace Physics {
 
         [Header("Slam")]
         public float slamForce = 20f;
-        public float slamAttackDuration = 0.2f;
-        public float slamAttackCooldown = 0.5f;
+        public float slamDuration = Mathf.Infinity;
+        public float slamCooldown = 0.5f;
+        public float slamPhysicsDisableTime = 0.5f;
         public float slamMovementSpeedMultiplier = 0f;
         public float slamFallSpeedMultiplier = 0f;
         public Vector2 slamJumpSpeedMultiplier = Vector2.zero;
@@ -396,20 +403,21 @@ namespace Physics {
         private AttackType attackType = AttackType.None;
         private float physicsDisableTime = 0f; // Disables movement & gravity if positive
         private float attackDisableTime = 0f; // No attacks during cooldown
+        private float attackAnimTime = 0f;
         private int airJabsRemaining;
         private int airDashesRemaining;
         private int airUppercutsRemaining;
         private int airSlamsRemaining;
 
         public AttackType GetAttackType() {
-            return physicsDisableTime > 0f ? attackType : AttackType.None;
+            return attackAnimTime > 0f ? attackType : AttackType.None;
         }
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
                 if (InputManager.PlayerInput.Movement.y > 0) {
                     Uppercut();
-                } else if (InputManager.PlayerInput.Movement.y < 0) {
+                } else if (InputManager.PlayerInput.Movement.y < 0 && !controller.isGrounded) {
                     Slam();
                 } else {
                     Jab();
@@ -462,8 +470,9 @@ namespace Physics {
             yVelocity *= jabFallSpeedMultiplier;
             jumpVelocity *= jabJumpSpeedMultiplier;
             jumpVelocity += Vector2.right * direction * jabForce;
-            physicsDisableTime = attackType == AttackType.Jab3 ? finalJabAttackDuration : jabAttackDuration;
+            attackAnimTime = attackType == AttackType.Jab3 ? finalJabAttackDuration : jabAttackDuration;
             attackDisableTime = attackType == AttackType.Jab3 ? finalJabAttackCooldown : jabAttackCooldown;
+            physicsDisableTime = attackType == AttackType.Jab3 ? finalJabPhysicsDisableTime : jabPhysicsDisableTime;
 
             return true;
         }
@@ -479,7 +488,7 @@ namespace Physics {
             if (!controller.isGrounded) {
                 if (airUppercutsRemaining == 0) return false;
             }
-             if (airUppercutsRemaining > 0) airUppercutsRemaining--; // Uppercut pushes you airbourne
+            if (airUppercutsRemaining > 0) airUppercutsRemaining--; // Uppercut pushes you airbourne
 
             // Uppercut!
             attackType = AttackType.Uppercut;
@@ -487,8 +496,9 @@ namespace Physics {
             yVelocity *= uppercutFallSpeedMultiplier;
             jumpVelocity *= uppercutJumpSpeedMultiplier;
             jumpVelocity += Vector2.up * uppercutForce;
-            physicsDisableTime = uppercutAttackDuration;
-            attackDisableTime = uppercutAttackCooldown;
+            attackAnimTime = uppercutDuration;
+            attackDisableTime = uppercutCooldown;
+            physicsDisableTime = uppercutPhysicsDisableTime;
 
             return true;
         }
@@ -512,8 +522,9 @@ namespace Physics {
             yVelocity *= slamFallSpeedMultiplier;
             jumpVelocity *= slamJumpSpeedMultiplier;
             jumpVelocity += Vector2.down * slamForce;
-            physicsDisableTime = slamAttackDuration;
-            attackDisableTime = slamAttackCooldown;
+            attackAnimTime = slamDuration;
+            attackDisableTime = slamCooldown;
+            physicsDisableTime = slamPhysicsDisableTime;
 
             return true;
         }
@@ -556,8 +567,9 @@ namespace Physics {
             moveVelocity = direction * dashForce;
             jumpVelocity *= dashJumpSpeedMultiplier;
             yVelocity *= dashFallSpeedMultiplier;
-            physicsDisableTime = dashDuration;
+            attackAnimTime = dashDuration;
             attackDisableTime = dashCooldown;
+            physicsDisableTime = dashPhysicsDisableTime;
 
             return true;
         }
@@ -567,6 +579,15 @@ namespace Physics {
             airUppercutsRemaining = maxAirUppercuts;
             airSlamsRemaining = maxAirSlams;
             airDashesRemaining = maxAirDashes;
+        }
+
+        private void UpdateAttacks() {
+            // If any infinite cooldowns are in progress and we hit the ground, end them.
+            if (controller.isGrounded && attackType != AttackType.None) {
+                if (physicsDisableTime == Mathf.Infinity) physicsDisableTime = 0f;
+                if (attackDisableTime == Mathf.Infinity) attackDisableTime = 0f;
+                if (attackAnimTime == Mathf.Infinity) attackAnimTime = 0f;
+            }
         }
 
         #endregion
