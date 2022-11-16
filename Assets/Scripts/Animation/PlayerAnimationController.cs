@@ -1,4 +1,5 @@
 ﻿using System;
+using Combat;
 using UnityEngine;
 using Physics;
 using Anim = Animation.AnimationManagerMc.McAnimation;
@@ -7,16 +8,16 @@ using General;
 namespace Animation {
     [RequireComponent(typeof(AnimationManagerMc))]
     [RequireComponent(typeof(Player))]
-    public class PlayerAnimationController : MonoBehaviour {
+    public class PlayerAnimationController : MonoBehaviour
+    {
+        [SerializeField] private HitboxManager hitbox;
         private Anim anim;
         private AnimationManagerMc animManager;
         private Player player;
-        private SpriteRenderer spriteRenderer;
 
         private void Awake() {
             animManager = GetComponent<AnimationManagerMc>();
             player = GetComponent<Player>();
-            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         private void LateUpdate() {
@@ -53,10 +54,15 @@ namespace Animation {
             }
 
             if (anim != previousAnim)
+            {
+                hitbox.Restore();
                 animManager.PlayAnimation(anim);
+            }
 
             // Flip sprite if facing left
-            spriteRenderer.flipX = player.IsFacingLeft();
+            Vector3 scale = transform.localScale;
+            scale.x = player.IsFacingLeft() ? -Mathf.Abs(transform.localScale.x) : Mathf.Abs(transform.localScale.x);
+            transform.localScale = scale;
             //spriteRenderer.transform.localPosition = new Vector3(player.IsFacingLeft() ? Util.PIXEL * -0.5f : 0f, 0f, 0f);
         }
     }
