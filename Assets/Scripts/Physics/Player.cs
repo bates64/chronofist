@@ -4,6 +4,8 @@ using UnityEngine;
 namespace Physics {
     [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Health.Health))]
     public class Player : MonoBehaviour {
+        public static Player Instance { get; private set; }
+
         private Controller2D controller;
 
         private void Awake() {
@@ -18,6 +20,8 @@ namespace Physics {
             InputManager.PlayerInput.OnDashChange += OnInputDash;
 
             ReplenishAirAttacks();
+
+            Instance = this;
         }
 
         private void Update() {

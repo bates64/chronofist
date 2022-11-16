@@ -9,28 +9,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1b98f432-f4a8-4193-91f4-e0ef1045bbd5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/DebugEnemyStateAsColor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/WanderAi.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/WanderAi.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/dictionaries/alex.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/dictionaries/alex.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Animation/DebugAnimationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Animation/DebugAnimationController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Animation/PlayerAnimationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Animation/PlayerAnimationController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Combat/HitboxManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/HitboxManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Effects/Effect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Effects/Effect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy/BaseEnemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemy/BaseEnemy.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/General/Singleton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/General/Singleton.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/General/Util.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/General/Util.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Health/EnemyDamager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Health/EnemyDamager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Health/Health.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Health/Health.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Health/KillBox.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Health/KillBox.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Input/InterfaceInputs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Input/InterfaceInputs.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Input/PlayerInputs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Input/PlayerInputs.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PassiveItems/ItemsLogic/HealthItem.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PassiveItems/ItemsLogic/HealthItem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PassiveItems/Pickupper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PassiveItems/Pickupper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Pause/PauseManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Pause/PauseManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Physics/Controller2D.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Physics/Controller2D.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Physics/Gravity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Physics/Gravity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Physics/LocalTimeProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Physics/LocalTimeProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy/BaseEnemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/Enemy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy/BaseEnemy.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/Enemy.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy/SandbagEnemy.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemy/SandbagEnemy.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/DebugEnemyStateAsColor.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Health/EnemyDamager.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Health/EnemyDamager.cs.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Physics/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Physics/Player.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/HUD/HealthBar/HeartContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/HUD/HealthBar/HeartContainer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/World/LevelManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/World/LevelManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,15 +41,12 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Animation/MC/Animations/Animation_MC_AirPunch1.anim" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Animation/MC/Animations/Animation_MC_AirPunch3.anim" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Animation/MC/Animations/Animation_MC_Punch3.anim" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Scripts/Animation/AnimationManagerMc.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Scripts/Animation/PlayerAnimationController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Scripts/Animation/PlayerAnimationController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Scripts/Animation/PlayerAnimationController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/alex/repos/game-off-jam/Assets/Scripts/Animation/PlayerAnimationController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/62aa986f467c477fb4844e51e4378656158400/30/a617b115/LayerMask.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/86edcfffa01c452c853bb5756974ca851f800/5e/5ed58ae9/Physics2D.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Effects/Effect.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Physics/Gravity.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.2d.pixel-perfect@5.0.3/Samples~/Scenes and Extras/Scenes/RoboHero/Scripts/Hero.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.2d.spriteshape@7.0.6/Runtime/SpriteShapeGenerator.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -86,11 +75,11 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.spelling",
+    "settings.editor.selected.configurable": "CodeLensConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor &amp; Play">
     <configuration name="UnitTests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2021.3.12f1/Unity.app/Contents/MacOS/Unity" />
       <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath C:\Users\bossb\OneDrive\Documentos\Unity\Worldspace\JamRepo\game-off-jam -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
@@ -135,7 +124,9 @@
       <workItem from="1668570632673" duration="536000" />
       <workItem from="1668571178682" duration="829000" />
       <workItem from="1668572021501" duration="550000" />
-      <workItem from="1668572580189" duration="1821000" />
+      <workItem from="1668572580189" duration="1970000" />
+      <workItem from="1668579734867" duration="97000" />
+      <workItem from="1668579852810" duration="7599000" />
     </task>
     <servers />
   </component>

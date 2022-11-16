@@ -316,8 +316,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5759,27 +5759,17 @@ GameObject:
   - component: {fileID: 650873251}
   - component: {fileID: 650873250}
   - component: {fileID: 650873249}
-  - component: {fileID: 650873248}
   - component: {fileID: 650873252}
+  - component: {fileID: 650873255}
+  - component: {fileID: 650873254}
+  - component: {fileID: 650873253}
   m_Layer: 12
-  m_Name: SandbagEnemy
+  m_Name: ExampleEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &650873248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650873247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e25a8ae6cdc44295b2f6ae5719b9228, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &650873249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5829,8 +5819,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650873247}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.55, y: -5.82, z: 1.6707332}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalPosition: {x: -15.89, y: -4.5, z: 1.6707332}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 462694007}
@@ -5858,6 +5848,51 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &650873253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650873247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90fab7c63754474c9c289876cb66ac8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chaseRadius: 10
+  wanderRadius: 4
+  minWaitTime: 1
+  maxWaitTime: 3
+  minWalkTime: 1
+  maxWalkTime: 3
+--- !u!114 &650873254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650873247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e25a8ae6cdc44295b2f6ae5719b9228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &650873255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650873247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2a8154a9bf346139e648553ccf2095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravity: 4
+  knockbackDamping: {x: 0.6, y: 0.6}
+  walkSpeed: 4
 --- !u!1 &787881430
 GameObject:
   m_ObjectHideFlags: 0
