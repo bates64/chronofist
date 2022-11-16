@@ -7,7 +7,9 @@ namespace Physics {
         public static int Layer => LayerMask.NameToLayer("Local Time");
 
         private void Start() {
-            if (gameObject.layer != Layer) Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
+            if (gameObject.layer != Layer) {
+                Debug.LogWarning("LocalTimeProvider should be on the 'Local Time' layer.");
+            }
 
             LocalTime.InvalidateMultiplierAtCache();
         }

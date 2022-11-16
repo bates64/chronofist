@@ -12,8 +12,8 @@ namespace World {
         public Camera mainCamera;
         public GameObject world;
         public GameObject follow; // Probably the player
-        private LoadedLevel _currentLevel;
         private readonly List<LoadedLevel> _loadedLevels = new();
+        private LoadedLevel _currentLevel;
 
         private LDtkComponentProject _project;
 
@@ -21,7 +21,9 @@ namespace World {
             // Make the level where 'follow' object is the current level.
             if (follow != null) {
                 var level = getLoadedLevelAt(new Vector2(follow.transform.position.x, follow.transform.position.y));
-                if (level != null) makeLevelCurrent(level);
+                if (level != null) {
+                    makeLevelCurrent(level);
+                }
             }
         }
 
@@ -45,9 +47,10 @@ namespace World {
                 }
 
                 var bounds = child.GetComponent<PolygonCollider2D>();
-                if (bounds == null)
+                if (bounds == null) {
                     Debug.LogError(
                         $"Level '{child.name}' is missing a PolygonCollider2D - ensure 'Use Composite Collider' is enabled on the World asset.");
+                }
 
                 var id = child.GetComponent<LDtkIid>();
                 _loadedLevels.Add(new LoadedLevel(child, level, id, bounds, follow.transform));
@@ -56,32 +59,39 @@ namespace World {
 
         private LoadedLevel getLoadedLevel(GameObject gameObject) {
             foreach (var level in _loadedLevels)
-                if (level.gameObject == gameObject)
+                if (level.gameObject == gameObject) {
                     return level;
+                }
 
             return null;
         }
 
         private LoadedLevel getLoadedLevel(LDtkIid id) {
             foreach (var level in _loadedLevels)
-                if (level.id.Iid == id.Iid)
+                if (level.id.Iid == id.Iid) {
                     return level;
+                }
 
             return null;
         }
 
         private LoadedLevel getLoadedLevelAt(Vector2 position) {
             foreach (var level in _loadedLevels)
-                if (level.bounds.OverlapPoint(position))
+                if (level.bounds.OverlapPoint(position)) {
                     return level;
+                }
 
             return null;
         }
 
         private void makeLevelCurrent(LoadedLevel enteredLevel) {
-            if (_currentLevel == enteredLevel || enteredLevel == null) return;
+            if (_currentLevel == enteredLevel || enteredLevel == null) {
+                return;
+            }
 
-            if (_currentLevel != null) _currentLevel.Exit();
+            if (_currentLevel != null) {
+                _currentLevel.Exit();
+            }
 
             _currentLevel = enteredLevel;
             enteredLevel.Enter();
@@ -112,13 +122,15 @@ namespace World {
                 }
 
                 var neighbour = getLoadedLevel(id);
-                if (neighbour != null)
+                if (neighbour != null) {
                     neighbour.MarkForUnload = false;
-                else
+                } else
 
                     // What the fuck?
+                {
                     Debug.LogError(
                         $"Level '{enteredLevel.level.Identifier}' has a neighbour '{id.Iid}' that is in the scene but the LevelManager doesn't know about it.");
+                }
             }
 
             // 4. Unload all levels that are still marked.
@@ -147,8 +159,9 @@ namespace World {
         private void loadLevel(Level level) {
             // Check if the level is already loaded.
             foreach (var loadedLevel in _loadedLevels)
-                if (loadedLevel.level.Identifier == level.Identifier)
+                if (loadedLevel.level.Identifier == level.Identifier) {
                     return;
+                }
 
             // Load the level.
             // PERF: consider LoadAsync

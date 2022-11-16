@@ -9,12 +9,14 @@ namespace Effects {
             TimeToLive -= Time.deltaTime; // Not using LocalTime!
 
             if (TimeToLive <= 0f) {
-                if (isLastUpdate)
+                if (isLastUpdate) {
                     Destroy(gameObject);
-                else
+                } else
 
                     // We get to live one more frame!
+                {
                     isLastUpdate = true;
+                }
             }
         }
     }

@@ -5,11 +5,11 @@ namespace Physics {
     public class Controller2D : MonoBehaviour {
         private const float SkinWidth = .015f;
         public LayerMask collisionMask;
+        private readonly Direction _horizontal = new(8, 0, Vector2.right);
+        private readonly Direction _vertical = new(8, 0, Vector2.up);
 
         private BoxCollider2D _collider;
-        private readonly Direction _horizontal = new(8, 0, Vector2.right);
         private RaycastOrigins _raycastOrigins;
-        private readonly Direction _vertical = new(8, 0, Vector2.up);
 
         public bool isGrounded => _vertical.NegativeCollision;
         public CollisionGroup collision { get; } = new();
@@ -54,8 +54,7 @@ namespace Physics {
             if (isGrounded) {
                 groundTime += Time.deltaTime;
                 airTime = 0f;
-            }
-            else {
+            } else {
                 groundTime = 0f;
                 airTime += Time.deltaTime;
             }
@@ -76,8 +75,14 @@ namespace Physics {
         public void Move(Vector2 velocity) {
             UpdateRaycastOrigins();
             ValidateVelocity(ref velocity);
-            if (velocity.x != 0) Measure(_horizontal, _raycastOrigins.BottomRight, ref velocity.x, 0);
-            if (velocity.y != 0) Measure(_vertical, _raycastOrigins.TopLeft, ref velocity.y, velocity.x);
+            if (velocity.x != 0) {
+                Measure(_horizontal, _raycastOrigins.BottomRight, ref velocity.x, 0);
+            }
+
+            if (velocity.y != 0) {
+                Measure(_vertical, _raycastOrigins.TopLeft, ref velocity.y, velocity.x);
+            }
+
             transform.Translate(velocity);
         }
 
@@ -114,15 +119,23 @@ namespace Physics {
                 }
             }
 
-            if (!updateCollision) return isHit;
+            if (!updateCollision) {
+                return isHit;
+            }
+
             direction.NegativeCollision = sign == -1 && isHit;
             direction.PositiveCollision = sign == 1 && isHit;
             return isHit;
         }
 
         private void ValidateVelocity(ref Vector2 velocity) {
-            if (Mathf.Abs(velocity.x) < 0.005f) velocity.x = 0;
-            if (Mathf.Abs(velocity.x) < 0.0005f) velocity.x = 0;
+            if (Mathf.Abs(velocity.x) < 0.005f) {
+                velocity.x = 0;
+            }
+
+            if (Mathf.Abs(velocity.x) < 0.0005f) {
+                velocity.x = 0;
+            }
         }
 
         private void UpdateRaycastOrigins() {
@@ -172,8 +185,11 @@ namespace Physics {
                 get => _down;
                 set {
                     if (_down != value) {
-                        if (value) OnLanding?.Invoke();
-                        else OnTakeoff?.Invoke();
+                        if (value) {
+                            OnLanding?.Invoke();
+                        } else {
+                            OnTakeoff?.Invoke();
+                        }
                     }
 
                     _down = value;
@@ -183,9 +199,12 @@ namespace Physics {
             public bool up {
                 get => _up;
                 set {
-                    if (_up != value)
-                        if (value)
+                    if (_up != value) {
+                        if (value) {
                             OnCeilingBump?.Invoke();
+                        }
+                    }
+
                     _up = value;
                 }
             }
@@ -193,11 +212,12 @@ namespace Physics {
             public bool left {
                 get => _left;
                 set {
-                    if (_left != value)
+                    if (_left != value) {
                         if (value) {
                             OnWallBump?.Invoke();
                             OnLeftWallBump?.Invoke();
                         }
+                    }
 
                     _left = value;
                 }
@@ -206,11 +226,12 @@ namespace Physics {
             public bool right {
                 get => _right;
                 set {
-                    if (_right != value)
+                    if (_right != value) {
                         if (value) {
                             OnWallBump?.Invoke();
                             OnRightWallBump?.Invoke();
                         }
+                    }
 
                     _right = value;
                 }

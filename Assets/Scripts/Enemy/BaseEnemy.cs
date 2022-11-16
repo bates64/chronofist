@@ -3,8 +3,7 @@ using Physics;
 using UnityEngine;
 
 namespace Enemy {
-    [RequireComponent(typeof(Controller2D))]
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Rigidbody2D))]
     public class BaseEnemy : MonoBehaviour {
         public static List<BaseEnemy> enemies = new();
 
@@ -30,8 +29,9 @@ namespace Enemy {
             // Gravity
             gravityVelocity.y -= gravity * deltaTime;
             controller.Move(gravityVelocity * deltaTime);
-            if (controller.isGrounded)
+            if (controller.isGrounded) {
                 gravityVelocity.y = -gravity;
+            }
 
             // Knockback
             controller.Move(knockbackVelocity * deltaTime);

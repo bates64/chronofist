@@ -22,7 +22,9 @@ namespace General {
         }
 
         public static void SetLayerRecursively(this GameObject obj, int newLayer) {
-            if (obj == null) return;
+            if (obj == null) {
+                return;
+            }
 
             obj.layer = newLayer;
 

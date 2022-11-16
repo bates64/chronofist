@@ -6,8 +6,9 @@ namespace PassiveItems {
 
         private void Update() {
             foreach (var pickup in Pickup.ActivePickups)
-                if (Vector2.Distance(transform.position, pickup.transform.position) < radius)
+                if (Vector2.Distance(transform.position, pickup.transform.position) < radius) {
                     pickup.PickUp(this);
+                }
         }
     }
 }

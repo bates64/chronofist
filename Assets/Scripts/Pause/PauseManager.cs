@@ -6,13 +6,17 @@ namespace Pause {
         public bool isPaused { get; private set; }
 
         private void Update() {
-            if (isPaused)
-                if (InputManager.InterfaceInput.back)
+            if (isPaused) {
+                if (InputManager.InterfaceInput.back) {
                     Unpause();
+                }
+            }
         }
 
         public void OnGUI() {
-            if (isPaused) GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "Paused n shit");
+            if (isPaused) {
+                GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "Paused n shit");
+            }
         }
 
         protected override void init() {

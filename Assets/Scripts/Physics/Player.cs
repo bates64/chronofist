@@ -2,8 +2,7 @@ using UI;
 using UnityEngine;
 
 namespace Physics {
-    [RequireComponent(typeof(Controller2D))]
-    [RequireComponent(typeof(Health.Health))]
+    [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Health.Health))]
     public class Player : MonoBehaviour {
         private Controller2D controller;
 
@@ -64,21 +63,23 @@ namespace Physics {
 
         private void OnCeilingBump() {
             // Kill jump velocity
-            if (jumpVelocity.y > 0f) jumpVelocity.y *= -0.1f;
+            if (jumpVelocity.y > 0f) {
+                jumpVelocity.y *= -0.1f;
+            }
         }
 
         #region Horizontal Movement
 
         [Header("Horizontal Movement")] private readonly float maxWalkSpeed = 8f;
 
-        [Range(1, 30)] [SerializeField] private float maxRunSpeed = 14f;
+        [Range(1, 30), SerializeField]  private float maxRunSpeed = 14f;
         private readonly float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
-        [Range(0, 150)] [SerializeField] private float accelerationAir = 80f;
+        [Range(0, 150), SerializeField]  private float accelerationAir = 80f;
 
-        [Range(0, 100)] [SerializeField] private float accelerationGround = 80f;
+        [Range(0, 100), SerializeField]  private float accelerationGround = 80f;
 
         //private float accelerationReverseDirection = 1f;
-        [Range(0, 200)] [SerializeField] private float decceleration = 80f;
+        [Range(0, 200), SerializeField]  private float decceleration = 80f;
         [Range(0f, 5f)] public float slideAccelerationMultiplier = 1.5f;
 
         private float moveVelocity;
@@ -94,10 +95,10 @@ namespace Physics {
             var deltaTime = LocalTime.DeltaTimeAt(this);
 
             if (Mathf.Abs(input) >= 0.8f) {
-                if (controller.isGrounded)
+                if (controller.isGrounded) {
                     timeHeldMaxXInput += deltaTime;
-            }
-            else {
+                }
+            } else {
                 timeHeldMaxXInput = 0f;
             }
 
@@ -112,14 +113,16 @@ namespace Physics {
                 moveVelocity -= Mathf.Sign(moveVelocity) * decceleration * deltaTime;
 
                 // If we've crossed zero, stop
-                if (Mathf.Sign(moveVelocity) != oldSign)
+                if (Mathf.Sign(moveVelocity) != oldSign) {
                     moveVelocity = 0f;
-                if (Mathf.Abs(moveVelocity) < 0.1f)
+                }
+
+                if (Mathf.Abs(moveVelocity) < 0.1f) {
                     moveVelocity = 0f;
+                }
 
                 moveTime = 0f;
-            }
-            else {
+            } else {
                 // Accelerate
                 var acceleration = input * (controller.isGrounded ? accelerationGround : accelerationAir) * deltaTime;
 
@@ -132,16 +135,20 @@ namespace Physics {
                 if (Mathf.Abs(moveVelocity + acceleration) <=
                     Mathf.Abs(targetVelocity)) // If accelerating will not exceed target...
                     // Apply acceleration normally
+                {
                     moveVelocity += acceleration;
-                else if (Mathf.Abs(moveVelocity) <
-                         Mathf.Abs(targetVelocity)) // If above target velocity already, don't accelerate
+                } else if (Mathf.Abs(moveVelocity) <
+                           Mathf.Abs(targetVelocity)) // If above target velocity already, don't accelerate
                     // We've reached target velocity
+                {
                     moveVelocity = targetVelocity;
+                }
 
-                if (acceleration < 0f)
+                if (acceleration < 0f) {
                     isFacingLeft = true;
-                else if (acceleration > 0f)
+                } else if (acceleration > 0f) {
                     isFacingLeft = false;
+                }
 
                 moveTime += deltaTime;
             }
@@ -157,19 +164,23 @@ namespace Physics {
                 wallJumpDirection = left ? 1f : -1f;
 
                 // Hitting wall kills x velocity
-                if (moveVelocity > 0.1f && right)
+                if (moveVelocity > 0.1f && right) {
                     moveVelocity = 0.1f;
-                else if (moveVelocity < -0.1f && left) moveVelocity = -0.1f;
+                } else if (moveVelocity < -0.1f && left) {
+                    moveVelocity = -0.1f;
+                }
+
                 if (jumpVelocity.y <= 0f) {
-                    if (jumpVelocity.x > 0.1f && left)
+                    if (jumpVelocity.x > 0.1f && left) {
                         jumpVelocity.x = 0f;
-                    else if (jumpVelocity.x < -0.1f && right) jumpVelocity.x = 0f;
+                    } else if (jumpVelocity.x < -0.1f && right) {
+                        jumpVelocity.x = 0f;
+                    }
                 }
 
                 // Check for stored wall jump
                 ApplyStoredJump();
-            }
-            else {
+            } else {
                 timeSinceWall += deltaTime;
             }
         }
@@ -200,17 +211,17 @@ namespace Physics {
 
         #region Vertical Movement
 
-        [Header("Vertical Movement")] [Range(0f, 100f)] [SerializeField]
+        [Header("Vertical Movement"), Range(0f, 100f), SerializeField]
         private float walkJumpForce = 20f;
 
-        [Range(0f, 100f)] [SerializeField] private float runJumpForce = 30f;
+        [Range(0f, 100f), SerializeField]  private float runJumpForce = 30f;
         public Vector2 wallJumpForce = new(21f, 20f);
         public Vector2 jumpVelocityDamping = new(0.25f, 0.25f);
-        [Range(0f, 1f)] [SerializeField] private float jumpCoyoteTime = 0.1f;
-        [Range(0f, 1f)] [SerializeField] private float wallJumpCoyoteTime = 0.1f;
-        [Range(0f, 100f)] [SerializeField] private float gravity = 60f;
-        [Range(0f, 100f)] [SerializeField] private float terminalFallVelocity = 25f;
-        [Range(0f, 100f)] [SerializeField] private float wallSlideSpeed = 6f;
+        [Range(0f, 1f), SerializeField]  private float jumpCoyoteTime = 0.1f;
+        [Range(0f, 1f), SerializeField]  private float wallJumpCoyoteTime = 0.1f;
+        [Range(0f, 100f), SerializeField]  private float gravity = 60f;
+        [Range(0f, 100f), SerializeField]  private float terminalFallVelocity = 25f;
+        [Range(0f, 100f), SerializeField]  private float wallSlideSpeed = 6f;
 
         private Vector2 jumpVelocity = Vector2.zero;
         private bool didJumpCancel;
@@ -223,7 +234,9 @@ namespace Physics {
             // Jumping (upwards portion)
             if (jumpVelocity.y > 0f) {
                 // Check for jump cancel (jump button released before apex)
-                if (!InputManager.PlayerInput.Jump) didJumpCancel = true;
+                if (!InputManager.PlayerInput.Jump) {
+                    didJumpCancel = true;
+                }
 
                 // Apply y-axis jump damping (24x if cancelled)
                 var yJumpDamping = didJumpCancel ? jumpVelocityDamping.y * 24f : jumpVelocityDamping.y;
@@ -237,8 +250,7 @@ namespace Physics {
 
                     didJumpCancel = false;
                 }
-            }
-            else {
+            } else {
                 jumpVelocity.y = 0f;
             }
 
@@ -256,30 +268,34 @@ namespace Physics {
 
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
+            {
                 if (isPushingWall()) {
-                    if (totalVel < 0f)
+                    if (totalVel < 0f) {
                         currentTerminalVel = wallSlideSpeed;
+                    }
+
                     isFacingLeft = controller.CheckRight();
 
                     // TODO: produce particles
                 }
+            }
 
             /*if (!controller.isGrounded && InputManager.PlayerInput.Movement.y < 0) { // Fast fall
                 currentTerminalVel *= 4f * Mathf.Abs(InputManager.PlayerInput.Movement.y);
                 yVelocity -= 50f * deltaTime;
             }*/
-            if (totalVel < -currentTerminalVel) yVelocity = -currentTerminalVel;
+            if (totalVel < -currentTerminalVel) {
+                yVelocity = -currentTerminalVel;
+            }
         }
 
         private void OnInputJump(bool isPressed) {
             if (isPressed) {
                 if (controller.airTime < jumpCoyoteTime && Jump()) {
                     // We jumped.
-                }
-                else if (timeSinceWall < wallJumpCoyoteTime && WallJump()) {
+                } else if (timeSinceWall < wallJumpCoyoteTime && WallJump()) {
                     // We wall-jumped.
-                }
-                else {
+                } else {
                     // Store jump input and apply it when we hit the ground/wall
                     timeSinceStoredJump = 0f;
                 }
@@ -306,9 +322,17 @@ namespace Physics {
         }
 
         private bool WallJump() {
-            if (controller.isGrounded) return false;
-            if (!isPushingWall()) return false;
-            if (physicsDisableTime > 0f) return false;
+            if (controller.isGrounded) {
+                return false;
+            }
+
+            if (!isPushingWall()) {
+                return false;
+            }
+
+            if (physicsDisableTime > 0f) {
+                return false;
+            }
 
             yVelocity = 0f;
 
@@ -321,9 +345,17 @@ namespace Physics {
         }
 
         private bool Jump() {
-            if (IsJumping()) return false;
-            if (!controller.isGrounded) return false;
-            if (physicsDisableTime > 0f) return false;
+            if (IsJumping()) {
+                return false;
+            }
+
+            if (!controller.isGrounded) {
+                return false;
+            }
+
+            if (physicsDisableTime > 0f) {
+                return false;
+            }
 
             yVelocity = 0f;
             jumpVelocity = Vector2.up * (isRunning ? runJumpForce : walkJumpForce);
@@ -420,12 +452,13 @@ namespace Physics {
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
-                if (InputManager.PlayerInput.Movement.y > 0)
+                if (InputManager.PlayerInput.Movement.y > 0) {
                     Uppercut();
-                else if (InputManager.PlayerInput.Movement.y < 0 && !controller.isGrounded)
+                } else if (InputManager.PlayerInput.Movement.y < 0 && !controller.isGrounded) {
                     Slam();
-                else
+                } else {
                     Jab();
+                }
             }
         }
 
@@ -436,27 +469,34 @@ namespace Physics {
         }
 
         private void OnInputDash(bool isPressed) {
-            if (isPressed) Dash();
+            if (isPressed) {
+                Dash();
+            }
         }
 
         public bool Jab() {
             var nextType = AttackType.Jab1;
             if (attackDisableTime > 0f) {
                 // Combo
-                if (attackType == AttackType.Jab1)
+                if (attackType == AttackType.Jab1) {
                     nextType = AttackType.Jab2;
-                else if (attackType == AttackType.Jab2)
+                } else if (attackType == AttackType.Jab2) {
                     nextType = AttackType.Jab3;
-                else if (attackType == AttackType.DashForward || attackType == AttackType.DashBackward)
+                } else if (attackType == AttackType.DashForward || attackType == AttackType.DashBackward)
 
                     // TODO: Suplex
+                {
                     nextType = AttackType.Jab1;
-                else
+                } else {
                     return false;
+                }
             }
 
             if (!controller.isGrounded) {
-                if (airJabsRemaining == 0) return false;
+                if (airJabsRemaining == 0) {
+                    return false;
+                }
+
                 airJabsRemaining--;
             }
 
@@ -464,7 +504,9 @@ namespace Physics {
             var direction = isFacingLeft ? -1f : 1f;
 
             // ...overriden by input.
-            if (InputManager.PlayerInput.Movement.x != 0f) direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            if (InputManager.PlayerInput.Movement.x != 0f) {
+                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            }
 
             // Jab!
             attackType = nextType;
@@ -483,16 +525,20 @@ namespace Physics {
             if (attackDisableTime > 0f) {
                 if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
                     // Combo from non-finishing jab
-                }
-                else {
+                } else {
                     return false;
                 }
             }
 
-            if (!controller.isGrounded)
-                if (airUppercutsRemaining == 0)
+            if (!controller.isGrounded) {
+                if (airUppercutsRemaining == 0) {
                     return false;
-            if (airUppercutsRemaining > 0) airUppercutsRemaining--; // Uppercut pushes you airbourne
+                }
+            }
+
+            if (airUppercutsRemaining > 0) {
+                airUppercutsRemaining--; // Uppercut pushes you airbourne
+            }
 
             // Uppercut!
             attackType = AttackType.Uppercut;
@@ -511,14 +557,16 @@ namespace Physics {
             if (attackDisableTime > 0f) {
                 if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
                     // Combo from non-finishing jab
-                }
-                else {
+                } else {
                     return false;
                 }
             }
 
             if (!controller.isGrounded) {
-                if (airSlamsRemaining == 0) return false;
+                if (airSlamsRemaining == 0) {
+                    return false;
+                }
+
                 airSlamsRemaining--;
             }
 
@@ -545,7 +593,10 @@ namespace Physics {
             }
 
             if (!controller.isGrounded) {
-                if (airDashesRemaining == 0) return false;
+                if (airDashesRemaining == 0) {
+                    return false;
+                }
+
                 airDashesRemaining--;
             }
 
@@ -553,19 +604,26 @@ namespace Physics {
             var direction = isFacingLeft ? -1f : 1f;
 
             // ...overriden by movement velocity...
-            if (moveVelocity != 0f) direction = Mathf.Sign(moveVelocity);
+            if (moveVelocity != 0f) {
+                direction = Mathf.Sign(moveVelocity);
+            }
 
             // ...overriden by input...
-            if (InputManager.PlayerInput.Movement.x != 0f) direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            if (InputManager.PlayerInput.Movement.x != 0f) {
+                direction = Mathf.Sign(InputManager.PlayerInput.Movement.x);
+            }
 
             // ...overriden by wall if they're against one.
-            if (isPushingWall()) direction = wallJumpDirection;
+            if (isPushingWall()) {
+                direction = wallJumpDirection;
+            }
 
             // If the dash is in the direction of current velocity, it's a dash forward.
-            if (Mathf.Sign(moveVelocity) == direction)
+            if (Mathf.Sign(moveVelocity) == direction) {
                 attackType = AttackType.DashForward;
-            else
+            } else {
                 attackType = AttackType.DashBackward;
+            }
 
             // Dash!
             moveVelocity = direction * dashForce;
@@ -588,9 +646,17 @@ namespace Physics {
         private void UpdateAttacks() {
             // If any infinite cooldowns are in progress and we hit the ground, end them.
             if (controller.isGrounded && attackType != AttackType.None) {
-                if (physicsDisableTime == Mathf.Infinity) physicsDisableTime = 0f;
-                if (attackDisableTime == Mathf.Infinity) attackDisableTime = 0f;
-                if (attackAnimTime == Mathf.Infinity) attackAnimTime = 0f;
+                if (physicsDisableTime == Mathf.Infinity) {
+                    physicsDisableTime = 0f;
+                }
+
+                if (attackDisableTime == Mathf.Infinity) {
+                    attackDisableTime = 0f;
+                }
+
+                if (attackAnimTime == Mathf.Infinity) {
+                    attackAnimTime = 0f;
+                }
             }
         }
 

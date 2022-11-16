@@ -11,8 +11,9 @@ namespace Health {
         public bool isDead => health <= 0f;
 
         public void Start() {
-            if (GetComponent<DeathHandler>() == null)
+            if (GetComponent<DeathHandler>() == null) {
                 Debug.LogWarning($"'{gameObject.name}' has Health but no DeathHandler");
+            }
 
             // TODO: if maxHealth changes, check health & invoke OnChange
         }
@@ -43,7 +44,9 @@ namespace Health {
         public event DChange OnChange;
 
         public void ApplyDamage(float damage) {
-            if (isDead) return;
+            if (isDead) {
+                return;
+            }
 
             health -= damage;
             OnTakeDamage?.Invoke(damage);
@@ -60,7 +63,9 @@ namespace Health {
         }
 
         public void Heal(float heal, bool allowRevive) {
-            if (isDead && !allowRevive) return;
+            if (isDead && !allowRevive) {
+                return;
+            }
 
             health += heal;
             OnHeal?.Invoke(heal);

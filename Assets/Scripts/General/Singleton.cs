@@ -8,7 +8,10 @@ namespace General {
 
         protected static T Instance {
             get {
-                if (_instance is null) FindObjectOfType<T>().initialize();
+                if (_instance is null) {
+                    FindObjectOfType<T>().initialize();
+                }
+
                 return _instance;
             }
         }
@@ -25,8 +28,7 @@ namespace General {
             if (_instance is null) {
                 _instance = this as T;
                 init();
-            }
-            else {
+            } else {
                 Destroy(this);
             }
         }

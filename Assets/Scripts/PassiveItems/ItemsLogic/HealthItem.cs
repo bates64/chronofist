@@ -15,7 +15,9 @@ namespace PassiveItems {
             }
 
             health.maxHealth += amount;
-            if (isHeal) health.Heal(amount, false);
+            if (isHeal) {
+                health.Heal(amount, false);
+            }
         }
     }
 }

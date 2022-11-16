@@ -21,12 +21,15 @@ namespace Health {
                 }
 
             // Freeze frame effect on hit
-            if (numHits > 0) TimeEffect.Spawn(0.1f, 0.12f);
+            if (numHits > 0) {
+                TimeEffect.Spawn(0.1f, 0.12f);
+            }
 
             if (attemptsUntilDestroy > 0) {
                 attemptsUntilDestroy--;
-                if (attemptsUntilDestroy == 0)
+                if (attemptsUntilDestroy == 0) {
                     Destroy(gameObject);
+                }
             }
         }
 

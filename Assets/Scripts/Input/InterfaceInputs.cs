@@ -54,10 +54,22 @@ namespace Input {
 
         private Vector2Int getMovement() {
             var movement = Vector2Int.zero;
-            if (moveUp) movement.y += 1;
-            if (moveDown) movement.y -= 1;
-            if (moveLeft) movement.x -= 1;
-            if (moveRight) movement.x += 1;
+            if (moveUp) {
+                movement.y += 1;
+            }
+
+            if (moveDown) {
+                movement.y -= 1;
+            }
+
+            if (moveLeft) {
+                movement.x -= 1;
+            }
+
+            if (moveRight) {
+                movement.x += 1;
+            }
+
             return movement;
         }
     }

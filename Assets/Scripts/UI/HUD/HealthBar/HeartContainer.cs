@@ -13,10 +13,11 @@ namespace UI.HUD.HealthBar {
 
         private void Update() {
             if (_parentSection != null) {
-                if (_parentSection.health.health >= healthValue)
+                if (_parentSection.health.health >= healthValue) {
                     _spriteRenderer.sprite = _parentSection.fullSprite;
-                else
+                } else {
                     _spriteRenderer.sprite = _parentSection.emptySprite;
+                }
 
                 _spriteRenderer.enabled = _parentSection.health.maxHealth >= healthValue;
             }

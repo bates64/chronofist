@@ -72,7 +72,9 @@ namespace Input {
         }
 
         private void RelayPause(InputAction.CallbackContext context) {
-            if (context.ReadValueAsButton()) OnPause?.Invoke();
+            if (context.ReadValueAsButton()) {
+                OnPause?.Invoke();
+            }
         }
 
         #endregion

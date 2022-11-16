@@ -16,7 +16,10 @@ namespace Physics {
 
         public float AddForce(float deltaTime) {
             AccumulatedVelocity += ForceValue * deltaTime;
-            if (Mathf.Abs(AccumulatedVelocity) < 0.1) AccumulatedVelocity = 0.1f * Mathf.Sign(ForceValue);
+            if (Mathf.Abs(AccumulatedVelocity) < 0.1) {
+                AccumulatedVelocity = 0.1f * Mathf.Sign(ForceValue);
+            }
+
             return AccumulatedVelocity;
         }
     }

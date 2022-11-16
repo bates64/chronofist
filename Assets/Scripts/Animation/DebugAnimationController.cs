@@ -11,7 +11,10 @@ namespace Animation {
         }
 
         private void Update() {
-            if (_previousAnim != anim) _manager.PlayAnimation(anim);
+            if (_previousAnim != anim) {
+                _manager.PlayAnimation(anim);
+            }
+
             _previousAnim = anim;
         }
     }
