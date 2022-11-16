@@ -10,6 +10,7 @@ namespace Effects {
 
             if (TimeToLive <= 0f) {
                 if (isLastUpdate) {
+                    OnEnd();
                     Destroy(gameObject);
                 } else
 
@@ -19,5 +20,7 @@ namespace Effects {
                 }
             }
         }
+
+        protected virtual void OnEnd() {}
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cinemachine;
+using Combat;
 using General;
 using LDtkUnity;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace World {
         public GameObject follow; // Probably the player
         private readonly List<LoadedLevel> _loadedLevels = new();
         private LoadedLevel _currentLevel;
+        [SerializeField] private GameObject camera;
 
         private LDtkComponentProject _project;
 
@@ -53,7 +55,7 @@ namespace World {
                 }
 
                 var id = child.GetComponent<LDtkIid>();
-                _loadedLevels.Add(new LoadedLevel(child, level, id, bounds, follow.transform));
+                _loadedLevels.Add(new LoadedLevel(child, level, id, bounds, follow.transform,camera));
             }
         }
 
@@ -177,7 +179,7 @@ namespace World {
             var levelComponent = levelObject.GetComponent<LDtkComponentLevel>();
             var id = levelObject.GetComponent<LDtkIid>();
             var bounds = levelObject.GetComponent<PolygonCollider2D>();
-            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent, id, bounds, follow.transform));
+            _loadedLevels.Add(new LoadedLevel(levelObject, levelComponent, id, bounds, follow.transform,camera));
         }
 
         private class LoadedLevel {
@@ -193,7 +195,7 @@ namespace World {
             public bool MarkForUnload;
 
             public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds,
-                Transform follow) {
+                Transform follow,GameObject camera) {
                 this.gameObject = gameObject;
                 this.level = level;
                 this.bounds = bounds;
@@ -208,8 +210,7 @@ namespace World {
                     childTransform.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Level"));
 
                 // Create a child object to hold the virtual camera.
-                vcamObject = new GameObject("VirtualCamera");
-                vcamObject.transform.parent = gameObject.transform;
+                vcamObject = Instantiate(camera, gameObject.transform);
 
                 // Center it on the level.
                 vcamObject.transform.position = new Vector3(bounds.bounds.center.x, bounds.bounds.center.y, -10f);
@@ -218,7 +219,7 @@ namespace World {
                 vcamObject.SetActive(false);
 
                 // Set up the actual vcam component.
-                var vcam = vcamObject.AddComponent<CinemachineVirtualCamera>();
+                var vcam = vcamObject.GetComponent<CinemachineVirtualCamera>();
                 vcam.m_Lens.OrthographicSize = CustomCinemachinePixelPerfect.ORTHO_SIZE;
                 if (!useStaticCamera()) {
                     vcam.Follow = follow;
@@ -244,6 +245,7 @@ namespace World {
 
             public void Enter() {
                 vcamObject.SetActive(true);
+                ScreenShakeReference.SetCurrentCamera(vcamObject.GetComponent<CinemachineVirtualCamera>());
             }
 
             public void Exit() {
