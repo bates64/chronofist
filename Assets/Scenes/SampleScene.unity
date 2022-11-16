@@ -7436,7 +7436,7 @@ MonoBehaviour:
   dashPhysicsDisableTime: 0.4
   dashFallSpeedMultiplier: 0
   dashJumpSpeedMultiplier: {x: 0.8, y: 0}
-  maxAirDashes: 0
+  maxAirDashes: 1
   uppercutForce: 30
   uppercutDuration: 0.4
   uppercutCooldown: 0.5

@@ -10,10 +10,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1b98f432-f4a8-4193-91f4-e0ef1045bbd5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.game-off-jam/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Combat/Enemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Combat/Enemy.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Physics/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Physics/Player.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,7 +114,7 @@
       <workItem from="1668572021501" duration="550000" />
       <workItem from="1668572580189" duration="1970000" />
       <workItem from="1668579734867" duration="97000" />
-      <workItem from="1668579852810" duration="8724000" />
+      <workItem from="1668579852810" duration="9282000" />
     </task>
     <servers />
   </component>
