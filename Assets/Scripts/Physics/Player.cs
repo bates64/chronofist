@@ -1,3 +1,4 @@
+using System;
 using UI;
 using UnityEngine;
 
@@ -449,6 +450,8 @@ namespace Physics {
         private int airDashesRemaining;
         private int airUppercutsRemaining;
         private int airSlamsRemaining;
+        [NonSerialized] public Vector2 AttackKnockback;
+        [NonSerialized] public float AttackDamage;
 
         public AttackType GetAttackType() {
             return attackAnimTime > 0f ? attackType : AttackType.None;
@@ -521,6 +524,8 @@ namespace Physics {
             attackAnimTime = attackType == AttackType.Jab3 ? finalJabAttackDuration : jabAttackDuration;
             attackDisableTime = attackType == AttackType.Jab3 ? finalJabAttackCooldown : jabAttackCooldown;
             physicsDisableTime = attackType == AttackType.Jab3 ? finalJabPhysicsDisableTime : jabPhysicsDisableTime;
+            AttackKnockback = direction * jabForce * 2f * Vector2.right;
+            AttackDamage = 1f;
 
             return true;
         }
@@ -553,6 +558,8 @@ namespace Physics {
             attackAnimTime = uppercutDuration;
             attackDisableTime = uppercutCooldown;
             physicsDisableTime = uppercutPhysicsDisableTime;
+            AttackKnockback = uppercutForce * Vector2.up;
+            AttackDamage = 2f;
 
             return true;
         }
@@ -583,6 +590,8 @@ namespace Physics {
             attackAnimTime = slamDuration;
             attackDisableTime = slamCooldown;
             physicsDisableTime = slamPhysicsDisableTime;
+            AttackKnockback = slamForce * Vector2.down;
+            AttackDamage = 3f;
 
             return true;
         }

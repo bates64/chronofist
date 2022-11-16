@@ -5835,7 +5835,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650873247}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -5891,7 +5891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: 4
-  knockbackDamping: {x: 0.6, y: 0.6}
+  knockbackDamping: {x: 2, y: 0.9}
   walkSpeed: 4
 --- !u!1 &787881430
 GameObject:
@@ -6019,7 +6019,7 @@ GameObject:
   m_Component:
   - component: {fileID: 940851364}
   - component: {fileID: 940851365}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: HBox4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6051,7 +6051,7 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -6208,7 +6208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1073065140}
   - component: {fileID: 1073065141}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: HBox5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6240,7 +6240,7 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -6810,7 +6810,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1714622321}
   - component: {fileID: 1714622322}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: HBox3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6842,7 +6842,7 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -6950,7 +6950,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1756815813}
   - component: {fileID: 1756815814}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: HBox1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6982,7 +6982,7 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -7113,7 +7113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2050251270}
   - component: {fileID: 2050251271}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: HBox2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7145,7 +7145,7 @@ CircleCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -7298,7 +7298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2142921946}
   - component: {fileID: 2142921947}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: AttackHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7424,7 +7424,7 @@ MonoBehaviour:
   jabAttackCooldown: 0.5
   jabPhysicsDisableTime: 0.2
   finalJabAttackDuration: 0.5
-  finalJabAttackCooldown: 1.2
+  finalJabAttackCooldown: 0.5
   finalJabPhysicsDisableTime: 0.2
   jabMovementSpeedMultiplier: 0.4
   jabFallSpeedMultiplier: 0.8

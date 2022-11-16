@@ -15,6 +15,7 @@ namespace Combat {
         private Vector2 gravityVelocity = Vector2.zero;
         private Vector2 knockbackVelocity = Vector2.zero;
         private float facingDirection = 1f;
+        private LayerMask playerAttackLayer;
 
         [NonSerialized] public Vector3 HomePosition;
 
@@ -22,6 +23,7 @@ namespace Combat {
             HomePosition = transform.position;
             controller = GetComponent<Controller2D>();
             health = GetComponent<Health.Health>();
+            playerAttackLayer = LayerMask.NameToLayer("PlayerAttack");
         }
 
         private void Update() {
@@ -50,6 +52,17 @@ namespace Combat {
 
             // Timers
             damageCooldown -= deltaTime;
+        }
+
+        private void OnTriggerEnter2D(Collider2D col) {
+            // Check for incoming damage...
+            if (col.gameObject.layer == playerAttackLayer) {
+                var player = Player.Instance;
+                if (TryResetCooldown(0.05f)) {
+                    ApplyKnockback(player.AttackKnockback);
+                    if (health) health.ApplyDamage(player.AttackDamage);
+                }
+            }
         }
 
         public void Walk(float direction) {
@@ -88,7 +101,7 @@ namespace Combat {
         }
 
         public bool IsVulnerable() {
-            return IsAlive() && damageCooldown > 0f;
+            return IsAlive() && damageCooldown < 0f;
         }
 
         public float DistanceFromHome() {
