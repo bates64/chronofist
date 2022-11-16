@@ -7097,10 +7097,10 @@ MonoBehaviour:
   jabForce: 2
   jabAttackDuration: 0.4
   jabAttackCooldown: 0.5
-  jabPhysicsDisableTime: 0.2
+  jabPhysicsDisableTime: 0.4
   finalJabAttackDuration: 0.5
   finalJabAttackCooldown: 1.2
-  finalJabPhysicsDisableTime: 0.2
+  finalJabPhysicsDisableTime: 0.5
   jabMovementSpeedMultiplier: 0.4
   jabFallSpeedMultiplier: 0.8
   jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
