@@ -6315,7 +6315,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10, y: -10}
-  m_SizeDelta: {x: 400, y: 20}
+  m_SizeDelta: {x: 800, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1436772983
 MonoBehaviour:
@@ -7094,18 +7094,35 @@ MonoBehaviour:
   gravity: 60
   terminalFallVelocity: 40
   wallSlideSpeed: 6
-  jabForce: 5
+  jabForce: 2
   jabAttackDuration: 0.4
   jabAttackCooldown: 0.5
+  finalJabAttackDuration: 0.5
+  finalJabAttackCooldown: 1.2
   jabMovementSpeedMultiplier: 0.4
   jabFallSpeedMultiplier: 0.8
   jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
+  maxAirJabs: -1
   dashForce: 30
   dashDuration: 0.2
   dashCooldown: 0.5
   dashFallSpeedMultiplier: 0
   dashJumpSpeedMultiplier: {x: 0.8, y: 0}
   maxAirDashes: 0
+  uppercutForce: 30
+  uppercutAttackDuration: 0.4
+  uppercutAttackCooldown: 0.5
+  uppercutMovementSpeedMultiplier: 0
+  uppercutFallSpeedMultiplier: 0
+  uppercutJumpSpeedMultiplier: {x: 0, y: 0}
+  maxAirUppercuts: 1
+  slamForce: 20
+  slamAttackDuration: 0.4
+  slamAttackCooldown: 0.5
+  slamMovementSpeedMultiplier: 0
+  slamFallSpeedMultiplier: 0
+  slamJumpSpeedMultiplier: {x: 0, y: 0}
+  maxAirSlams: 1
 --- !u!114 &2146169975
 MonoBehaviour:
   m_ObjectHideFlags: 0

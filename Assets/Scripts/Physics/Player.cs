@@ -19,7 +19,7 @@ namespace Physics {
             InputManager.PlayerInput.OnSpecialChange += OnInputSpecial;
             InputManager.PlayerInput.OnDashChange += OnInputDash;
 
-            airDashesRemaining = maxAirDashes;
+            ReplenishAirAttacks();
         }
 
         private void Update() {
@@ -39,7 +39,7 @@ namespace Physics {
             Vector2 totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
-            UiManager.DebugUi.SetStateName($"attackType: {attackType}");
+            UiManager.DebugUi.SetStateName($"jabs: {airJabsRemaining}, uppercuts: {airUppercutsRemaining}, slams: {airSlamsRemaining}, dashes: {airDashesRemaining}");
             UiManager.DebugUi.SetVelocity(totalVelocity);
             UiManager.DebugUi.SetLocalTime(LocalTime.MultiplierAt(transform.position));
         }
@@ -56,8 +56,7 @@ namespace Physics {
             // Kill vertical movement
             yVelocity = 0f;
 
-            airDashesRemaining = maxAirDashes;
-
+            ReplenishAirAttacks();
             ApplyStoredJump();
         }
 
@@ -348,11 +347,14 @@ namespace Physics {
 
         [Header("Jab")]
         public float jabForce = 10f;
-        public float jabAttackDuration = 0.2f;
+        public float jabAttackDuration = 0.5f;
         public float jabAttackCooldown = 0.5f;
+        public float finalJabAttackDuration = 1f;
+        public float finalJabAttackCooldown = 1f;
         public float jabMovementSpeedMultiplier = 0f;
         public float jabFallSpeedMultiplier = 0f;
         public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
+        public int maxAirJabs = -1;
 
         [Header("Dash")]
         public float dashForce = 40f;
@@ -362,12 +364,23 @@ namespace Physics {
         public Vector2 dashJumpSpeedMultiplier = Vector2.zero;
         public int maxAirDashes = 1;
 
-        private enum AttackDirection {
-            Up,
-            Down,
-            Left,
-            Right,
-        }
+        [Header("Uppercut")]
+        public float uppercutForce = 20f;
+        public float uppercutAttackDuration = 0.2f;
+        public float uppercutAttackCooldown = 0.5f;
+        public float uppercutMovementSpeedMultiplier = 0f;
+        public float uppercutFallSpeedMultiplier = 0f;
+        public Vector2 uppercutJumpSpeedMultiplier = Vector2.zero;
+        public int maxAirUppercuts = 1;
+
+        [Header("Slam")]
+        public float slamForce = 20f;
+        public float slamAttackDuration = 0.2f;
+        public float slamAttackCooldown = 0.5f;
+        public float slamMovementSpeedMultiplier = 0f;
+        public float slamFallSpeedMultiplier = 0f;
+        public Vector2 slamJumpSpeedMultiplier = Vector2.zero;
+        public int maxAirSlams = 1;
 
         public enum AttackType {
             None,
@@ -376,12 +389,17 @@ namespace Physics {
             Jab3,
             DashForward,
             DashBackward,
+            Uppercut,
+            Slam,
         }
 
         private AttackType attackType = AttackType.None;
         private float physicsDisableTime = 0f; // Disables movement & gravity if positive
         private float attackDisableTime = 0f; // No attacks during cooldown
+        private int airJabsRemaining;
         private int airDashesRemaining;
+        private int airUppercutsRemaining;
+        private int airSlamsRemaining;
 
         public AttackType GetAttackType() {
             return physicsDisableTime > 0f ? attackType : AttackType.None;
@@ -389,7 +407,13 @@ namespace Physics {
 
         private void OnInputAttack(bool isPressed) {
             if (isPressed) {
-                Jab();
+                if (InputManager.PlayerInput.Movement.y > 0) {
+                    Uppercut();
+                } else if (InputManager.PlayerInput.Movement.y < 0) {
+                    Slam();
+                } else {
+                    Jab();
+                }
             }
         }
 
@@ -405,18 +429,24 @@ namespace Physics {
             }
         }
 
-        private void Jab() {
+        public bool Jab() {
+            AttackType nextType = AttackType.Jab1;
             if (attackDisableTime > 0f) {
                 // Combo
                 if (attackType == AttackType.Jab1) {
-                    attackType = AttackType.Jab2;
+                    nextType = AttackType.Jab2;
                 } else if (attackType == AttackType.Jab2) {
-                    attackType = AttackType.Jab3;
+                    nextType = AttackType.Jab3;
+                } else if (attackType == AttackType.DashForward || attackType == AttackType.DashBackward) {
+                    // TODO: Suplex
+                    nextType = AttackType.Jab1;
                 } else {
-                    return;
+                    return false;
                 }
-            } else {
-                attackType = AttackType.Jab1;
+            }
+            if (!controller.isGrounded) {
+                if (airJabsRemaining == 0) return false;
+                airJabsRemaining--;
             }
 
             // Jab is in direction player is facing...
@@ -427,18 +457,76 @@ namespace Physics {
             }
 
             // Jab!
+            attackType = nextType;
             moveVelocity *= jabMovementSpeedMultiplier;
             yVelocity *= jabFallSpeedMultiplier;
             jumpVelocity *= jabJumpSpeedMultiplier;
             jumpVelocity += Vector2.right * direction * jabForce;
-            physicsDisableTime = jabAttackDuration;
-            attackDisableTime = jabAttackCooldown;
+            physicsDisableTime = attackType == AttackType.Jab3 ? finalJabAttackDuration : jabAttackDuration;
+            attackDisableTime = attackType == AttackType.Jab3 ? finalJabAttackCooldown : jabAttackCooldown;
+
+            return true;
         }
 
-        private void Dash() {
-            if (attackDisableTime > 0f) return;
+        public bool Uppercut() {
+            if (attackDisableTime > 0f) {
+                if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
+                    // Combo from non-finishing jab
+                } else {
+                    return false;
+                }
+            }
             if (!controller.isGrounded) {
-                if (airDashesRemaining == 0) return;
+                if (airUppercutsRemaining == 0) return false;
+            }
+             if (airUppercutsRemaining > 0) airUppercutsRemaining--; // Uppercut pushes you airbourne
+
+            // Uppercut!
+            attackType = AttackType.Uppercut;
+            moveVelocity *= uppercutMovementSpeedMultiplier;
+            yVelocity *= uppercutFallSpeedMultiplier;
+            jumpVelocity *= uppercutJumpSpeedMultiplier;
+            jumpVelocity += Vector2.up * uppercutForce;
+            physicsDisableTime = uppercutAttackDuration;
+            attackDisableTime = uppercutAttackCooldown;
+
+            return true;
+        }
+
+        public bool Slam() {
+            if (attackDisableTime > 0f) {
+                if (attackType == AttackType.Jab1 || attackType == AttackType.Jab2) {
+                    // Combo from non-finishing jab
+                } else {
+                    return false;
+                }
+            }
+            if (!controller.isGrounded) {
+                if (airSlamsRemaining == 0) return false;
+                airSlamsRemaining--;
+            }
+
+            // Slam!
+            attackType = AttackType.Slam;
+            moveVelocity *= slamMovementSpeedMultiplier;
+            yVelocity *= slamFallSpeedMultiplier;
+            jumpVelocity *= slamJumpSpeedMultiplier;
+            jumpVelocity += Vector2.down * slamForce;
+            physicsDisableTime = slamAttackDuration;
+            attackDisableTime = slamAttackCooldown;
+
+            return true;
+        }
+
+        public bool Dash() {
+            if (attackDisableTime > 0f) {
+                if (attackType == AttackType.Jab1) {
+                     // TODO: Suplex
+                }
+                return false;
+            }
+            if (!controller.isGrounded) {
+                if (airDashesRemaining == 0) return false;
                 airDashesRemaining--;
             }
 
@@ -470,6 +558,15 @@ namespace Physics {
             yVelocity *= dashFallSpeedMultiplier;
             physicsDisableTime = dashDuration;
             attackDisableTime = dashCooldown;
+
+            return true;
+        }
+
+        public void ReplenishAirAttacks() {
+            airJabsRemaining = maxAirJabs;
+            airUppercutsRemaining = maxAirUppercuts;
+            airSlamsRemaining = maxAirSlams;
+            airDashesRemaining = maxAirDashes;
         }
 
         #endregion

@@ -32,7 +32,11 @@ namespace Animation {
                 anim = player.IsAirbourne() ? Anim.AirPunch2 : Anim.Punch2;
             } else if (player.GetAttackType() == Player.AttackType.Jab3) {
                 anim = player.IsAirbourne() ? Anim.AirPunch3 : Anim.Punch3;
-            } else if (player.IsWallPushing()) {
+            } else if (player.GetAttackType() == Player.AttackType.Uppercut) {
+                anim = Anim.Uppercut;
+            } else if (player.GetAttackType() == Player.AttackType.Slam) {
+                anim = Anim.Slam;
+            }  else if (player.IsWallPushing()) {
                 anim = Anim.Push;
             } else if (player.IsWallSliding()) {
                 anim = Anim.WallCling;
