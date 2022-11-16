@@ -7099,7 +7099,7 @@ MonoBehaviour:
   jabAttackCooldown: 0.5
   jabPhysicsDisableTime: 0.4
   finalJabAttackDuration: 0.5
-  finalJabAttackCooldown: 1.2
+  finalJabAttackCooldown: 0.6
   finalJabPhysicsDisableTime: 0.5
   jabMovementSpeedMultiplier: 0.4
   jabFallSpeedMultiplier: 0.8
