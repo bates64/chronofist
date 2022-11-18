@@ -7436,10 +7436,10 @@ MonoBehaviour:
   jabForce: 2
   jabAttackDuration: 0.4
   jabAttackCooldown: 0.5
-  jabPhysicsDisableTime: 0.4
-  finalJabAttackDuration: 0.6
-  finalJabAttackCooldown: 0.6
-  finalJabPhysicsDisableTime: 0.6
+  jabPhysicsDisableTime: 0.2
+  finalJabAttackDuration: 0.5
+  finalJabAttackCooldown: 0.5
+  finalJabPhysicsDisableTime: 0.2
   jabMovementSpeedMultiplier: 0.4
   jabFallSpeedMultiplier: 0.8
   jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
@@ -7450,7 +7450,7 @@ MonoBehaviour:
   dashPhysicsDisableTime: 0.4
   dashFallSpeedMultiplier: 0
   dashJumpSpeedMultiplier: {x: 0.8, y: 0}
-  maxAirDashes: 1
+  maxAirDashes: 0
   uppercutForce: 30
   uppercutDuration: 0.4
   uppercutCooldown: 0.5
@@ -7467,6 +7467,12 @@ MonoBehaviour:
   slamFallSpeedMultiplier: 0
   slamJumpSpeedMultiplier: {x: 0, y: 0}
   maxAirSlams: 1
+  normalAttackEffectDuration: 0.1
+  normalAttackEffectShakeAmplitude: 20
+  normalAttackEffectShakeFrequency: 10
+  strongAttackEffectDuration: 0.15
+  strongAttackEffectShakeAmplitude: 30
+  strongAttackEffectShakeFrequency: 20
 --- !u!114 &2146169975
 MonoBehaviour:
   m_ObjectHideFlags: 0

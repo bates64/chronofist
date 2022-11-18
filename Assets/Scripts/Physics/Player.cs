@@ -1,6 +1,7 @@
 using System;
 using UI;
 using UnityEngine;
+using Effects;
 
 namespace Physics {
     [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Health.Health))]
@@ -77,14 +78,14 @@ namespace Physics {
 
         [Header("Horizontal Movement")] private readonly float maxWalkSpeed = 8f;
 
-        [Range(1, 30), SerializeField]  private float maxRunSpeed = 14f;
+        [Range(1, 30), SerializeField] private float maxRunSpeed = 14f;
         private readonly float timeToHoldMaxXInputToRun = 0.0f; // 0 = always run
-        [Range(0, 150), SerializeField]  private float accelerationAir = 80f;
+        [Range(0, 150), SerializeField] private float accelerationAir = 80f;
 
-        [Range(0, 100), SerializeField]  private float accelerationGround = 80f;
+        [Range(0, 100), SerializeField] private float accelerationGround = 80f;
 
         //private float accelerationReverseDirection = 1f;
-        [Range(0, 200), SerializeField]  private float decceleration = 80f;
+        [Range(0, 200), SerializeField] private float decceleration = 80f;
         [Range(0f, 5f)] public float slideAccelerationMultiplier = 1.5f;
 
         private float moveVelocity;
@@ -219,14 +220,14 @@ namespace Physics {
         [Header("Vertical Movement"), Range(0f, 100f), SerializeField]
         private float walkJumpForce = 20f;
 
-        [Range(0f, 100f), SerializeField]  private float runJumpForce = 30f;
+        [Range(0f, 100f), SerializeField] private float runJumpForce = 30f;
         public Vector2 wallJumpForce = new(21f, 20f);
         public Vector2 jumpVelocityDamping = new(0.25f, 0.25f);
-        [Range(0f, 1f), SerializeField]  private float jumpCoyoteTime = 0.1f;
-        [Range(0f, 1f), SerializeField]  private float wallJumpCoyoteTime = 0.1f;
-        [Range(0f, 100f), SerializeField]  private float gravity = 60f;
-        [Range(0f, 100f), SerializeField]  private float terminalFallVelocity = 25f;
-        [Range(0f, 100f), SerializeField]  private float wallSlideSpeed = 6f;
+        [Range(0f, 1f), SerializeField] private float jumpCoyoteTime = 0.1f;
+        [Range(0f, 1f), SerializeField] private float wallJumpCoyoteTime = 0.1f;
+        [Range(0f, 100f), SerializeField] private float gravity = 60f;
+        [Range(0f, 100f), SerializeField] private float terminalFallVelocity = 25f;
+        [Range(0f, 100f), SerializeField] private float wallSlideSpeed = 6f;
 
         private Vector2 jumpVelocity = Vector2.zero;
         private bool didJumpCancel;
@@ -670,6 +671,51 @@ namespace Physics {
                 if (attackAnimTime == Mathf.Infinity) {
                     attackAnimTime = 0f;
                 }
+            }
+        }
+
+        #endregion
+
+        #region Damage Effects
+
+        [Header("Normal Attack Effect (Jab1, Jab2)")]
+        public float normalAttackEffectDuration = 0.1f;
+        public float normalAttackEffectShakeAmplitude = 20f;
+        public float normalAttackEffectShakeFrequency = 10f;
+
+        [Header("Strong Attack Effect (Jab3, Uppercut, Slam)")]
+        public float strongAttackEffectDuration = 0.15f;
+        public float strongAttackEffectShakeAmplitude = 30f;
+        public float strongAttackEffectShakeFrequency = 20f;
+
+        private GameObject shakeEffect;
+        private GameObject timeEffect;
+
+        public void DidDamageEnemy(Combat.Enemy enemy) {
+            // Don't spawn an effect if there's already one running.
+            if (shakeEffect != null || timeEffect != null) {
+                return;
+            }
+
+            switch (attackType) {
+                case AttackType.None:
+                case AttackType.DashForward:
+                case AttackType.DashBackward:
+                default:
+                    break;
+                case AttackType.Jab1:
+                case AttackType.Jab2:
+                    // Normal attack effect
+                    shakeEffect = ShakeEffect.Spawn(0f, normalAttackEffectDuration, normalAttackEffectShakeAmplitude, normalAttackEffectShakeFrequency);
+                    timeEffect = TimeEffect.Spawn(normalAttackEffectDuration, 0.12f);
+                    break;
+                case AttackType.Uppercut:
+                case AttackType.Slam:
+                case AttackType.Jab3:
+                    // Strong attack effect
+                    shakeEffect = ShakeEffect.Spawn(0f, strongAttackEffectDuration, strongAttackEffectShakeAmplitude, strongAttackEffectShakeFrequency);
+                    timeEffect = TimeEffect.Spawn(strongAttackEffectDuration, 0.12f);
+                    break;
             }
         }
 

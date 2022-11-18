@@ -1,5 +1,4 @@
 using System;
-using Effects;
 using Physics;
 using UnityEngine;
 
@@ -60,9 +59,9 @@ namespace Combat {
             if (col.gameObject.layer == playerAttackLayer) {
                 var player = Player.Instance;
                 if (TryResetCooldown(0.05f)) {
+                    player.DidDamageEnemy(this);
                     ApplyKnockback(player.AttackKnockback);
                     if (health) health.ApplyDamage(player.AttackDamage);
-                    ShakeEffect.Shake(Vector3.zero,10,10,0.2f,0,1);
                 }
             }
         }

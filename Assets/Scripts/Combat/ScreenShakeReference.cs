@@ -9,7 +9,6 @@ namespace Combat
 {
     public class ScreenShakeReference : Singleton<ScreenShakeReference>
     {
-        private int _index = 0;
         private CinemachineBasicMultiChannelPerlin _currentPerlin;
         private CinemachineVirtualCamera _currentCamera;
 
