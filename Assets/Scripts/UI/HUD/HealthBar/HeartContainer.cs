@@ -12,7 +12,7 @@ namespace UI.HUD.HealthBar {
         }
 
         private void Update() {
-            if (_parentSection != null) {
+            if (_parentSection != null && _parentSection.health != null) {
                 if (_parentSection.health.health >= healthValue) {
                     _spriteRenderer.sprite = _parentSection.fullSprite;
                 } else {

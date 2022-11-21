@@ -9,6 +9,13 @@
       },
       "url": "https://package.openupm.com"
     },
+    "com.litefeel.bitmapfontimporter": {
+      "version": "3.3.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://registry.npmjs.org"
+    },
     "com.unity.2d.animation": {
       "version": "7.0.8",
       "depth": 0,
