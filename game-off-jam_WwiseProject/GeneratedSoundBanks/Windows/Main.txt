@@ -1,0 +1,9 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3848457545	Jab1			\Default Work Unit\Player\Jab1	
+	3848457546	Jab2			\Default Work Unit\Player\Jab2	
+	3848457547	Jab3			\Default Work Unit\Player\Jab3	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	355802678	Jab_Final	Y:\Documents\GitHub\game-off-jam\game-off-jam_WwiseProject\.cache\Windows\SFX\zEnemy death_punch_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Player\Attack\Final Jab\Jab_Final		117332
+	395494878	Jab	Y:\Documents\GitHub\game-off-jam\game-off-jam_WwiseProject\.cache\Windows\SFX\zDamage_punch_10C4C929.wem		\Actor-Mixer Hierarchy\Default Work Unit\Player\Attack\Jab\Jab		95760
+
