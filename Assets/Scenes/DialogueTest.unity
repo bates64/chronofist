@@ -381,10 +381,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a0a2d61022484066aba7e2d51de052d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fontXml: {fileID: 4900000, guid: 825e259985cda41289f5a019c04c9398, type: 3}
   fontImage: {fileID: 2800000, guid: 3e5d673b6ed2e48ae8c71d5ae4f474d8, type: 3}
   font: {fileID: 12800000, guid: 7af9ca58a520640da935a2f9efae05ec, type: 2}
-  text: No
+  text: Hello, world!
 --- !u!4 &1858904360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1264579118906599257, guid: 03a65d1038a074854ae2b0f5c1033c12, type: 3}

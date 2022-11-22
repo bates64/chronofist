@@ -1,31 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
 using General;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Ui {
     public class GameText : MonoBehaviour {
-        public TextAsset fontXml;
         public Texture2D fontImage;
         public Font font;
 
         public string text = "Hello, world!";
 
-        private XmlDocument fontXmlDoc;
-
         private void Start() {
-            fontXmlDoc = new XmlDocument();
-            fontXmlDoc.LoadXml(fontXml.text);
             CreateSpriteChildren();
         }
 
         private void CreateSpriteChildren() {
-            foreach (Transform child in transform) {
-                DestroyImmediate(child.gameObject);
-            }
+            DestroySpriteChildren();
 
             // For each character in `text`, create a new sprite child
             var x = 0f;
@@ -35,6 +24,10 @@ namespace Ui {
                 if (c == ' ') {
                     x += 4f * Util.PIXEL;
                     continue;
+                } else if (c == '\n') {
+                    y += 16f * Util.PIXEL;
+                    x = 0f;
+                    continue;
                 }
 
                 CharacterInfo characterInfo = GetCharacterInfoForChar(c);
@@ -42,7 +35,7 @@ namespace Ui {
                 // Create a new game object
                 GameObject go = new GameObject();
                 go.transform.parent = transform;
-                go.transform.localPosition = new Vector3(x + characterInfo.vert.x * Util.PIXEL, y + characterInfo.vert.y * Util.PIXEL , 0f);
+                go.transform.localPosition = new Vector3(x + characterInfo.minX * Util.PIXEL, y + characterInfo.maxY * Util.PIXEL , 0f);
                 go.name = c.ToString();
 
                 // Create a new sprite renderer
@@ -51,8 +44,12 @@ namespace Ui {
 
                 // Update the position
                 x += characterInfo.advance * Util.PIXEL;
+            }
+        }
 
-                // TODO: y
+        private void DestroySpriteChildren() {
+            foreach (Transform child in transform) {
+                DestroyImmediate(child.gameObject);
             }
         }
 
@@ -75,6 +72,7 @@ namespace Ui {
 
         private Sprite CreateSprite(CharacterInfo characterInfo) {
             // Make a Sprite from the character info using the font image
+            // TODO(perf): cache me
             return Sprite.Create(
                 fontImage,
                 new Rect(
