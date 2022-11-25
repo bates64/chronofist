@@ -7,27 +7,36 @@ namespace Ui {
         public Texture2D fontImage;
         public Font font;
 
-        public string text = "Hello, world!";
+        private string _text = "GameText";
+        public string Text {
+            get => _text;
+            set {
+                _text = value;
+                CreateSpriteChildren();
+            }
+        }
 
         private void Start() {
             CreateSpriteChildren();
         }
 
         private void CreateSpriteChildren() {
+            // PERF: could make this more efficient by updating existing children if they exist
             DestroySpriteChildren();
 
-            // For each character in `text`, create a new sprite child
+            // For each character in `Text`, create a new sprite child
             var x = 0f;
             var y = 0f;
 
-            foreach (char c in text) {
-                if (c == ' ') {
-                    x += 4f * Util.PIXEL;
-                    continue;
-                } else if (c == '\n') {
-                    y += 16f * Util.PIXEL;
-                    x = 0f;
-                    continue;
+            foreach (var c in Text) {
+                switch (c) {
+                    case ' ':
+                        x += 4f * Util.PIXEL;
+                        continue;
+                    case '\n':
+                        y += 16f * Util.PIXEL;
+                        x = 0f;
+                        continue;
                 }
 
                 CharacterInfo characterInfo = GetCharacterInfoForChar(c);
