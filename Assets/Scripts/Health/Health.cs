@@ -43,14 +43,16 @@ namespace Health {
 
         public event DChange OnChange;
 
-        public void ApplyDamage(float damage) {
+        public void ApplyDamage(float damage, bool isPassive = false) {
             if (isDead) {
                 return;
             }
 
             health -= damage;
-            OnTakeDamage?.Invoke(damage);
             OnChange?.Invoke(health, maxHealth);
+            if (!isPassive) {
+                OnTakeDamage?.Invoke(damage);
+            }
 
             if (health <= 0f) {
                 health = 0f;
