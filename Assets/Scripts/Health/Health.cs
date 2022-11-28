@@ -78,5 +78,23 @@ namespace Health {
                 OnFullHealth?.Invoke();
             }
         }
+
+        public string ToFractionString() {
+            return $"{health}/{maxHealth}";
+        }
+
+        public string ToPercentString() {
+            return $"{(health / maxHealth) * 100f}%";
+        }
+
+        /// <returns>
+        ///     Returns the health remaining in M:SS format, where M is minutes and S is seconds, and 1 unit of health is 1 second.
+        /// </returns>
+        public string ToTimeString() {
+            var seconds = (int) health;
+            var minutes = seconds / 60;
+            seconds %= 60;
+            return $"{minutes}:{seconds:00}";
+        }
     }
 }

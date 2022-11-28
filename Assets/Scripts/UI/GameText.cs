@@ -3,14 +3,20 @@ using General;
 using UnityEngine;
 
 namespace Ui {
+    [ExecuteAlways]
+    [SelectionBase]
     public class GameText : MonoBehaviour {
         public Texture2D fontImage;
         public Font font;
 
-        private string _text = "GameText";
+        [SerializeField] [TextArea] string _text = "GameText";
         public string Text {
             get => _text;
             set {
+                if (value == _text) {
+                    return;
+                }
+
                 _text = value;
                 CreateSpriteChildren();
             }
@@ -20,9 +26,14 @@ namespace Ui {
             CreateSpriteChildren();
         }
 
+        [ContextMenu("CreateSpriteChildren")]
         private void CreateSpriteChildren() {
             // PERF: could make this more efficient by updating existing children if they exist
             DestroySpriteChildren();
+
+            if (font == null || fontImage == null) {
+                return;
+            }
 
             // For each character in `Text`, create a new sprite child
             var x = 0f;
@@ -39,7 +50,13 @@ namespace Ui {
                         continue;
                 }
 
-                CharacterInfo characterInfo = GetCharacterInfoForChar(c);
+                CharacterInfo characterInfo;
+                try {
+                    characterInfo = GetCharacterInfoForChar(c);
+                } catch (NoGlyphException e) {
+                    Debug.LogError(e);
+                    characterInfo = GetCharacterInfoForChar('?');
+                }
 
                 // Create a new game object
                 GameObject go = new GameObject();
@@ -56,8 +73,10 @@ namespace Ui {
             }
         }
 
+        [ContextMenu("DestroySpriteChildren")]
         private void DestroySpriteChildren() {
             foreach (Transform child in transform) {
+                child.gameObject.SetActive(false);
                 DestroyImmediate(child.gameObject);
             }
         }
