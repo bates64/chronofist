@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Ui {
     [RequireComponent(typeof(GameText))]
     public class SlowGameText : MonoBehaviour {
-        public string eventualText = "SlowGameText";
+        [TextArea] public string eventualText = "SlowGameText";
         public float delay = 0.05f;
         public float delayComma = 0.2f;
         public float delayPeriod = 0.5f;
@@ -24,10 +24,10 @@ namespace Ui {
 
         private IEnumerator ShowText() {
             // Print each character one at a time
-            // TODO: use a new GameText.hideAfterIndex instead of resetting the text each time
-            gameText.Text = "";
+            gameText.Text = eventualText;
+            gameText.NumberOfCharsToRender = 0;
             foreach (var c in eventualText) {
-                gameText.Text += c;
+                gameText.NumberOfCharsToRender += 1;
                 yield return new WaitForSeconds(c switch {
                     ',' => delayComma,
                     '.' => delayPeriod,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using General;
 using UnityEngine;
 
@@ -9,27 +10,45 @@ namespace Ui {
         public Texture2D fontImage;
         public Font font;
 
-        [SerializeField] [TextArea] string _text = "GameText";
+        [SerializeField] [TextArea] string text = "GameText";
         public string Text {
-            get => _text;
+            get => text;
             set {
-                if (value == _text) {
+                if (value == text) {
                     return;
                 }
 
-                _text = value;
-                CreateSpriteChildren();
+                text = value;
+                UpdateChildren();
             }
         }
 
-        private void Start() {
-            CreateSpriteChildren();
+        [SerializeField] [Range(-1, 60)] private int numberOfCharsToRender = -1;
+        public int NumberOfCharsToRender {
+            get => numberOfCharsToRender;
+            set {
+                if (value == numberOfCharsToRender) {
+                    return;
+                }
+
+                numberOfCharsToRender = value;
+                UpdateChildren();
+            }
         }
 
-        [ContextMenu("CreateSpriteChildren")]
-        private void CreateSpriteChildren() {
-            // PERF: could make this more efficient by updating existing children if they exist
-            DestroySpriteChildren();
+        private readonly List<GameObject> childObjects = new List<GameObject>();
+
+        private void Start() {
+            foreach (Transform child in transform) {
+                childObjects.Add(child.gameObject);
+            }
+
+            UpdateChildren();
+        }
+
+        [ContextMenu("UpdateChildren")]
+        private void UpdateChildren() {
+            DisableChildren();
 
             if (font == null || fontImage == null) {
                 return;
@@ -39,15 +58,30 @@ namespace Ui {
             var x = 0f;
             var y = 0f;
 
+            var index = 0;
+            var prevChar = ' ';
+
             foreach (var c in Text) {
+                if (index >= numberOfCharsToRender && numberOfCharsToRender != -1) {
+                    break;
+                }
+
                 switch (c) {
                     case ' ':
                         x += 4f * Util.PIXEL;
+                        index += 1;
                         continue;
                     case '\n':
-                        y += 16f * Util.PIXEL;
+                        y -= 16f * Util.PIXEL;
                         x = 0f;
+                        index += 1;
                         continue;
+                    case 'o':
+                    case 'a':
+                    case 'e':
+                        if (prevChar == 'T')
+                            x -= 2f * Util.PIXEL;
+                        break;
                 }
 
                 CharacterInfo characterInfo;
@@ -59,26 +93,43 @@ namespace Ui {
                 }
 
                 // Create a new game object
-                GameObject go = new GameObject();
+                var go = GetOrCreateChildObject(index);
                 go.transform.parent = transform;
                 go.transform.localPosition = new Vector3(x + characterInfo.minX * Util.PIXEL, y + characterInfo.maxY * Util.PIXEL , 0f);
                 go.name = c.ToString();
 
                 // Create a new sprite renderer
-                SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+                SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
+                if (sr == null) {
+                    sr = go.AddComponent<SpriteRenderer>();
+                }
                 sr.sprite = CreateSprite(characterInfo);
 
                 // Update the position
                 x += characterInfo.advance * Util.PIXEL;
+
+                index += 1;
+                prevChar = c;
             }
         }
 
-        [ContextMenu("DestroySpriteChildren")]
-        private void DestroySpriteChildren() {
-            foreach (Transform child in transform) {
-                child.gameObject.SetActive(false);
-                DestroyImmediate(child.gameObject);
+        private void DisableChildren() {
+            foreach (var child in childObjects) {
+                if (child != null)
+                    child.SetActive(false);
             }
+        }
+
+        private GameObject GetOrCreateChildObject(int index) {
+            if (index < childObjects.Count) {
+                var child = childObjects[index];
+                child.SetActive(true);
+                return child;
+            }
+
+            var go = new GameObject();
+            childObjects.Add(go);
+            return go;
         }
 
         private class NoGlyphException : Exception {
