@@ -8,6 +8,7 @@ namespace Ui {
         public float delay = 0.05f;
         public float delayComma = 0.2f;
         public float delayPeriod = 0.5f;
+        public bool speedUpWhenBackDown;
 
         public bool IsDone => gameText != null && gameText.NumberOfCharsToRender == eventualText.Length;
 
@@ -29,7 +30,8 @@ namespace Ui {
             gameText.NumberOfCharsToRender = 0;
             foreach (var c in eventualText) {
                 gameText.NumberOfCharsToRender += 1;
-                yield return new WaitForSeconds(c switch {
+                var multiplier = speedUpWhenBackDown && InputManager.InterfaceInput.back ? 0.1f : 1f;
+                yield return new WaitForSeconds(multiplier * c switch {
                     ',' => delayComma,
                     '.' => delayPeriod,
                     '!' => delayPeriod,
