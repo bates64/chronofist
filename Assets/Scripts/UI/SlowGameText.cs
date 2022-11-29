@@ -9,9 +9,10 @@ namespace Ui {
         public float delayComma = 0.2f;
         public float delayPeriod = 0.5f;
 
-        public bool IsDone => gameText.Text == eventualText;
+        public bool IsDone => gameText != null && gameText.NumberOfCharsToRender == eventualText.Length;
 
         private GameText gameText;
+        private Coroutine co;
 
         private void Awake() {
             gameText = GetComponent<GameText>();
@@ -19,7 +20,7 @@ namespace Ui {
 
         private void Start() {
             if (gameText != null)
-                StartCoroutine(ShowText());
+                PrintText(eventualText);
         }
 
         private IEnumerator ShowText() {
@@ -35,6 +36,15 @@ namespace Ui {
                     _ => delay
                 });
             }
+        }
+
+        public void PrintText(string text) {
+            if (co != null) {
+                StopCoroutine(co);
+            }
+
+            eventualText = text;
+            co = StartCoroutine(ShowText());
         }
     }
 }
