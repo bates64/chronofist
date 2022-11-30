@@ -426,7 +426,9 @@ namespace Physics {
         public float jabFallSpeedMultiplier;
         public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
         public int maxAirJabs = -1;
-        public AudioClip jabSound;
+        public AudioClip jab1Sound;
+        public AudioClip jab2Sound;
+        public AudioClip jab3Sound;
 
         [Header("Dash")]
         public float dashForce = 40f;
@@ -556,8 +558,20 @@ namespace Physics {
             AttackKnockback = direction * jabForce * 2f * Vector2.right;
             AttackDamage = 1f;
 
-            if (jabSound != null)
-                audioSource.PlayOneShot(jabSound);
+            switch (attackType) {
+                case AttackType.Jab1:
+                    if (jab1Sound != null)
+                        audioSource.PlayOneShot(jab1Sound);
+                    break;
+                case AttackType.Jab2:
+                    if (jab2Sound != null)
+                        audioSource.PlayOneShot(jab2Sound);
+                    break;
+                case AttackType.Jab3:
+                    if (jab3Sound != null)
+                        audioSource.PlayOneShot(jab3Sound);
+                    break;
+            }
 
             return true;
         }
