@@ -1,6 +1,7 @@
 using UnityEngine;
 
 namespace Ui {
+    [RequireComponent(typeof(AudioSource))] // Used by MenuItem
     public class Menu : MonoBehaviour {
         public MenuCursor cursor;
         public int selectedItemIndex;
@@ -28,9 +29,11 @@ namespace Ui {
 
             if (InputManager.InterfaceInput.moveUp && selectedItemIndex > MinIndex) {
                 selectedItemIndex--;
+                SelectedItem.Select();
                 timeSinceInput = 0;
             } else if (InputManager.InterfaceInput.moveDown && selectedItemIndex < MaxIndex) {
                 selectedItemIndex++;
+                SelectedItem.Select();
                 timeSinceInput = 0;
             }
 
@@ -46,6 +49,7 @@ namespace Ui {
             for (int i = 0; i < menuItems.Length; i++) {
                 if (menuItems[i] == item) {
                     selectedItemIndex = i;
+                    SelectedItem.Select();
                     break;
                 }
             }
