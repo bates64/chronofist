@@ -338,6 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fontImage: {fileID: 0}
   font: {fileID: 0}
+  orderInLayer: 0
   text: GameText
   numberOfCharsToRender: -1
 --- !u!1 &462694006
@@ -9950,9 +9951,12 @@ MonoBehaviour:
   gravity: 60
   terminalFallVelocity: 40
   wallSlideSpeed: 6
-  jumpSound: {fileID: 0}
-  wallJumpSound: {fileID: 0}
-  landSound: {fileID: 0}
+  canWallSlide: 1
+  canWallJump: 1
+  canWallPush: 1
+  jumpSound: {fileID: 8300000, guid: 2d08c56a3771a4d949191a43d2f70b44, type: 3}
+  wallJumpSound: {fileID: 8300000, guid: 2d08c56a3771a4d949191a43d2f70b44, type: 3}
+  landSound: {fileID: 8300000, guid: 85fcb1886cd1f4654aa0957a0c13d23c, type: 3}
   ceilingBumpSound: {fileID: 0}
   attackContactSound: {fileID: 0}
   jabForce: 2
@@ -9966,15 +9970,17 @@ MonoBehaviour:
   jabFallSpeedMultiplier: 0.8
   jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
   maxAirJabs: -1
-  jabSound: {fileID: 0}
+  jab1Sound: {fileID: 8300000, guid: f1a0b4e6e3cd04f8da35a823e55fed2d, type: 3}
+  jab2Sound: {fileID: 8300000, guid: f1a0b4e6e3cd04f8da35a823e55fed2d, type: 3}
+  jab3Sound: {fileID: 8300000, guid: a82b62c40323946f3a767af9a7b575c0, type: 3}
   dashForce: 30
   dashDuration: 0.2
   dashCooldown: 0.5
   dashPhysicsDisableTime: 0.4
   dashFallSpeedMultiplier: 0
   dashJumpSpeedMultiplier: {x: 0.8, y: 0}
-  maxAirDashes: 0
-  dashSound: {fileID: 0}
+  maxAirDashes: 1
+  dashSound: {fileID: 8300000, guid: da36b55ed26f147febc44d0909f23420, type: 3}
   uppercutForce: 30
   uppercutDuration: 0.4
   uppercutCooldown: 0.5
@@ -9983,7 +9989,7 @@ MonoBehaviour:
   uppercutFallSpeedMultiplier: 0
   uppercutJumpSpeedMultiplier: {x: 0, y: 0}
   maxAirUppercuts: 1
-  uppercutSound: {fileID: 0}
+  uppercutSound: {fileID: 8300000, guid: fd505b0fc7ad943bd96476a2b19e359c, type: 3}
   slamForce: 20
   slamDuration: Infinity
   slamCooldown: 0.5
@@ -9992,7 +9998,7 @@ MonoBehaviour:
   slamFallSpeedMultiplier: 0
   slamJumpSpeedMultiplier: {x: 0, y: 0}
   maxAirSlams: 1
-  slamSound: {fileID: 0}
+  slamSound: {fileID: 8300000, guid: fd505b0fc7ad943bd96476a2b19e359c, type: 3}
   normalAttackEffectDuration: 0.1
   normalAttackEffectShakeAmplitude: 20
   normalAttackEffectShakeFrequency: 10
