@@ -9950,9 +9950,9 @@ MonoBehaviour:
   gravity: 60
   terminalFallVelocity: 40
   wallSlideSpeed: 6
-  jumpSound: {fileID: 0}
-  wallJumpSound: {fileID: 0}
-  landSound: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: 97a824dd9bab64ec6953b1f950ce8fdc, type: 3}
+  wallJumpSound: {fileID: 8300000, guid: 97a824dd9bab64ec6953b1f950ce8fdc, type: 3}
+  landSound: {fileID: 8300000, guid: 85fcb1886cd1f4654aa0957a0c13d23c, type: 3}
   ceilingBumpSound: {fileID: 0}
   attackContactSound: {fileID: 0}
   jabForce: 2
@@ -9966,7 +9966,7 @@ MonoBehaviour:
   jabFallSpeedMultiplier: 0.8
   jabJumpSpeedMultiplier: {x: 0.8, y: 0.5}
   maxAirJabs: -1
-  jabSound: {fileID: 0}
+  jabSound: {fileID: 8300000, guid: f1a0b4e6e3cd04f8da35a823e55fed2d, type: 3}
   dashForce: 30
   dashDuration: 0.2
   dashCooldown: 0.5
@@ -9992,7 +9992,7 @@ MonoBehaviour:
   slamFallSpeedMultiplier: 0
   slamJumpSpeedMultiplier: {x: 0, y: 0}
   maxAirSlams: 1
-  slamSound: {fileID: 0}
+  slamSound: {fileID: 8300000, guid: fd505b0fc7ad943bd96476a2b19e359c, type: 3}
   normalAttackEffectDuration: 0.1
   normalAttackEffectShakeAmplitude: 20
   normalAttackEffectShakeFrequency: 10
