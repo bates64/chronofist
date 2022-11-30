@@ -16,6 +16,7 @@ namespace Input {
             _actions.Interface.Back.canceled += RelayBack;
             _actions.Interface.Interact.performed += RelayInteract;
             _actions.Interface.Interact.canceled += RelayInteract;
+            Debug.Log("InterfaceInputs initialised");
         }
 
         public bool moveUp { get; private set; }

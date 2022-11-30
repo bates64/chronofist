@@ -1,3 +1,4 @@
+using Pause;
 using Physics;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace Ui {
         public LocalTimeProvider globalTimeProvider;
 
         private void Update() {
-            var isActive = InputManager.CurrentMode == InputManager.Mode.Interface;
+            var isActive = PauseManager.IsPaused;
 
             globalTimeProvider.TimeMultiplier = Mathf.Lerp(globalTimeProvider.TimeMultiplier, isActive ? 0 : 1,
                 Time.deltaTime * speed);

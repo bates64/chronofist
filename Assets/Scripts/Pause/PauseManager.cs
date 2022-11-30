@@ -9,7 +9,8 @@ namespace Pause {
 
         private AudioSource audioSource;
 
-        public bool isPaused { get; private set; }
+        private bool isPaused;
+        public static bool IsPaused => Instance.isPaused;
 
         private void Start() {
             audioSource = GetComponent<AudioSource>();

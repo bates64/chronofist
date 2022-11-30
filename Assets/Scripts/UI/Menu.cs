@@ -15,8 +15,6 @@ namespace Ui {
         private float timeSinceInput = Mathf.Infinity;
 
         private void Start() {
-            InputManager.SetMode(InputManager.Mode.Interface);
-
             menuItems = GetComponentsInChildren<MenuItem>();
         }
 
@@ -43,6 +41,7 @@ namespace Ui {
             }
 
             cursor.follow = SelectedItem.transform;
+            cursor.gameObject.SetActive(InputManager.CurrentMode == InputManager.Mode.Interface);
         }
 
         public void SelectItem(MenuItem item) {

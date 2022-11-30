@@ -1,5 +1,6 @@
 ﻿using General;
 using Input;
+using UnityEngine;
 
 public class InputManager : Singleton<InputManager> {
     public enum Mode {
