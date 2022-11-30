@@ -19,6 +19,8 @@ public class InputManager : Singleton<InputManager> {
         SetMode(initialMode);
     }
 
+    public static Mode CurrentMode => Instance.mode;
+
     public static void SetMode(Mode mode) {
         Instance.setMode(mode);
     }

@@ -17,6 +17,16 @@ namespace Animation {
         }
 
         private void LateUpdate() {
+            var timeMultiplier = LocalTime.MultiplierAt(transform.position);
+
+            // Set animation speed to local time
+            animManager.SetSpeed(timeMultiplier);
+
+            // Don't update animation if time is low
+            if (timeMultiplier < 0.01f) {
+                return;
+            }
+
             var previousAnim = anim;
 
             if (player.GetAttackType() == Player.AttackType.DashForward) {

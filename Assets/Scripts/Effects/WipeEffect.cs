@@ -25,6 +25,7 @@ namespace Effects {
 
             var sprite = obj.AddComponent<SpriteRenderer>();
             sprite.sprite = Resources.Load<Sprite>("Wipe");
+            sprite.sortingLayerName = "UI";
 
             return obj;
         }
