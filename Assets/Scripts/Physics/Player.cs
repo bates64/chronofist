@@ -4,10 +4,11 @@ using UnityEngine;
 using Effects;
 
 namespace Physics {
-    [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Health.Health))]
+    [RequireComponent(typeof(Controller2D)), RequireComponent(typeof(Health.Health)), RequireComponent((typeof(AudioSource)))]
     public class Player : MonoBehaviour {
         public static Player Instance { get; private set; }
 
+        private AudioSource audioSource;
         private Controller2D controller;
 
         private void Awake() {
@@ -15,6 +16,8 @@ namespace Physics {
             controller.collision.OnWallBump += OnWallBump;
             controller.collision.OnLanding += OnLanding;
             controller.collision.OnCeilingBump += OnCeilingBump;
+
+            audioSource = GetComponent<AudioSource>();
 
             InputManager.PlayerInput.OnJumpChange += OnInputJump;
             InputManager.PlayerInput.OnAttackChange += OnInputAttack;
@@ -65,6 +68,9 @@ namespace Physics {
 
             ReplenishAirAttacks();
             ApplyStoredJump();
+
+            if (landSound != null)
+                audioSource.PlayOneShot(landSound);
         }
 
         private void OnCeilingBump() {
@@ -72,6 +78,9 @@ namespace Physics {
             if (jumpVelocity.y > 0f) {
                 jumpVelocity.y *= -0.1f;
             }
+
+            if (ceilingBumpSound != null)
+                audioSource.PlayOneShot(ceilingBumpSound);
         }
 
         #region Horizontal Movement
@@ -217,7 +226,8 @@ namespace Physics {
 
         #region Vertical Movement
 
-        [Header("Vertical Movement"), Range(0f, 100f), SerializeField]
+        [Header("Vertical Movement")]
+        [Range(0f, 100f), SerializeField]
         private float walkJumpForce = 20f;
 
         [Range(0f, 100f), SerializeField] private float runJumpForce = 30f;
@@ -232,6 +242,11 @@ namespace Physics {
         public bool canWallSlide = true;
         public bool canWallJump = true;
         public bool canWallPush = true;
+
+        public AudioClip jumpSound;
+        public AudioClip wallJumpSound;
+        public AudioClip landSound;
+        public AudioClip ceilingBumpSound;
 
         private Vector2 jumpVelocity = Vector2.zero;
         private bool didJumpCancel;
@@ -353,6 +368,9 @@ namespace Physics {
             moveVelocity = moveForce * wallJumpDirection;
             jumpVelocity = new Vector2(Mathf.Max(0f, wallJumpForce.x - moveForce) * wallJumpDirection, wallJumpForce.y);
 
+            if (wallJumpSound != null)
+                audioSource.PlayOneShot(wallJumpSound);
+
             return true;
         }
 
@@ -371,6 +389,9 @@ namespace Physics {
 
             yVelocity = 0f;
             jumpVelocity = Vector2.up * (isRunning ? runJumpForce : walkJumpForce);
+
+            if (jumpSound != null)
+                audioSource.PlayOneShot(jumpSound);
 
             return true;
         }
@@ -396,8 +417,11 @@ namespace Physics {
 
         #region Attack
 
-        [Header("Jab")] public float jabForce = 10f;
+        [Header("Attacks")]
+        public AudioClip attackContactSound;
 
+        [Header("Jab")]
+        public float jabForce = 10f;
         public float jabAttackDuration = 0.5f;
         public float jabAttackCooldown = 0.5f;
         public float jabPhysicsDisableTime = 0.2f;
@@ -408,18 +432,22 @@ namespace Physics {
         public float jabFallSpeedMultiplier;
         public Vector2 jabJumpSpeedMultiplier = Vector2.zero;
         public int maxAirJabs = -1;
+        public AudioClip jab1Sound;
+        public AudioClip jab2Sound;
+        public AudioClip jab3Sound;
 
-        [Header("Dash")] public float dashForce = 40f;
-
+        [Header("Dash")]
+        public float dashForce = 40f;
         public float dashDuration = 0.4f;
         public float dashCooldown = 0.2f;
         public float dashPhysicsDisableTime = 0.4f;
         public float dashFallSpeedMultiplier;
         public Vector2 dashJumpSpeedMultiplier = Vector2.zero;
         public int maxAirDashes = 1;
+        public AudioClip dashSound;
 
-        [Header("Uppercut")] public float uppercutForce = 20f;
-
+        [Header("Uppercut")]
+        public float uppercutForce = 20f;
         public float uppercutDuration = 0.4f;
         public float uppercutCooldown = 0.5f;
         public float uppercutPhysicsDisableTime = 0.1f;
@@ -427,9 +455,10 @@ namespace Physics {
         public float uppercutFallSpeedMultiplier;
         public Vector2 uppercutJumpSpeedMultiplier = Vector2.zero;
         public int maxAirUppercuts = 1;
+        public AudioClip uppercutSound;
 
-        [Header("Slam")] public float slamForce = 20f;
-
+        [Header("Slam")]
+        public float slamForce = 20f;
         public float slamDuration = Mathf.Infinity;
         public float slamCooldown = 0.5f;
         public float slamPhysicsDisableTime = 0.5f;
@@ -437,6 +466,7 @@ namespace Physics {
         public float slamFallSpeedMultiplier;
         public Vector2 slamJumpSpeedMultiplier = Vector2.zero;
         public int maxAirSlams = 1;
+        public AudioClip slamSound;
 
         public enum AttackType {
             None,
@@ -534,6 +564,21 @@ namespace Physics {
             AttackKnockback = direction * jabForce * 2f * Vector2.right;
             AttackDamage = 1f;
 
+            switch (attackType) {
+                case AttackType.Jab1:
+                    if (jab1Sound != null)
+                        audioSource.PlayOneShot(jab1Sound);
+                    break;
+                case AttackType.Jab2:
+                    if (jab2Sound != null)
+                        audioSource.PlayOneShot(jab2Sound);
+                    break;
+                case AttackType.Jab3:
+                    if (jab3Sound != null)
+                        audioSource.PlayOneShot(jab3Sound);
+                    break;
+            }
+
             return true;
         }
 
@@ -568,6 +613,9 @@ namespace Physics {
             AttackKnockback = uppercutForce * Vector2.up;
             AttackDamage = 2f;
 
+            if (uppercutSound != null)
+                audioSource.PlayOneShot(uppercutSound);
+
             return true;
         }
 
@@ -599,6 +647,9 @@ namespace Physics {
             physicsDisableTime = slamPhysicsDisableTime;
             AttackKnockback = slamForce * Vector2.down;
             AttackDamage = 3f;
+
+            if (slamSound != null)
+                audioSource.PlayOneShot(slamSound);
 
             return true;
         }
@@ -652,6 +703,9 @@ namespace Physics {
             attackAnimTime = dashDuration;
             attackDisableTime = dashCooldown;
             physicsDisableTime = dashPhysicsDisableTime;
+
+            if (dashSound != null)
+                audioSource.PlayOneShot(dashSound);
 
             return true;
         }
@@ -712,17 +766,22 @@ namespace Physics {
                 case AttackType.Jab1:
                 case AttackType.Jab2:
                     // Normal attack effect
-                    shakeEffect = ShakeEffect.Spawn(0f, normalAttackEffectDuration, normalAttackEffectShakeAmplitude, normalAttackEffectShakeFrequency);
+                    shakeEffect = ShakeEffect.Spawn(0f, normalAttackEffectDuration, normalAttackEffectShakeAmplitude,
+                        normalAttackEffectShakeFrequency);
                     timeEffect = TimeEffect.Spawn(normalAttackEffectDuration, 0.12f);
                     break;
                 case AttackType.Uppercut:
                 case AttackType.Slam:
                 case AttackType.Jab3:
                     // Strong attack effect
-                    shakeEffect = ShakeEffect.Spawn(0f, strongAttackEffectDuration, strongAttackEffectShakeAmplitude, strongAttackEffectShakeFrequency);
+                    shakeEffect = ShakeEffect.Spawn(0f, strongAttackEffectDuration, strongAttackEffectShakeAmplitude,
+                        strongAttackEffectShakeFrequency);
                     timeEffect = TimeEffect.Spawn(strongAttackEffectDuration, 0.12f);
                     break;
             }
+
+            if (attackContactSound != null)
+                audioSource.PlayOneShot(attackContactSound);
         }
 
         #endregion
