@@ -196,13 +196,13 @@ namespace Physics {
         }
 
         public bool IsWallSliding() {
-            return timeSinceWall < 0.01f && !controller.isGrounded &&
+            return canWallSlide && timeSinceWall < 0.01f && !controller.isGrounded &&
                    Mathf.Sign(InputManager.PlayerInput.Movement.x) == -wallJumpDirection && jumpVelocity.y == 0f &&
                    moveVelocity != 0f;
         }
 
         public bool IsWallPushing() {
-            return timeSinceWall < 0.01f && controller.isGrounded && Mathf.Abs(moveVelocity) > 0f;
+            return canWallPush && timeSinceWall < 0.01f && controller.isGrounded && Mathf.Abs(moveVelocity) > 0f;
         }
 
         public bool IsFacingLeft() {
@@ -228,6 +228,10 @@ namespace Physics {
         [Range(0f, 100f), SerializeField] private float gravity = 60f;
         [Range(0f, 100f), SerializeField] private float terminalFallVelocity = 25f;
         [Range(0f, 100f), SerializeField] private float wallSlideSpeed = 6f;
+
+        public bool canWallSlide = true;
+        public bool canWallJump = true;
+        public bool canWallPush = true;
 
         private Vector2 jumpVelocity = Vector2.zero;
         private bool didJumpCancel;
@@ -270,12 +274,10 @@ namespace Physics {
             // Terminal Y velocity
             var totalVel = yVelocity + jumpVelocity.y;
             var currentTerminalVel = controller.isGrounded ? 0.1f : terminalFallVelocity;
-            if (!controller.isGrounded && totalVel <= 0f)
-
+            if (!controller.isGrounded && totalVel <= 0f) {
                 // Wall slide.
                 // Pushing against a wall limits fall speed & faces player away from wall
-            {
-                if (isPushingWall()) {
+                if (canWallSlide && isPushingWall()) {
                     if (totalVel < 0f) {
                         currentTerminalVel = wallSlideSpeed;
                     }
@@ -337,6 +339,10 @@ namespace Physics {
             }
 
             if (physicsDisableTime > 0f) {
+                return false;
+            }
+
+            if (!canWallJump) {
                 return false;
             }
 
