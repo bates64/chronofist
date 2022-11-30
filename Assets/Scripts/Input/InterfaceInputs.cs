@@ -6,12 +6,12 @@ namespace Input {
         public InterfaceInputs() {
             _actions.Interface.MoveUp.performed += RelayMoveUp;
             _actions.Interface.MoveUp.canceled += RelayMoveUp;
-            _actions.Interface.MoveDown.performed += RelayMoveUp;
-            _actions.Interface.MoveDown.canceled += RelayMoveUp;
-            _actions.Interface.MoveLeft.performed += RelayMoveUp;
-            _actions.Interface.MoveLeft.canceled += RelayMoveUp;
-            _actions.Interface.MoveRight.performed += RelayMoveUp;
-            _actions.Interface.MoveRight.canceled += RelayMoveUp;
+            _actions.Interface.MoveDown.performed += RelayMoveDown;
+            _actions.Interface.MoveDown.canceled += RelayMoveDown;
+            _actions.Interface.MoveLeft.performed += RelayMoveLeft;
+            _actions.Interface.MoveLeft.canceled += RelayMoveLeft;
+            _actions.Interface.MoveRight.performed += RelayMoveRight;
+            _actions.Interface.MoveRight.canceled += RelayMoveRight;
             _actions.Interface.Back.performed += RelayBack;
             _actions.Interface.Back.canceled += RelayBack;
             _actions.Interface.Interact.performed += RelayInteract;

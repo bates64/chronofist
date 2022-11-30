@@ -41,8 +41,6 @@ namespace Ui {
                     WipeEffect.Spawn(WipeEffectTime);
                     didWipeEffect = true;
                 }
-
-
             }
         }
     }
