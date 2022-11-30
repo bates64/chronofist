@@ -39,5 +39,9 @@ namespace Animation {
             _animator.SetTrigger(Play);
             _animator.Update(0);
         }
+
+        public void SetSpeed(float speed) {
+            _animator.speed = speed;
+        }
     }
 }

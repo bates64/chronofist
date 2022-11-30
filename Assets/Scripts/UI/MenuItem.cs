@@ -14,7 +14,7 @@ namespace Ui {
         }
 
         public void Interact() {
-            if (transitionToSceneName != null) {
+            if (!string.IsNullOrEmpty(transitionToSceneName)) {
                 WipeEffect.Spawn(3f);
                 Invoke(nameof(LoadScene), 1.5f);
             }

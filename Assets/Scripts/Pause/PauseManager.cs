@@ -13,12 +13,6 @@ namespace Pause {
             }
         }
 
-        public void OnGUI() {
-            if (isPaused) {
-                GUI.Box(new Rect(0, 0, Screen.width, Screen.height), "Paused n shit");
-            }
-        }
-
         protected override void init() {
             InputManager.PlayerInput.OnPause += Pause;
         }
