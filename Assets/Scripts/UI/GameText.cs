@@ -9,6 +9,7 @@ namespace Ui {
     public class GameText : MonoBehaviour {
         public Texture2D fontImage;
         public Font font;
+        public int orderInLayer;
 
         [SerializeField] [TextArea] string text = "GameText";
         public string Text {
@@ -104,6 +105,8 @@ namespace Ui {
                     sr = go.AddComponent<SpriteRenderer>();
                 }
                 sr.sprite = CreateSprite(characterInfo);
+                sr.sortingLayerName = "UI";
+                sr.sortingOrder = orderInLayer;
 
                 // Update the position
                 x += characterInfo.advance * Util.PIXEL;
@@ -121,11 +124,12 @@ namespace Ui {
         }
 
         private GameObject GetOrCreateChildObject(int index) {
-            if (index < childObjects.Count) {
+            // source of visual bugs
+            /*if (index < childObjects.Count) {
                 var child = childObjects[index];
                 child.SetActive(true);
                 return child;
-            }
+            }*/
 
             var go = new GameObject();
             childObjects.Add(go);
