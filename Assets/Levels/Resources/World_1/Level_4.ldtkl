@@ -11,8 +11,8 @@
 	"identifier": "Level_4",
 	"iid": "938556e0-5110-11ed-8a24-8f57bf4d742a",
 	"uid": 401,
-	"worldX": 1496,
-	"worldY": 855,
+	"worldX": 448,
+	"worldY": 3192,
 	"worldDepth": 0,
 	"pxWid": 480,
 	"pxHei": 446,
@@ -1023,5 +1023,5 @@
 			"entityInstances": []
 		}
 	],
-	"__neighbours": [ { "levelIid": "76687d30-5110-11ed-8a24-c384f3f42225", "levelUid": 399, "dir": "n" }, { "levelIid": "a298beb0-5110-11ed-8a24-c7e32c39c2fd", "levelUid": 402, "dir": "w" } ]
+	"__neighbours": []
 }
