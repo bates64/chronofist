@@ -19,9 +19,9 @@ ScriptedImporter:
   _createBackgroundColor: 0
   _createLevelBoundsTrigger: 1
   _intGridValues:
-  - _key: Foreground_1
+  - _key: GroundDetails16_1
     _asset: {instanceID: 0}
-  - _key: Foreground_2
+  - _key: GroundDetails16_2
     _asset: {instanceID: 0}
   - _key: GroundDetails8_1
     _asset: {instanceID: 0}
@@ -39,9 +39,9 @@ ScriptedImporter:
     _asset: {instanceID: 0}
   _entities:
   - _key: BasicEnemy
-    _asset: {instanceID: 0}
+    _asset: {fileID: 2564807998415331286, guid: 11c15b76aa2e849ecb6fea5b10fd019c, type: 3}
   - _key: Chronostatue
-    _asset: {instanceID: 0}
+    _asset: {fileID: 5285360204757290240, guid: 4cdf592735ebe42889d94838ef63552b, type: 3}
   - _key: Gem
     _asset: {instanceID: 0}
   _enumGenerate: 0
