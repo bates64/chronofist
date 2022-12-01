@@ -17,6 +17,7 @@ namespace Combat {
         private Vector2 knockbackVelocity = Vector2.zero;
         private float facingDirection = 1f;
         private LayerMask playerAttackLayer;
+        public float TimeToRestore;
 
         private static Transform _playerTransform;
 
@@ -117,6 +118,11 @@ namespace Combat {
         protected virtual void WhenDamage()
         {
 
+        }
+
+        protected void RestoreTime(Player player)
+        {
+            player.RestoreTime(TimeToRestore);
         }
 
         public void Walk(float direction) {

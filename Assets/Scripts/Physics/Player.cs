@@ -796,6 +796,7 @@ namespace Physics {
         private float invincibilityTimer;
         private Health.Health _health;
         private Animator _animator;
+        [SerializeField] private float lifeStealValue;
 
         [SerializeField] private float invincibleTime;
 
@@ -819,6 +820,16 @@ namespace Physics {
             int damage = col.GetComponent<DamageSource>().Damage;
             invincibilityTimer = invincibleTime;
             _health.ApplyDamage(damage);
+        }
+
+        private void OnDamageDealt()
+        {
+            _health.Heal(lifeStealValue,true);
+        }
+
+        public void RestoreTime(float val)
+        {
+            _health.Heal(val, true);
         }
 
         #endregion

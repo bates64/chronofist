@@ -5117,7 +5117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2412102711580161702}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.84, y: 3.17, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5215,6 +5215,7 @@ MonoBehaviour:
   walkSpeed: 4
   Controller: {fileID: 0}
   health: {fileID: 0}
+  TimeToRestore: 5
   Animator: {fileID: 0}
   Velocity: {x: 0, y: 0}
   StunTime: 1

@@ -51,7 +51,50 @@
 			"seed": 2754569,
 			"overrideTilesetUid": null,
 			"gridTiles": [],
-			"entityInstances": []
+			"entityInstances": [
+				{
+					"__identifier": "Slime",
+					"__grid": [11,115],
+					"__pivot": [0.5,0.5],
+					"__tags": [],
+					"__tile": null,
+					"__smartColor": "#1024B4",
+					"iid": "90e5b010-5110-11ed-a0a2-bbd5b1675253",
+					"width": 40,
+					"height": 40,
+					"defUid": 423,
+					"px": [92,920],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Goblin",
+					"__grid": [50,115],
+					"__pivot": [0.5,0.5],
+					"__tags": [],
+					"__tile": null,
+					"__smartColor": "#A017EA",
+					"iid": "94185260-5110-11ed-a0a2-89143dc96a65",
+					"width": 40,
+					"height": 40,
+					"defUid": 424,
+					"px": [404,920],
+					"fieldInstances": []
+				},
+				{
+					"__identifier": "Dragon",
+					"__grid": [11,105],
+					"__pivot": [0.5,0.5],
+					"__tags": [],
+					"__tile": null,
+					"__smartColor": "#F41622",
+					"iid": "95338660-5110-11ed-a0a2-795a67281748",
+					"width": 40,
+					"height": 40,
+					"defUid": 425,
+					"px": [92,840],
+					"fieldInstances": []
+				}
+			]
 		},
 		{
 			"__identifier": "GroundDetails16",

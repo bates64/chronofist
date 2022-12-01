@@ -76,6 +76,7 @@ namespace Combat.Enemies.Slime
 
         private void Death()
         {
+            RestoreTime(Player.Instance);
             _particles.transform.parent = null;
             DefaultEffect effect = _particles.gameObject.AddComponent<DefaultEffect>();
             effect.TimeToLive = 1;

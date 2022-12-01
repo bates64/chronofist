@@ -1,4 +1,6 @@
+using System;
 using Effects;
+using Physics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -41,8 +43,13 @@ namespace Combat.Enemies.Dragon
             _particles = GetComponentInChildren<ParticleSystem>();
             InitializeStates();
             health.OnDeath += Death;
-            Home = transform.position;
+
             CurrentState = IdleState;
+        }
+
+        private void Start()
+        {
+            Home = transform.position;
         }
 
         private void InitializeStates()
@@ -99,6 +106,7 @@ namespace Combat.Enemies.Dragon
 
         private void Death()
         {
+            RestoreTime(Player.Instance);
             _particles.transform.parent = null;
             DefaultEffect effect = _particles.gameObject.AddComponent<DefaultEffect>();
             effect.TimeToLive = 1;

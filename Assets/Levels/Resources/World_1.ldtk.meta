@@ -40,6 +40,12 @@ ScriptedImporter:
   _entities:
   - _key: BasicEnemy
     _asset: {fileID: 2564807998415331286, guid: 11c15b76aa2e849ecb6fea5b10fd019c, type: 3}
+  - _key: Slime
+    _asset: {fileID: 2287670546356003478, guid: 43a2b876900b02d438ec67351f2aad31, type: 3}
+  - _key: Goblin
+    _asset: {fileID: 2412102711580161702, guid: 572f99a6fc4c223479a41b03ead9a6c4, type: 3}
+  - _key: Dragon
+    _asset: {fileID: 9220166121515956046, guid: 88aec64bc3ad60b47a3eaede0358bce6, type: 3}
   - _key: Chronostatue
     _asset: {fileID: 5285360204757290240, guid: 4cdf592735ebe42889d94838ef63552b, type: 3}
   - _key: Gem

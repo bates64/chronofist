@@ -443,7 +443,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cb91cbd8017e4155a38417f69ee634a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableWhenTouchFloor: {fileID: 0}
   maxRunSpeed: 21
   accelerationAir: 120
   accelerationGround: 80
@@ -512,6 +511,11 @@ MonoBehaviour:
   strongAttackEffectDuration: 0.15
   strongAttackEffectShakeAmplitude: 30
   strongAttackEffectShakeFrequency: 20
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  lifeStealValue: 3
+  invincibleTime: 1
 --- !u!114 &1950711879016886871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -703,6 +707,7 @@ GameObject:
   - component: {fileID: 1950711879356988668}
   - component: {fileID: 1950711879356988670}
   - component: {fileID: 1950711879356988669}
+  - component: {fileID: 1738856975}
   m_Layer: 9
   m_Name: Collision
   m_TagString: Untagged
@@ -735,7 +740,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -772,3 +777,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1738856975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950711879356988667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b80f627d2a743769f5da0b560ec2992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

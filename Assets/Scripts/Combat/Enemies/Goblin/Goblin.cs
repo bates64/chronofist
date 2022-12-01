@@ -1,5 +1,6 @@
 using System;
 using Effects;
+using Physics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -77,6 +78,7 @@ namespace Combat.Enemies.Goblin
 
         private void Death()
         {
+            RestoreTime(Player.Instance);
             _particles.transform.parent = null;
             DefaultEffect effect = _particles.gameObject.AddComponent<DefaultEffect>();
             effect.TimeToLive = 1;
