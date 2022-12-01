@@ -118,8 +118,12 @@ namespace Ui {
 
         private void DisableChildren() {
             foreach (var child in childObjects) {
-                if (child != null)
+                if (child != null) {
                     child.SetActive(false);
+
+                    if (!Application.isPlaying)
+                        Destroy(child);
+                }
             }
         }
 

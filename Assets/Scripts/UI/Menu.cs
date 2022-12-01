@@ -7,6 +7,7 @@ namespace Ui {
         public int selectedItemIndex;
 
         private MenuItem[] menuItems;
+        private bool inputListening => InputManager.CurrentMode == InputManager.Mode.Interface;
 
         public MenuItem SelectedItem => menuItems[selectedItemIndex];
         private static int MinIndex => 0;
@@ -41,10 +42,11 @@ namespace Ui {
             }
 
             cursor.follow = SelectedItem.transform;
-            cursor.gameObject.SetActive(InputManager.CurrentMode == InputManager.Mode.Interface);
+            cursor.gameObject.SetActive(inputListening);
         }
 
         public void SelectItem(MenuItem item) {
+            if (!inputListening) return;
             for (int i = 0; i < menuItems.Length; i++) {
                 if (menuItems[i] == item) {
                     selectedItemIndex = i;

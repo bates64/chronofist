@@ -6,6 +6,8 @@ namespace Ui {
     public class MenuItem : MonoBehaviour {
         public string transitionToSceneName;
         public InputManager.Mode setInputManagerMode;
+        public CreditsController triggerCredits;
+
         public AudioClip interactSound;
         public AudioClip selectSound;
 
@@ -35,6 +37,10 @@ namespace Ui {
 
             if (setInputManagerMode != InputManager.Mode.None) {
                 InputManager.SetMode(setInputManagerMode);
+            }
+
+            if (triggerCredits != null) {
+                triggerCredits.SetCreditsActive(true);
             }
         }
 
