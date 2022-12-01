@@ -19,9 +19,21 @@ ScriptedImporter:
   _createBackgroundColor: 0
   _createLevelBoundsTrigger: 1
   _intGridValues:
-  - _key: Foreground_1
+  - _key: GroundDetails16_1
     _asset: {instanceID: 0}
-  - _key: Foreground_2
+  - _key: GroundDetails16_2
+    _asset: {instanceID: 0}
+  - _key: GroundDetails8_1
+    _asset: {instanceID: 0}
+  - _key: Ground_1
+    _asset: {instanceID: 0}
+  - _key: Ground_2
+    _asset: {instanceID: 0}
+  - _key: Ground_3
+    _asset: {instanceID: 0}
+  - _key: Ground_4
+    _asset: {instanceID: 0}
+  - _key: Walls_1
     _asset: {instanceID: 0}
   _entities: []
   _enumGenerate: 0

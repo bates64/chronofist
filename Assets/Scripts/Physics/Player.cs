@@ -1,4 +1,6 @@
 using System;
+using Combat;
+using Combat.Enemies;
 using UI;
 using UnityEngine;
 using Effects;
@@ -11,19 +13,21 @@ namespace Physics {
         private AudioSource audioSource;
         private Controller2D controller;
 
+        public static readonly int Invincible = Animator.StringToHash("Invincible");
+
         private void Awake() {
             controller = GetComponent<Controller2D>();
             controller.collision.OnWallBump += OnWallBump;
             controller.collision.OnLanding += OnLanding;
             controller.collision.OnCeilingBump += OnCeilingBump;
-
+            _animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
-
+            _health = GetComponent<Health.Health>();
             InputManager.PlayerInput.OnJumpChange += OnInputJump;
             InputManager.PlayerInput.OnAttackChange += OnInputAttack;
             InputManager.PlayerInput.OnSpecialChange += OnInputSpecial;
             InputManager.PlayerInput.OnDashChange += OnInputDash;
-
+            EnemyLayer = LayerMask.NameToLayer("Enemy");
             ReplenishAirAttacks();
 
             Instance = this;
@@ -44,7 +48,8 @@ namespace Physics {
 
             UpdateWalls();
             UpdateAttacks();
-
+            invincibilityTimer -= deltaTime;
+            _animator.SetBool(Invincible,isInvincible);
             var totalVelocity = new Vector2(moveVelocity, yVelocity) + jumpVelocity;
             controller.Move(totalVelocity * LocalTime.DeltaTimeAt(this));
 
@@ -750,6 +755,7 @@ namespace Physics {
 
         private GameObject shakeEffect;
         private GameObject timeEffect;
+        [SerializeField] private LayerMask EnemyLayer;
 
         public void DidDamageEnemy(Combat.Enemy enemy) {
             // Don't spawn an effect if there's already one running.
@@ -782,6 +788,36 @@ namespace Physics {
 
             if (attackContactSound != null)
                 audioSource.PlayOneShot(attackContactSound);
+        }
+
+        private bool isInvincible => invincibilityTimer > 0;
+
+        private float invincibilityTimer;
+        private Health.Health _health;
+        private Animator _animator;
+
+        [SerializeField] private float invincibleTime;
+
+
+        public void RelayCol(Collider2D col)
+        {
+            Damage(col);
+        }
+
+        protected void Damage(Collider2D col)
+        {
+            // Check for incoming damage...
+            if (col.gameObject.layer == EnemyLayer && !isInvincible)
+            {
+                OnHit(col);
+            }
+        }
+
+        private void OnHit(Collider2D col)
+        {
+            int damage = col.GetComponent<DamageSource>().Damage;
+            invincibilityTimer = invincibleTime;
+            _health.ApplyDamage(damage);
         }
 
         #endregion

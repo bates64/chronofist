@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Combat {
     /// <summary>
-    ///   This component changes the color of a child SpriteRenderer depending on the Enemy component state:
+    ///   This component changes the color of a child SpriteRenderer depending on the MyEnemy component state:
     ///     - Idle: white
     ///     - Invulnerable / taking damage: red
     ///     - Dead: black

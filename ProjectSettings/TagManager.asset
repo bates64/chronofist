@@ -19,7 +19,7 @@ TagManager:
   - LevelBounds
   - Enemy
   - PlayerAttack
-  - 
+  - EnemyProjectile
   - 
   - 
   - 

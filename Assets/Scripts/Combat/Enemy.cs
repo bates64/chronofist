@@ -9,35 +9,79 @@ namespace Combat {
         public Vector2 knockbackDamping = new(0.6f, 0.6f); // Higher = heavier
         public float walkSpeed = 4f;
 
-        private Controller2D controller;
-        private Health.Health health; // May be null
+        [HideInInspector] public Controller2D Controller;
+        public Health.Health health; // May be null
         private float damageCooldown;
-        private Vector2 gravityVelocity = Vector2.zero;
+        protected Vector2 gravityVelocity = Vector2.zero;
         private Vector2 knockbackVelocity = Vector2.zero;
         private float facingDirection = 1f;
         private LayerMask playerAttackLayer;
 
+        private static Transform _playerTransform;
+
+        public static readonly int StateId = Animator.StringToHash("StateId");
+        public static readonly int Play = Animator.StringToHash("Play");
+        public static readonly int DamageS = Animator.StringToHash("Damage");
+
         [NonSerialized] public Vector3 HomePosition;
 
-        private void Awake() {
+        public static Vector2 PlayerPosition
+        {
+            get
+            {
+                if (_playerTransform is null)
+                {
+                    _playerTransform = FindObjectOfType<Player>().transform;
+                }
+                return _playerTransform.position;
+            }
+        }
+        public float DeltaTime => LocalTime.DeltaTimeAt(this);
+
+         protected virtual void Awake() {
             HomePosition = transform.position;
-            controller = GetComponent<Controller2D>();
+            Controller = GetComponent<Controller2D>();
             health = GetComponent<Health.Health>();
             playerAttackLayer = LayerMask.NameToLayer("PlayerAttack");
         }
 
-        private void Update() {
-            var deltaTime = LocalTime.DeltaTimeAt(this);
+        protected virtual void Update()
+        {
+            var deltaTime = DeltaTime;
+            Gravity(deltaTime);
+            Knockback(deltaTime);
+            Cooldowns(deltaTime);
+        }
 
+        public void Flip(int dir,Transform MyEnemyTransform)
+        {
+            var transform = MyEnemyTransform;
+            Vector3 newScale = transform.localScale;
+            newScale.x = Mathf.Abs(newScale.x) * -dir;
+            transform.localScale = newScale;
+        }
+
+        protected virtual void Cooldowns(float deltaTime)
+        {
+            // Timers
+            damageCooldown -= deltaTime;
+        }
+
+        protected void Gravity(float deltaTime)
+        {
             // Gravity
             gravityVelocity.y -= gravity * deltaTime;
-            controller.Move(gravityVelocity * deltaTime);
-            if (controller.isGrounded) {
+            Controller.Move(gravityVelocity * deltaTime);
+            if (Controller.isGrounded)
+            {
                 gravityVelocity.y = -gravity;
             }
+        }
 
+        protected virtual void Knockback(float deltaTime)
+        {
             // Knockback
-            controller.Move(knockbackVelocity * deltaTime);
+            Controller.Move(knockbackVelocity * deltaTime);
             knockbackVelocity -= knockbackVelocity * knockbackDamping * deltaTime;
 
             // Bounce off walls/floors/ceilings
@@ -49,16 +93,19 @@ namespace Combat {
                 knockbackVelocity.y *= -1;
             if (controller.collision.up)
                 knockbackVelocity.y *= -1;*/
-
-            // Timers
-            damageCooldown -= deltaTime;
         }
 
         private void OnTriggerEnter2D(Collider2D col) {
+            Damage(col);
+        }
+
+        protected void Damage(Collider2D col)
+        {
             // Check for incoming damage...
             if (col.gameObject.layer == playerAttackLayer) {
                 var player = Player.Instance;
                 if (TryResetCooldown(0.05f)) {
+                    WhenDamage();
                     player.DidDamageEnemy(this);
                     ApplyKnockback(player.AttackKnockback);
                     if (health) health.ApplyDamage(player.AttackDamage);
@@ -66,9 +113,14 @@ namespace Combat {
             }
         }
 
+        protected virtual void WhenDamage()
+        {
+
+        }
+
         public void Walk(float direction) {
             facingDirection = direction;
-            controller.Move(walkSpeed * direction * LocalTime.DeltaTimeAt(this) * Vector2.right);
+            Controller.Move(walkSpeed * direction * LocalTime.DeltaTimeAt(this) * Vector2.right);
         }
 
         public void Walk() {
@@ -79,9 +131,16 @@ namespace Combat {
             return facingDirection;
         }
 
-        public void ApplyKnockback(Vector2 knockback) {
+        public void ApplyKnockback(Vector2 knockback)
+        {
+            WhenKnockBackApplied(knockback);
             knockbackVelocity += knockback;
             gravityVelocity = Vector2.zero;
+        }
+
+        protected virtual void WhenKnockBackApplied(Vector2 knockback)
+        {
+
         }
 
         public bool TryResetCooldown(float cooldown = 0f) {
@@ -102,7 +161,7 @@ namespace Combat {
         }
 
         public bool IsVulnerable() {
-            return IsAlive() && damageCooldown < 0f;
+            return IsAlive() && damageCooldown <= 0f;
         }
 
         public float DistanceFromHome() {
@@ -110,7 +169,7 @@ namespace Combat {
         }
 
         public bool IsGrounded() {
-            return controller.isGrounded;
+            return Controller.isGrounded;
         }
     }
 }
