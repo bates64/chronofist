@@ -71,6 +71,8 @@ namespace Physics {
 
             if (landSound != null)
                 audioSource.PlayOneShot(landSound);
+
+            hasTouchedFloor = true;
         }
 
         private void OnCeilingBump() {
@@ -253,6 +255,9 @@ namespace Physics {
         private float yVelocity; // TODO: rename to fallVelocity?
         private float timeSinceStoredJump = Mathf.Infinity;
 
+        private bool hasTouchedFloor;
+        public bool HasTouchedFloor => hasTouchedFloor;
+
         private void ApplyGravity() {
             var deltaTime = LocalTime.DeltaTimeAt(this);
 
@@ -328,18 +333,14 @@ namespace Physics {
         // If there's an input stored and its possible to jump, jump and discard the input.
         private bool ApplyStoredJump() {
             if (timeSinceStoredJump < jumpCoyoteTime && Jump()) {
-                Debug.Log("Stored jump!");
                 timeSinceStoredJump = Mathf.Infinity;
                 return true;
             }
 
             if (timeSinceStoredJump < wallJumpCoyoteTime && WallJump()) {
-                Debug.Log("Stored wall jump!");
                 timeSinceStoredJump = Mathf.Infinity;
                 return true;
             }
-
-            Debug.Log("Stored jump fail");
 
             return false;
         }

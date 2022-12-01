@@ -38,6 +38,8 @@ ScriptedImporter:
   _entities:
   - _key: BasicEnemy
     _asset: {fileID: 2564807998415331286, guid: 11c15b76aa2e849ecb6fea5b10fd019c, type: 3}
+  - _key: Chronostatue
+    _asset: {instanceID: 0}
   _enumGenerate: 0
   _enumPath: 
   _enumNamespace: 
