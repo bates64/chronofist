@@ -51,9 +51,12 @@ namespace Ui {
             }
         }
 
-        public void SetCharacterSprites(Sprite characterNameSprite, Sprite characterPortraitSprite) {
-            transform.Find("DialogueBox").Find("DialogueName").GetComponent<SpriteRenderer>().sprite = characterNameSprite;
-            transform.Find("DialogueBox").Find("Portrait").GetComponent<SpriteRenderer>().sprite = characterPortraitSprite;
+        public void SetSpeaker(string name) {
+            var box = transform.Find("DialogueBox");
+
+            box.Find("Scientist").gameObject.SetActive(name == "Scientist");
+            box.Find("Scribe").gameObject.SetActive(name == "Scribe");
+            box.Find("Seamstress").gameObject.SetActive(name == "Seamstress");
         }
     }
 }

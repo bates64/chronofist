@@ -14,10 +14,7 @@ namespace Npc {
         public CinemachineVirtualCamera virtualCamera;
         public float triggerDistance = 10f;
         [TextArea] public string[] dialogue = { "Hello, world!" };
-
-        [Header("Speaker")]
-        public Sprite characterNameSprite;
-        public Sprite characterPortraitSprite;
+        public string speaker = "";
 
         private bool isSpeaking;
 
@@ -63,7 +60,7 @@ namespace Npc {
         public void TriggerSpeech() {
             speechUi.dialogue = dialogue;
             speechUi.dialogueIndex = 0;
-            speechUi.SetCharacterSprites(characterNameSprite, characterPortraitSprite);
+            speechUi.SetSpeaker(speaker);
             speechUi.Trigger();
 
             isSpeaking = true;
