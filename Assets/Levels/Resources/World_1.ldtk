@@ -28,7 +28,7 @@
 	"simplifiedExport": false,
 	"imageExportMode": "None",
 	"pngFilePattern": null,
-	"backupOnSave": true,
+	"backupOnSave": false,
 	"backupLimit": 10,
 	"levelNamePattern": "Level_%idx",
 	"tutorialDesc": null,
