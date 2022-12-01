@@ -122,7 +122,7 @@ namespace Ui {
                     child.SetActive(false);
 
                     if (!Application.isPlaying)
-                        Destroy(child);
+                        DestroyImmediate(child);
                 }
             }
         }

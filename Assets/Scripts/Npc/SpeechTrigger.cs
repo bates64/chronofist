@@ -1,4 +1,5 @@
 using Cinemachine;
+using Physics;
 using UnityEngine;
 using Ui;
 
@@ -14,7 +15,21 @@ namespace Npc {
         public float triggerDistance = 10f;
         [TextArea] public string[] dialogue = { "Hello, world!" };
 
+        [Header("Speaker")]
+        public Sprite characterNameSprite;
+        public Sprite characterPortraitSprite;
+
         private bool isSpeaking;
+
+        private void Awake() {
+            if (player == null) {
+                player = FindObjectOfType<Player>().gameObject;
+            }
+
+            if (speechUi == null) {
+                speechUi = FindObjectOfType<SpeechUi>();
+            }
+        }
 
         private void Update() {
             // Show speech bubble if player is close enough
@@ -29,7 +44,7 @@ namespace Npc {
             // Check for end of dialogue
             if (isSpeaking && !speechUi.visible) {
                 isSpeaking = false;
-                virtualCamera.gameObject.SetActive(false);
+                if (virtualCamera != null) virtualCamera.gameObject.SetActive(false);
                 InputManager.SetMode(InputManager.Mode.Player);
             }
         }
@@ -41,14 +56,19 @@ namespace Npc {
 
         private void CheckInteract() {
             if (InputManager.PlayerInput.Attack) {
-                speechUi.dialogue = dialogue;
-                speechUi.dialogueIndex = 0;
-                speechUi.Trigger();
-
-                isSpeaking = true;
-                virtualCamera.gameObject.SetActive(true);
-                InputManager.SetMode(InputManager.Mode.Interface);
+                TriggerSpeech();
             }
+        }
+
+        public void TriggerSpeech() {
+            speechUi.dialogue = dialogue;
+            speechUi.dialogueIndex = 0;
+            speechUi.SetCharacterSprites(characterNameSprite, characterPortraitSprite);
+            speechUi.Trigger();
+
+            isSpeaking = true;
+            if (virtualCamera != null) virtualCamera.gameObject.SetActive(true);
+            InputManager.SetMode(InputManager.Mode.Interface);
         }
     }
 }
