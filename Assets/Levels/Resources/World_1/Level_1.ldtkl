@@ -79,6 +79,20 @@
 					"defUid": 395,
 					"px": [376,224],
 					"fieldInstances": []
+				},
+				{
+					"__identifier": "Chronostatue",
+					"__grid": [14,27],
+					"__pivot": [0.5,1],
+					"__tags": [],
+					"__tile": null,
+					"__smartColor": "#8C8C8C",
+					"iid": "d427e730-5110-11ed-8a24-2ff3437a6468",
+					"width": 66,
+					"height": 131,
+					"defUid": 412,
+					"px": [116,224],
+					"fieldInstances": []
 				}
 			]
 		},
