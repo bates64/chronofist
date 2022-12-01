@@ -50,5 +50,10 @@ namespace Ui {
                 visible = true;
             }
         }
+
+        public void SetCharacterSprites(Sprite characterNameSprite, Sprite characterPortraitSprite) {
+            transform.Find("DialogueBox").Find("DialogueName").GetComponent<SpriteRenderer>().sprite = characterNameSprite;
+            transform.Find("DialogueBox").Find("Portrait").GetComponent<SpriteRenderer>().sprite = characterPortraitSprite;
+        }
     }
 }

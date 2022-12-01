@@ -19,6 +19,10 @@ namespace World {
 
         private LDtkComponentProject _project;
 
+        public static GameObject GetPlayer() {
+            return Instance.follow;
+        }
+
         private void Update() {
             // Make the level where 'follow' object is the current level.
             if (follow != null) {
