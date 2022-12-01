@@ -32,7 +32,7 @@
 	"backupLimit": 10,
 	"levelNamePattern": "Level_%idx",
 	"tutorialDesc": null,
-	"flags": [],
+	"flags": ["IgnoreBackupSuggest"],
 	"defs": { "layers": [
 		{
 			"__type": "Entities",
@@ -4367,20 +4367,20 @@
 			"worldY": -135,
 			"worldDepth": 0,
 			"pxWid": 480,
-			"pxHei": 990,
-			"__bgColor": "#000000",
-			"bgColor": null,
+			"pxHei": 270,
+			"__bgColor": "#3F3E3E",
+			"bgColor": "#3F3E3E",
 			"useAutoIdentifier": true,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
-			"__smartColor": "#737373",
+			"__smartColor": "#959595",
 			"__bgPos": null,
 			"externalRelPath": "World_1/Level_0.ldtkl",
 			"fieldInstances": [],
 			"layerInstances": null,
-			"__neighbours": [{ "levelIid": "73ec7f80-5110-11ed-b1f7-fb6b57fc6daa", "levelUid": 35, "dir": "e" }]
+			"__neighbours": []
 		},
 		{
 			"identifier": "Level_1",

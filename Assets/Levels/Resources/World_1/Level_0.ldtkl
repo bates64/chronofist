@@ -29,6 +29,31 @@
 	"fieldInstances": [],
 	"layerInstances": [
 		{
+			"__identifier": "Entities",
+			"__type": "Entities",
+			"__cWid": 60,
+			"__cHei": 34,
+			"__gridSize": 8,
+			"__opacity": 1,
+			"__pxTotalOffsetX": 0,
+			"__pxTotalOffsetY": 0,
+			"__tilesetDefUid": null,
+			"__tilesetRelPath": null,
+			"iid": "cc9b3f90-5110-11ed-b115-032a3bebe8bd",
+			"levelId": 0,
+			"layerDefUid": 397,
+			"pxOffsetX": 0,
+			"pxOffsetY": 0,
+			"visible": true,
+			"optionalRules": [],
+			"intGridCsv": [],
+			"autoLayerTiles": [],
+			"seed": 2754569,
+			"overrideTilesetUid": null,
+			"gridTiles": [],
+			"entityInstances": []
+		},
+		{
 			"__identifier": "GroundDetails16",
 			"__type": "IntGrid",
 			"__cWid": 30,
@@ -1830,5 +1855,5 @@
 			"entityInstances": []
 		}
 	],
-	"__neighbours": [ { "levelIid": "73ec7f80-5110-11ed-b1f7-fb6b57fc6daa", "levelUid": 35, "dir": "e" }, { "levelIid": "43ac83e0-5110-11ed-97f6-6772540ca0bb", "levelUid": 36, "dir": "s" } ]
+	"__neighbours": []
 }

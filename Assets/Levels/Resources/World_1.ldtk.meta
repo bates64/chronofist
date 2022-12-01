@@ -33,9 +33,17 @@ ScriptedImporter:
     _asset: {instanceID: 0}
   - _key: Ground_4
     _asset: {instanceID: 0}
+  - _key: Ground_5
+    _asset: {instanceID: 0}
   - _key: Walls_1
     _asset: {instanceID: 0}
-  _entities: []
+  _entities:
+  - _key: BasicEnemy
+    _asset: {instanceID: 0}
+  - _key: Chronostatue
+    _asset: {instanceID: 0}
+  - _key: Gem
+    _asset: {instanceID: 0}
   _enumGenerate: 0
   _enumPath: 
   _enumNamespace: 
