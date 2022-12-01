@@ -194,6 +194,8 @@ namespace World {
 
             public bool MarkForUnload;
 
+            private GameObject entityLayer;
+
             public LoadedLevel(GameObject gameObject, LDtkComponentLevel level, LDtkIid id, PolygonCollider2D bounds,
                 Transform follow,GameObject camera) {
                 this.gameObject = gameObject;
@@ -206,8 +208,15 @@ namespace World {
                 bounds.isTrigger = true;
 
                 // The children of the level need to be on the Level layer.
-                foreach (Transform childTransform in level.gameObject.transform)
-                    childTransform.gameObject.SetLayerRecursively(LayerMask.NameToLayer("Level"));
+                // Except for entities- they need to be on the Enemy layer.
+                foreach (Transform childTransform in level.gameObject.transform) {
+                    var isEntityLayer = childTransform.gameObject.name == "Entities";
+                    var layerName = isEntityLayer ? "Enemy" : "Level";
+                    childTransform.gameObject.SetLayerRecursively(LayerMask.NameToLayer(layerName));
+
+                    if (isEntityLayer)
+                        entityLayer = childTransform.gameObject;
+                }
 
                 // Create a child object to hold the virtual camera.
                 vcamObject = Instantiate(camera, gameObject.transform);
@@ -241,21 +250,30 @@ namespace World {
                     var confiner = vcamObject.AddComponent<CinemachineConfiner2D>();
                     confiner.m_BoundingShape2D = bounds;
                 }
+
+                SetEntitiesActive(false);
             }
 
             public void Enter() {
                 vcamObject.SetActive(true);
                 ScreenShakeReference.SetCurrentCamera(vcamObject.GetComponent<CinemachineVirtualCamera>());
+                SetEntitiesActive(true);
             }
 
             public void Exit() {
                 vcamObject.SetActive(false);
+                SetEntitiesActive(false);
             }
 
             private bool useStaticCamera() {
                 Debug.Log($"Level {level.Identifier} is {level.BorderRect.width}x{level.BorderRect.height} tiles");
                 return level.BorderRect.width - SCREEN_WIDTH_TILES < 0.1f &&
                        level.BorderRect.height - SCREEN_HEIGHT_TILES < 0.1f;
+            }
+
+            private void SetEntitiesActive(bool active) {
+                if (entityLayer == null) return;
+                entityLayer.SetActive(active);
             }
         }
     }

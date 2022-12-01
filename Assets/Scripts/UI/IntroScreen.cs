@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Ui {
     public class IntroScreen : MonoBehaviour {
         public GameObject nextScreen;
-        public float lifetime = 5f;
+        public float delayUntilNextScreen = 1f;
 
-        private float _timeAlive;
+        private float timeSinceDone;
         private bool didWipeEffect;
         private SlowGameText text;
 
@@ -26,11 +26,12 @@ namespace Ui {
         }
 
         private void Update() {
-            _timeAlive += Time.deltaTime;
+            if (text.IsDone)
+                timeSinceDone += Time.deltaTime;
 
-            if (_timeAlive >= lifetime) {
+            if (timeSinceDone > delayUntilNextScreen) {
                 if (didWipeEffect) {
-                    if (_timeAlive >= (lifetime + WipeEffectTime / 2f)) {
+                    if (timeSinceDone >= (delayUntilNextScreen + WipeEffectTime / 2f)) {
                         if (nextScreen != null) {
                             nextScreen.SetActive(true);
                         }
